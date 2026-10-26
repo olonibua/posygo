@@ -60,3 +60,4 @@ A nonce-based Content Security Policy is set per request in `src/middleware.ts`,
 
 Card top-ups leave the app for the payment provider's checkout page. The app only follows that link when it points back to itself (the practice checkout used in test mode) or to `checkout.stripe.com`; add any new provider's checkout host to `CHECKOUT_HOSTS` in `src/features/finance/use-vendor-wallet.ts`. The browser never sees card details.
 # posygo
+# posygo
