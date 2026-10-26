@@ -1,0 +1,62 @@
+# Global Fulfilment Network — Web
+
+The web app for vendors, warehouse operators and the platform team. It talks to the API project, `global-fulfilment-api`, which is deployed separately.
+
+## Stack
+
+Next.js 15 (App Router) · React 19 · Tailwind 3 · TanStack Query · React Hook Form · Zod 4 · the Posy design system on a white page background
+
+```
+src/app          Routes: (marketing), (auth), (portal) for vendors, (console) for the platform team and fulfilment partners (partners get their own menu, scoped to their warehouse)
+src/features     Screens grouped by area
+src/components   Posy components (ui), layout and brand
+src/shared       Contracts shared with the API (keep identical; see below)
+src/styles       Design tokens from Posy
+```
+
+## Requirements
+
+Node 22, npm 10, and the API running locally (see its README).
+
+## First run
+
+```bash
+npm install
+cp .env.example .env.local      # NEXT_PUBLIC_API_URL, NEXT_PUBLIC_STORAGE_ORIGIN
+npm run dev                     # http://localhost:3000
+```
+
+## Checks
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npm run audit:prod
+```
+
+## Browser tests
+
+The browser suite signs in as every role (super admin, admin, finance, compliance, country ops, warehouse operator, vendor owner and member, partner lead and staff), checks what each can see and call, walks a lost-stock claim from transfer to wallet credit, and runs a vendor store from opening through a buyer's paid order, a discount code, a finance refund and a buyer's return, and a customer return from the order through the hub's blind count to back on sale, with the vendor's notification and CSV downloads, referral codes and campaigns, and a personal shopping request from the buyer's links through pricing, payment, buying and booking in to the parcel leaving the warehouse.
+
+1. Start the API and this app locally (`npm run build && npm start`), with the API pointing at a throwaway local database.
+2. Install the browser once: `npx playwright install chromium`.
+3. Run `npm run test:browser`.
+
+Before each run the suite calls the API's `npm run seed:e2e`, which creates or resets the `@e2e.gfn.local` accounts, a test partner hub with stock and a funded test vendor, and clears local rate limits. It refuses to run against production or a non-local database. Set `E2E_API_DIR` if the API isn't in `../global-fulfilment-api`, and `E2E_PASSWORD` / `E2E_TOTP_SECRET` to override the test credentials. Failures leave screenshots and traces in `e2e/results`.
+
+## Design system
+
+Every card, note, tile, band and control follows Posy's light palette; only the page background is white. Colours, shadows and radii come from `src/styles/tokens.css` through Tailwind theme keys. Components never set their own hex values.
+
+## Shared contracts
+
+`src/shared` is a copy of the API's `src/shared` (without tests). Change it in the API project first, copy it here, then run `npm run shared:check` (it expects the API project next to this one, or pass its `src/shared` path as an argument).
+
+## Security
+
+A nonce-based Content Security Policy is set per request in `src/middleware.ts`, with strict security headers in `next.config.mjs`. Access tokens live only in memory; the refresh token is an HttpOnly cookie scoped to the API.
+
+Card top-ups leave the app for the payment provider's checkout page. The app only follows that link when it points back to itself (the practice checkout used in test mode) or to `checkout.stripe.com`; add any new provider's checkout host to `CHECKOUT_HOSTS` in `src/features/finance/use-vendor-wallet.ts`. The browser never sees card details.
+# posygo
