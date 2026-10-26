@@ -40,7 +40,7 @@ export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email
         {({ id, describedBy, invalid }) => (
           <Select id={id} aria-describedby={describedBy} aria-invalid={invalid} disabled={countries.isLoading} {...register("countryCode")}>
             <option value="" disabled>
-              {countries.isLoading ? "Loading markets…" : "Choose a market"}
+              {countries.isLoading ? "Loading markets…" : countries.data?.length ? "Choose a market" : "No markets are open yet"}
             </option>
             {countries.data?.map((country) => (
               <option key={country.code} value={country.code}>
