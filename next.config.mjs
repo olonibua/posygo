@@ -7,12 +7,17 @@ const securityHeaders = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
+const apiProxyTarget = process.env.API_PROXY_TARGET?.replace(/\/$/, "");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
+  },
+  async rewrites() {
+    return apiProxyTarget ? [{ source: "/v1/:path*", destination: `${apiProxyTarget}/v1/:path*` }] : [];
   },
 };
 
