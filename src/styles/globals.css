@@ -1,0 +1,296 @@
+@import "@fontsource-variable/instrument-sans";
+@import "./tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-ground font-sans text-body text-ink antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px var(--yellow);
+    border-radius: 6px;
+  }
+  a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  ::selection {
+    background: var(--yellow);
+    color: var(--cocoa);
+  }
+}
+
+@layer components {
+  .notebook {
+    position: relative;
+    border-radius: 4px;
+    color: var(--cocoa);
+    padding: 22px 24px 22px 52px;
+    background-image: radial-gradient(circle, var(--blue) 5px, transparent 5.6px);
+    background-position: 14px 14px;
+    background-size: 16px var(--hole-gap);
+    background-repeat: repeat-y;
+    box-shadow: var(--shadow-note);
+  }
+  .grain {
+    position: relative;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url(/brand/paper-grain.svg) 0 0 / 320px;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .confetti-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 9999px;
+    opacity: 0.85;
+    mix-blend-mode: multiply;
+  }
+}
+
+@layer utilities {
+  .motion-rise {
+    animation: rise-in var(--dur-slow) var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
+  .motion-pop {
+    animation: pop-in var(--dur) var(--ease-spring) both;
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
+  .motion-fade {
+    animation: fade-in var(--dur) var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * 30ms);
+  }
+  .stagger > :nth-child(1) {
+    --i: 0;
+  }
+  .stagger > :nth-child(2) {
+    --i: 1;
+  }
+  .stagger > :nth-child(3) {
+    --i: 2;
+  }
+  .stagger > :nth-child(4) {
+    --i: 3;
+  }
+  .stagger > :nth-child(5) {
+    --i: 4;
+  }
+  .stagger > :nth-child(6) {
+    --i: 5;
+  }
+  .stagger > :nth-child(7) {
+    --i: 6;
+  }
+  .stagger > :nth-child(8) {
+    --i: 7;
+  }
+  .stagger > :nth-child(9) {
+    --i: 8;
+  }
+  .stagger > :nth-child(10) {
+    --i: 9;
+  }
+  .stagger > :nth-child(11) {
+    --i: 10;
+  }
+  .stagger > :nth-child(12) {
+    --i: 11;
+  }
+  .stagger > :nth-child(n + 13) {
+    --i: 12;
+  }
+  .motion-settle {
+    animation: settle-in 560ms var(--ease-spring) both;
+  }
+  .motion-press {
+    transition:
+      translate var(--dur-fast) var(--ease-out),
+      scale var(--dur-fast) var(--ease-out),
+      background-color var(--dur) var(--ease-out),
+      color var(--dur) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out),
+      border-color var(--dur) var(--ease-out),
+      opacity var(--dur) var(--ease-out);
+  }
+  .motion-press:active:not(:disabled) {
+    scale: 0.96;
+  }
+  .motion-lift {
+    transition:
+      translate var(--dur) var(--ease-out),
+      box-shadow var(--dur) var(--ease-out);
+  }
+  .motion-lift:hover {
+    translate: 0 -2px;
+    box-shadow: var(--shadow-frame);
+  }
+  .motion-wobble:hover {
+    animation: wobble 700ms var(--ease-out);
+  }
+  .skeleton {
+    border-radius: 8px;
+    background: linear-gradient(100deg, var(--paper-sunk) 30%, var(--paper) 50%, var(--paper-sunk) 70%) 0 0 / 300% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    scale: 0.9;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes settle-in {
+  from {
+    opacity: 0;
+    translate: 0 -14px;
+    rotate: -4deg;
+  }
+}
+@keyframes shimmer {
+  to {
+    background-position: -150% 0;
+  }
+}
+@keyframes wobble {
+  30% {
+    rotate: 6deg;
+  }
+  60% {
+    rotate: -4deg;
+  }
+}
+@keyframes drift {
+  50% {
+    translate: 0 -6px;
+  }
+}
+@keyframes check-draw {
+  from {
+    stroke-dashoffset: 16;
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+    scale: 0.96;
+  }
+}
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    translate: 24px 0;
+  }
+}
+@keyframes drawer-in {
+  from {
+    translate: -100% 0;
+  }
+}
+@keyframes drawer-out {
+  to {
+    translate: -100% 0;
+  }
+}
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+    scale: 0.97;
+  }
+}
+@keyframes countdown {
+  to {
+    scale: 0 1;
+  }
+}
+
+details.faq::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size var(--dur-slow) var(--ease-out),
+    content-visibility var(--dur-slow) allow-discrete;
+}
+details.faq[open]::details-content {
+  block-size: auto;
+}
+:root {
+  interpolate-size: allow-keywords;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+.peer:checked + .check-box path {
+  animation: check-draw var(--dur) var(--ease-out) both;
+}
+@keyframes upload-slide {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 300% 0;
+  }
+}
+
+[data-reveal] {
+  transition:
+    opacity 700ms var(--ease-out),
+    translate 700ms var(--ease-out);
+}
+[data-reveal="waiting"] {
+  opacity: 0;
+  translate: 0 28px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal="waiting"] {
+    opacity: 1;
+    translate: none;
+  }
+}
+@media (scripting: none) {
+  [data-reveal="waiting"] {
+    opacity: 1;
+    translate: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  [data-reveal="waiting"] * {
+    animation-play-state: paused !important;
+  }
+}

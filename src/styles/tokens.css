@@ -1,0 +1,35 @@
+:root {
+  --ground: #ffffff;
+  --paper: #fffdf2;
+  --paper-sunk: #ece6cf;
+  --ink: #4d3927;
+  --ink-soft: #6e5a47;
+  --ink-faint: #76644f;
+  --line: #e3dcc4;
+  --line-strong: #c9bea0;
+  --on-ink: #f5f1e0;
+  --on-ink-soft: #e2d8bf;
+  --cocoa: #4d3927;
+  --cream: #f5f1e0;
+  --blue: #4176c5;
+  --sky: #8dd0fb;
+  --teal: #8fd1dc;
+  --pink: #f3b2af;
+  --magenta: #c4597c;
+  --magenta-deep: #b24b6e;
+  --lime: #dce88c;
+  --yellow: #f8e87d;
+  --orange: #ec905d;
+  --success: #5f8a2c;
+  --danger: #b4473f;
+  --shadow-note: 0 10px 24px -8px #4d392740;
+  --shadow-peek: 0 -10px 50px -20px #4d392740;
+  --shadow-frame: 0 1px 0 #4d39270f, 0 18px 40px -20px #4d392733;
+  --hole-gap: 36px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --dur-fast: 140ms;
+  --dur: 220ms;
+  --dur-slow: 420ms;
+}
