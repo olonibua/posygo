@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { CodeInput, Field, FormAlert, Input, PasswordInput } from "@/components/ui/form-controls";
 import { apiRequest } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/auth-context";
+import { useSkipEmailCheck, useTestShortcuts } from "@/lib/auth/test-shortcuts";
 import { homeFor } from "@/lib/auth/use-session-gate";
 import { applyServerErrors } from "@/lib/forms";
 
@@ -18,6 +19,8 @@ export function VerifyEmailForm({ email = "", password }: { email?: string; pass
   const { signIn } = useAuth();
   const [formError, setFormError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const shortcutsOn = useTestShortcuts();
+  const skipCheck = useSkipEmailCheck();
   const { register, handleSubmit, setError, getValues, formState } = useForm<VerifyEmailInput>({
     resolver: zodResolver(verifyEmailSchema),
     defaultValues: { email, code: "", password: password ?? "" },
@@ -32,6 +35,20 @@ export function VerifyEmailForm({ email = "", password }: { email?: string; pass
     } catch (error) {
       setFormError(applyServerErrors(error, setError, ["email", "code", "password"]));
     }
+  }
+
+  function skip() {
+    setFormError(null);
+    skipCheck.mutate(
+      { email: getValues("email"), password: getValues("password") },
+      {
+        onSuccess: (result) => {
+          signIn(result);
+          router.replace(homeFor(result.user));
+        },
+        onError: (error) => setFormError(applyServerErrors(error, setError, ["email", "password"])),
+      },
+    );
   }
 
   async function resend() {
@@ -61,9 +78,16 @@ export function VerifyEmailForm({ email = "", password }: { email?: string; pass
         {({ id, describedBy, invalid }) => <CodeInput id={id} length={8} aria-describedby={describedBy} aria-invalid={invalid} {...register("code")} />}
       </Field>
       <div className="flex flex-col-reverse items-start justify-between gap-4 border-t border-line pt-6 sm:flex-row sm:items-center">
-        <button type="button" onClick={() => void resend()} className="text-[13px] text-ink-soft underline">
-          Send a new code
-        </button>
+        <div className="flex flex-wrap gap-4">
+          <button type="button" onClick={() => void resend()} className="text-[13px] text-ink-soft underline">
+            Send a new code
+          </button>
+          {shortcutsOn ? (
+            <button type="button" onClick={skip} disabled={skipCheck.isPending} className="text-[13px] text-ink-soft underline">
+              Skip for testing
+            </button>
+          ) : null}
+        </div>
         <Button type="submit" variant="yellow" size="lg" loading={isSubmitting}>
           Confirm email →
         </Button>

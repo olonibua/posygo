@@ -5,7 +5,7 @@ import { type ComponentProps, type ReactNode, useId, useState } from "react";
 import { cn } from "@/lib/cn";
 
 const CONTROL =
-  "h-12 w-full rounded-card border-[1.5px] border-line-strong bg-paper px-3.5 text-[15px] text-ink outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-ink-faint hover:border-ink-faint focus:border-ink focus:shadow-[0_0_0_4px_var(--yellow)] aria-[invalid=true]:border-danger";
+  "h-12 w-full rounded-card border-[1.5px] border-line-strong bg-paper px-3.5 text-base text-ink outline-none sm:text-[15px] transition-[border-color,box-shadow] duration-200 placeholder:text-ink-faint hover:border-ink-faint focus:border-ink focus:shadow-[0_0_0_4px_var(--yellow)] aria-[invalid=true]:border-danger";
 
 interface FieldProps {
   label: string;

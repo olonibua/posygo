@@ -14,7 +14,7 @@ export function PlaceLotControl({ lot, locations, busy, onPlace }: { lot: LotVie
       <label className="sr-only" htmlFor={`place-${lot.id}`}>
         Location for {lot.code}
       </label>
-      <Select id={`place-${lot.id}`} value={locationId} onChange={(event) => setLocationId(event.target.value)} className="h-10 min-w-[140px] text-small">
+      <Select id={`place-${lot.id}`} value={locationId} onChange={(event) => setLocationId(event.target.value)} className="h-10 min-w-[140px] sm:text-small">
         <option value="">Choose…</option>
         {choices.map((location) => (
           <option key={location.id} value={location.id}>

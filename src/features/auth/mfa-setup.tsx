@@ -10,6 +10,7 @@ import { CodeInput, Field, FormAlert } from "@/components/ui/form-controls";
 import { NotebookNote, Paper, Stamp } from "@/components/ui/surfaces";
 import { ApiError, apiRequest } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/auth-context";
+import { useSkipMfaSetup, useTestShortcuts } from "@/lib/auth/test-shortcuts";
 import { homeFor } from "@/lib/auth/use-session-gate";
 
 export function MfaSetup() {
@@ -20,6 +21,8 @@ export function MfaSetup() {
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState<MfaEnrolmentComplete | null>(null);
 
+  const shortcutsOn = useTestShortcuts();
+  const skip = useSkipMfaSetup();
   const start = useMutation({ mutationFn: () => apiRequest<MfaEnrolmentStart>("/v1/auth/mfa/enrolment", { method: "POST" }) });
   const confirm = useMutation({ mutationFn: (body: { code: string; emailCode?: string }) => apiRequest<MfaEnrolmentComplete>("/v1/auth/mfa/enrolment/confirm", { method: "POST", body }) });
 
@@ -50,6 +53,17 @@ export function MfaSetup() {
       { code: parsed.data, emailCode: needsEmailCode && parsedEmailCode.success ? parsedEmailCode.data : undefined },
       { onSuccess: setCompleted, onError: (caught) => setError(caught instanceof ApiError ? caught.message : "We couldn't reach the server.") },
     );
+  }
+
+  function skipSetup() {
+    setError(null);
+    skip.mutate(undefined, {
+      onSuccess: (result) => {
+        signIn(result);
+        router.replace(homeFor(result.user));
+      },
+      onError: (caught) => setError(caught instanceof ApiError ? caught.message : "We couldn't reach the server."),
+    });
   }
 
   function finish() {
@@ -102,7 +116,12 @@ export function MfaSetup() {
         </Field>
       ) : null}
       <Field label="6-digit code from the app">{({ id }) => <CodeInput id={id} length={6} value={code} onChange={(event) => setCode(event.target.value)} />}</Field>
-      <div className="flex justify-end border-t border-line pt-6">
+      <div className="flex flex-wrap items-center justify-end gap-3 border-t border-line pt-6">
+        {shortcutsOn ? (
+          <Button variant="ghost" loading={skip.isPending} onClick={skipSetup}>
+            Skip for testing
+          </Button>
+        ) : null}
         <Button type="submit" variant="yellow" size="lg" loading={confirm.isPending} disabled={!start.data}>
           Turn on two-factor →
         </Button>
