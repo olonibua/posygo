@@ -24,7 +24,7 @@ export function AppShell({ console, user, children }: { console: Console; user: 
 
   return (
     <div className="min-h-screen lg:grid lg:grid-cols-[264px_1fr]">
-      <aside className="hidden border-r border-line bg-cream lg:block">
+      <aside className="hidden border-r border-line bg-ground lg:block">
         <div className="sticky top-0 h-screen">
           <Sidebar console={console} user={user} />
         </div>
@@ -63,7 +63,7 @@ function Drawer({ state, console, user, onClose, onClosed }: { state: DrawerStat
         ref={panel}
         onAnimationEnd={(event) => event.animationName === "drawer-out" && onClosed()}
         className={cn(
-          "relative h-full w-[288px] max-w-[85vw] border-r border-line bg-cream shadow-frame",
+          "relative h-full w-[288px] max-w-[85vw] border-r border-line bg-ground shadow-frame",
           closing ? "[animation:drawer-out_var(--dur)_var(--ease-in)_forwards]" : "[animation:drawer-in_var(--dur-slow)_var(--ease-out)_both]",
         )}
       >

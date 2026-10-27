@@ -1,7 +1,7 @@
 :root {
   --ground: #ffffff;
-  --paper: #fffdf2;
-  --paper-sunk: #ece6cf;
+  --paper: #ffffff;
+  --paper-sunk: #f1f1f1;
   --ink: #111111;
   --ink-soft: #3d3d3d;
   --ink-faint: #5c5c5c;
@@ -10,7 +10,7 @@
   --on-ink: #f5f1e0;
   --on-ink-soft: #e2d8bf;
   --cocoa: #111111;
-  --cream: #f5f1e0;
+  --cream: #f6f6f6;
   --blue: #4176c5;
   --sky: #8dd0fb;
   --teal: #8fd1dc;

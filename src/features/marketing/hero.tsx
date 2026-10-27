@@ -27,7 +27,7 @@ const PEEK_TILES = [
 export function Hero({ hubCountries }: { hubCountries: readonly string[] }) {
   const where = hubCountries.length > 0 ? `in ${listNames(hubCountries.map(shortName))}` : "close to your customers";
   return (
-    <div className="grain relative mx-2 overflow-hidden rounded-band bg-cream bg-[url(/brand/confetti-scatter.svg)] bg-[length:1400px_auto] bg-center pt-12 sm:mx-5 sm:pt-[70px]">
+    <div className="relative mx-2 overflow-hidden rounded-band bg-sky bg-[url(/brand/confetti-scatter.svg)] bg-[length:1400px_auto] bg-center pt-12 sm:mx-5 sm:pt-[70px]">
       <div className="mx-auto max-w-container px-4 sm:px-8">
         <Sticker src="/brand/badge-scallop-orange.svg" className="right-14 top-[300px] hidden w-[170px] rotate-12 lg:block" />
         <Chip tone="yellow" className="motion-pop">
