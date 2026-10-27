@@ -116,8 +116,8 @@ export const MFA_SETUP_KNOWLEDGE = describePage<MfaConfirmInput>({
     },
     emailCode: {
       labels: ["8-digit code from your email"],
-      meaning: "Staff and partner accounts get a code by email to prove this set-up is really you. It can take a minute to arrive, so check your spam folder too.",
-      mistakes: ["It must be exactly 8 digits.", 'If it hasn\'t arrived, choose "Send a new code" under the box. Only the newest code works, and each code lasts 15 minutes.'],
+      meaning: "A code we email you to prove this set-up is really you.",
+      mistakes: ["It must be exactly 8 digits.", 'Not arrived? Choose "Send a new code". Only the newest code works.'],
     },
   },
   related: [

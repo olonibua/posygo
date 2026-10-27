@@ -9,7 +9,7 @@ const WAIT_SECONDS = 60;
 export function ResendCode({ send }: { send: () => Promise<unknown> }) {
   const [waitLeft, setWaitLeft] = useState(0);
   const [sending, setSending] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [problem, setProblem] = useState<string | null>(null);
 
   useEffect(() => {
     if (waitLeft <= 0) {
@@ -21,31 +21,26 @@ export function ResendCode({ send }: { send: () => Promise<unknown> }) {
 
   async function resend() {
     setSending(true);
-    setNotice(null);
+    setProblem(null);
     try {
       await send();
-      setNotice("A new code is on its way. Use the newest one; earlier codes stop working.");
       setWaitLeft(WAIT_SECONDS);
     } catch (caught) {
-      setNotice(caught instanceof ApiError ? caught.message : "We couldn't reach the server. Try again in a moment.");
+      setProblem(caught instanceof ApiError ? caught.message : "Couldn't send. Try again.");
     } finally {
       setSending(false);
     }
   }
 
+  if (waitLeft > 0) {
+    return <span aria-live="polite">New code sent.</span>;
+  }
   return (
-    <div className="-mt-3 flex flex-col gap-1 text-[13px] text-ink-soft" aria-live="polite">
-      <p>
-        Didn&apos;t get it?{" "}
-        {waitLeft > 0 ? (
-          <span>You can ask for another in {waitLeft}s.</span>
-        ) : (
-          <button type="button" onClick={() => void resend()} disabled={sending} className="underline disabled:opacity-60">
-            {sending ? "Sending…" : "Send a new code"}
-          </button>
-        )}
-      </p>
-      {notice ? <p className="text-ink">{notice}</p> : null}
-    </div>
+    <span aria-live="polite">
+      <button type="button" onClick={() => void resend()} disabled={sending} className="underline disabled:opacity-60">
+        Send a new code
+      </button>
+      {problem ? <span className="text-danger"> {problem}</span> : null}
+    </span>
   );
 }

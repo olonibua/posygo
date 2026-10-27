@@ -113,15 +113,14 @@ export function MfaSetup() {
         </div>
       </Paper>
       {start.data?.emailCodeRequired ? (
-        <>
-          <Field
-            label="8-digit code from your email"
-            hint={`We sent it to ${state.status === "authenticated" ? state.user.email : "your email"} to prove this set-up is really you. It can take a minute, so check your spam folder too.`}
-          >
-            {({ id, describedBy }) => <CodeInput id={id} length={8} aria-describedby={describedBy} value={emailCode} onChange={(event) => setEmailCode(event.target.value)} />}
+        <div className="flex flex-col">
+          <Field label="8-digit code from your email">
+            {({ id }) => <CodeInput id={id} length={8} aria-describedby="email-code-note" value={emailCode} onChange={(event) => setEmailCode(event.target.value)} />}
           </Field>
-          <ResendCode send={() => apiRequest("/v1/auth/mfa/enrolment/resend-code", { method: "POST" })} />
-        </>
+          <p id="email-code-note" className="mt-1.5 text-meta text-ink-faint">
+            We emailed you a code to prove this set-up is really you. <ResendCode send={() => apiRequest("/v1/auth/mfa/enrolment/resend-code", { method: "POST" })} />
+          </p>
+        </div>
       ) : null}
       <Field label="6-digit code from the app">{({ id }) => <CodeInput id={id} length={6} value={code} onChange={(event) => setCode(event.target.value)} />}</Field>
       <div className="flex flex-wrap items-center justify-end gap-3 border-t border-line pt-6">
