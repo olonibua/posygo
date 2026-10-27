@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { absoluteUrl, PRIVATE_PATHS } from "@/lib/site";
+import { absoluteUrl, SITE_URL, PRIVATE_PATHS } from "@/lib/site";
 
 const ANSWER_ENGINES = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Google-Extended", "Applebot-Extended", "Bingbot"];
 
@@ -12,6 +12,6 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: ANSWER_ENGINES, allow: "/", disallow },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),
-    host: absoluteUrl("/"),
+    host: SITE_URL,
   };
 }

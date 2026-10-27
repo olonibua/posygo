@@ -22,7 +22,11 @@ export const dynamicParams = false;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const guide = findGuide((await params).slug);
-  return guide ? { ...publicPage({ title: guide.title, description: guide.description, path: `/guides/${guide.slug}` }), openGraph: { type: "article", modifiedTime: guide.updated } } : {};
+  if (!guide) {
+    return {};
+  }
+  const page = publicPage({ title: guide.title, description: guide.description, path: `/guides/${guide.slug}` });
+  return { ...page, openGraph: { ...page.openGraph, type: "article", modifiedTime: guide.updated } };
 }
 
 export default async function GuidePage({ params }: Props) {

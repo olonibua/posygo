@@ -58,7 +58,7 @@ Every new public page must:
 4. Use only facts and prices that come from the API or the code. Never type a price into page copy.
 5. Be listed in `src/features/marketing/site-pages.ts`, which feeds `sitemap.xml`, `llms.txt` and `llms-full.txt`, and linked from the header, footer or another public page.
 
-Private areas inherit `PRIVATE_PAGE` (noindex) from their layout and are listed in `PRIVATE_PATHS`, which `robots.txt` blocks. `robots.txt` names the main AI crawlers explicitly and allows them on public pages. Set `NEXT_PUBLIC_SITE_URL` to the live address in each deployment so canonical links, the sitemap and sharing images point at the right domain.
+Private areas inherit `PRIVATE_PAGE` (noindex) from their layout and are listed in `PRIVATE_PATHS`, which `robots.txt` blocks. `robots.txt` names the main AI crawlers explicitly and allows them on public pages. The official address is https://posygo.com. Set `NEXT_PUBLIC_SITE_URL=https://posygo.com` in production (it's also the fallback for production builds). posygo.vercel.app and www.posygo.com redirect permanently to it, and every other *.vercel.app address (preview deployments) is marked noindex so search engines only list the real site.
 
 ## The in-app helper
 

@@ -9,6 +9,7 @@ interface PageFacts {
   canonical: string;
   h1s: number;
   robots: string;
+  image: string;
   jsonLd: unknown[];
 }
 
@@ -30,6 +31,7 @@ async function readPage(request: APIRequestContext, path: string, userAgent = GO
     canonical: first(head, /<link rel="canonical" href="([^"]*)"/),
     h1s: (html.match(/<h1[\s>]/g) ?? []).length,
     robots: first(head, /<meta name="robots" content="([^"]*)"/),
+    image: first(head, /<meta property="og:image" content="([^"]*)"/),
     jsonLd,
   };
 }
@@ -56,6 +58,7 @@ test.describe("what search engines and AI assistants see", () => {
       expect(new URL(page.canonical).pathname.replace(/\/$/, ""), `${where}canonical`).toBe(path.replace(/\/$/, ""));
       expect(page.h1s, `${where}one main heading`).toBe(1);
       expect(page.robots, `${where}robots`).not.toContain("noindex");
+      expect(page.image, `${where}sharing image`).toMatch(/^https?:\/\/.+\/opengraph-image/);
       expect(titles.get(page.title), `${where}title also used by`).toBeUndefined();
       titles.set(page.title, path);
     }

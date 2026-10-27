@@ -1,5 +1,7 @@
 export const BRAND = {
   name: "Posygo",
+  domain: "posygo.com",
+  siteUrl: "https://posygo.com",
   tagline: "Local fulfilment hubs for online sellers",
   description:
     "Store your stock in the country you sell to. Posygo's vetted local hubs count every unit, pack every order and ship it in days, with tracking and insurance while your stock is with us.",
