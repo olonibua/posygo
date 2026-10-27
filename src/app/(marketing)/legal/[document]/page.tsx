@@ -7,26 +7,25 @@ import { MarketingFooter, MarketingHeader } from "@/components/layout/marketing-
 import { PageHeader } from "@/components/ui/page-header";
 import { Paper } from "@/components/ui/surfaces";
 import { fetchLiveCountries } from "@/features/marketing/live-countries";
+import { fetchPublic } from "@/lib/api/public-server";
 import { cn } from "@/lib/cn";
 import { formatDate } from "@/lib/format";
+import { publicPage } from "@/lib/site";
 
-const DOCUMENTS: Record<string, { kind: LegalDocumentKind; title: string }> = {
-  terms: { kind: "TERMS", title: "Terms of service" },
-  privacy: { kind: "PRIVACY", title: "Privacy policy" },
-  "vendor-agreement": { kind: "VENDOR_AGREEMENT", title: "Vendor agreement" },
+const DOCUMENTS: Record<string, { kind: LegalDocumentKind; title: string; summary: string }> = {
+  terms: { kind: "TERMS", title: "Terms of service", summary: "The terms that apply when you use Posygo, for each country we serve." },
+  privacy: { kind: "PRIVACY", title: "Privacy policy", summary: "What personal information Posygo keeps, why, for how long and who it's shared with, for each country we serve." },
+  "vendor-agreement": { kind: "VENDOR_AGREEMENT", title: "Vendor agreement", summary: "The agreement between Posygo and sellers who store stock at our hubs, for each country we serve." },
 };
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
+export async function generateMetadata({ params }: { params: Promise<{ document: string }> }): Promise<Metadata> {
+  const { document } = await params;
+  const entry = DOCUMENTS[document];
+  return entry ? publicPage({ title: entry.title, description: entry.summary, path: `/legal/${document}` }) : {};
+}
 
-export const metadata: Metadata = { title: "Legal" };
-
-async function fetchDocument(countryCode: string, kind: LegalDocumentKind): Promise<LegalDocumentView | null> {
-  try {
-    const response = await fetch(`${API_URL}/v1/legal/${countryCode}/${kind}`, { next: { revalidate: 300 }, signal: AbortSignal.timeout(3000) });
-    return response.ok ? ((await response.json()) as LegalDocumentView) : null;
-  } catch {
-    return null;
-  }
+function fetchDocument(countryCode: string, kind: LegalDocumentKind): Promise<LegalDocumentView | null> {
+  return fetchPublic<LegalDocumentView>(`/v1/legal/${countryCode}/${kind}`);
 }
 
 export default async function LegalPage({ params, searchParams }: { params: Promise<{ document: string }>; searchParams: Promise<{ country?: string }> }) {

@@ -1,14 +1,9 @@
 import type { HubView, PartnerProgrammeView, PublicCountry } from "@/shared";
 
-const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
+import { fetchPublic } from "@/lib/api/public-server";
 
 async function publicJson<T>(path: string, fallback: T): Promise<T> {
-  try {
-    const response = await fetch(`${API_URL}${path}`, { next: { revalidate: 300 }, signal: AbortSignal.timeout(3000) });
-    return response.ok ? ((await response.json()) as T) : fallback;
-  } catch {
-    return fallback;
-  }
+  return (await fetchPublic<T>(path)) ?? fallback;
 }
 
 export function fetchLiveCountries(): Promise<PublicCountry[]> {

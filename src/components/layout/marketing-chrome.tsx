@@ -5,13 +5,21 @@ import { ButtonLink } from "@/components/ui/button";
 import { BRAND } from "@/lib/brand";
 
 const LINKS = [
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#trust", label: "Trust & safety" },
-  { href: "/#hubs", label: "Hubs" },
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/fulfilment", label: "Hubs" },
   { href: "/marketplace", label: "Shop" },
   { href: "/shop-for-me", label: "Shop for me" },
   { href: "/partners", label: "Become a partner" },
   { href: "/login", label: "Sign in" },
+];
+
+const FOOTER_LINKS = [
+  ...LINKS.filter((link) => link.href !== "/login"),
+  { href: "/guides", label: "Guides" },
+  { href: "/track", label: "Track a parcel" },
+  { href: "/legal/terms", label: "Terms" },
+  { href: "/legal/privacy", label: "Privacy" },
 ];
 
 export function MarketingHeader() {
@@ -37,13 +45,13 @@ export function MarketingFooter() {
     <div className="mx-auto max-w-container px-4 sm:px-8">
       <footer className="flex flex-col items-center justify-between gap-4 py-11 text-small text-ink-soft md:flex-row">
         <Logo size="sm" />
-        <span>
-          {LINKS.slice(0, 4).map((link) => (
-            <Link key={link.href} href={link.href} className="mx-1.5 text-ink-soft no-underline hover:underline">
+        <nav aria-label="Footer" className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+          {FOOTER_LINKS.map((link) => (
+            <Link key={link.href} href={link.href} className="text-ink-soft no-underline hover:underline">
               {link.label}
             </Link>
           ))}
-        </span>
+        </nav>
         <span>
           © {new Date().getFullYear()} {BRAND.name}
         </span>

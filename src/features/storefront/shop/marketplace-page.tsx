@@ -1,6 +1,6 @@
 "use client";
 
-import type { PublicCountry } from "@/shared";
+import type { PublicCountry, PublicProductView } from "@/shared";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { EmptyState, FilterTabs } from "@/components/ui/navigation-controls";
@@ -10,11 +10,16 @@ import { LoadingRows } from "@/components/ui/skeleton";
 import { useMarketplace } from "../use-storefront";
 import { ProductCard } from "./shop-parts";
 
-export function MarketplacePage({ countries }: { countries: PublicCountry[] }) {
+interface MarketplaceProps {
+  countries: PublicCountry[];
+  initial?: { countryCode: string; products: PublicProductView[] };
+}
+
+export function MarketplacePage({ countries, initial }: MarketplaceProps) {
   const router = useRouter();
   const requested = useSearchParams().get("country")?.toUpperCase();
   const country = countries.find((entry) => entry.code === requested) ?? countries[0];
-  const products = useMarketplace(country?.code ?? "");
+  const products = useMarketplace(country?.code ?? "", undefined, initial?.countryCode === country?.code ? initial?.products : undefined);
 
   if (!country) {
     return <EmptyState title="No stores open yet" body="Stores open here as soon as our first markets go live." />;

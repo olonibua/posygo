@@ -81,14 +81,20 @@ export function useSetListing() {
   }));
 }
 
-export function usePublicStore(slug: string) {
-  return useQuery({ queryKey: ["public", "store", slug], queryFn: () => apiRequest<PublicStoreView>(`/v1/public/stores/${encodeURIComponent(slug)}`, PUBLIC), retry: false });
+export function usePublicStore(slug: string, initialStore?: PublicStoreView) {
+  return useQuery({
+    queryKey: ["public", "store", slug],
+    queryFn: () => apiRequest<PublicStoreView>(`/v1/public/stores/${encodeURIComponent(slug)}`, PUBLIC),
+    initialData: initialStore,
+    retry: false,
+  });
 }
 
-export function useMarketplace(countryCode: string, category?: string) {
+export function useMarketplace(countryCode: string, category?: string, initialProducts?: PublicProductView[]) {
   return useQuery({
     queryKey: ["public", "marketplace", countryCode, category ?? "ALL"],
     queryFn: () => apiRequest<PublicProductView[]>(`/v1/public/marketplace/${countryCode}${category ? `?category=${encodeURIComponent(category)}` : ""}`, PUBLIC),
+    initialData: category ? undefined : initialProducts,
   });
 }
 

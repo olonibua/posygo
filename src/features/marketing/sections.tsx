@@ -1,10 +1,13 @@
 import type { HubView } from "@/shared";
+import Link from "next/link";
 
 import { ButtonLink } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { NotebookNote, Stamp, StepNumber, Sticker } from "@/components/ui/surfaces";
 import type { Tone } from "@/components/ui/tone";
 import { formatMoney, localeFor } from "@/lib/format";
+
+import { countryPath } from "./markets";
 
 const TRUST_POINTS: ReadonlyArray<{ title: string; body: string; tone: Tone }> = [
   { title: "Vetted local hubs", body: "Identity, address and referee checks before a hub takes any stock.", tone: "sky" },
@@ -118,7 +121,11 @@ export function HubsBand({ hubs }: { hubs: readonly HubView[] }) {
               >
                 {index === 0 ? <Sticker src="/brand/sticker-flower-cream.svg" className="-right-7 -top-8 w-[100px]" /> : null}
                 <StepNumber value={index + 1} />
-                <h3 className="mb-1.5 mt-2.5 text-[24px] font-medium tracking-[-0.6px]">{hub.countryName}</h3>
+                <h3 className="mb-1.5 mt-2.5 text-[24px] font-medium tracking-[-0.6px]">
+                  <Link href={countryPath({ name: hub.countryName })} className="text-ink">
+                    {hub.countryName}
+                  </Link>
+                </h3>
                 <p className="text-small">
                   Billed in {hub.currency}
                   {hub.insuredCoverMinor > 0 ? ` · stock insured up to ${formatMoney(hub.insuredCoverMinor, hub.currency, localeFor(hub.countryCode))}` : " · insured stock"}

@@ -4,6 +4,7 @@ import type { AuthenticatedResult, SessionUser } from "@/shared";
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { apiRequest, onSessionChange, refreshSession, setSession } from "@/lib/api/client";
+import { shouldRestoreSession } from "@/lib/auth/session-hint";
 
 type AuthState = { status: "loading"; user: null } | { status: "anonymous"; user: null } | { status: "authenticated"; user: SessionUser };
 
@@ -20,7 +21,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onSessionChange((result) => setState(result ? { status: "authenticated", user: result.user } : { status: "anonymous", user: null }));
-    void refreshSession();
+    if (shouldRestoreSession(window.location.pathname)) {
+      void refreshSession();
+    } else {
+      setSession(null);
+    }
     return unsubscribe;
   }, []);
 

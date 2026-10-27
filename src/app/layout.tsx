@@ -4,15 +4,20 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 import { BRAND } from "@/lib/brand";
+import { SITE_URL } from "@/lib/site";
 
 import { Providers } from "./providers";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: { default: BRAND.name, template: `%s · ${BRAND.name}` },
-  description: "Store, sell and ship your stock from vetted fulfilment partners in every market.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: `${BRAND.name} · ${BRAND.tagline}`, template: `%s · ${BRAND.name}` },
+  description: BRAND.description,
+  applicationName: BRAND.name,
   icons: { icon: "/brand/flower-mark.svg" },
+  openGraph: { siteName: BRAND.name, type: "website", locale: "en_GB" },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = { themeColor: "#ffffff", width: "device-width", initialScale: 1 };

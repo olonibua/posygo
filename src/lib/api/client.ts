@@ -1,5 +1,7 @@
 import type { ApiErrorBody, AuthenticatedResult } from "@/shared";
 
+import { rememberSignedIn } from "@/lib/auth/session-hint";
+
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
 
 export function apiAssetUrl(path: string): string {
@@ -37,6 +39,7 @@ export function onSessionChange(listener: SessionListener): () => void {
 
 export function setSession(result: AuthenticatedResult | null): void {
   accessToken = result?.accessToken ?? null;
+  rememberSignedIn(result !== null);
   listeners.forEach((listener) => listener(result));
 }
 

@@ -1,10 +1,13 @@
-import type { Metadata } from "next";
-
 import { MarketingFooter, MarketingHeader } from "@/components/layout/marketing-chrome";
 import { PageHeader } from "@/components/ui/page-header";
 import { TrackingSearch } from "@/features/tracking/tracking-view";
+import { publicPage } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Track a parcel" };
+export const metadata = publicPage({
+  title: "Track a parcel",
+  description: "Track an order shipped from a Posygo fulfilment hub. Enter the tracking number from your shipping email to see where your parcel is.",
+  path: "/track",
+});
 
 export default function Page() {
   return (

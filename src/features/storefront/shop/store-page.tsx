@@ -1,5 +1,6 @@
 "use client";
 
+import type { PublicStoreView } from "@/shared";
 import { useSearchParams } from "next/navigation";
 
 import { ButtonLink } from "@/components/ui/button";
@@ -15,8 +16,8 @@ import { useBasket } from "../basket-store";
 import { usePublicStore } from "../use-storefront";
 import { ProductCard, ShopFooter, ShopHeader } from "./shop-parts";
 
-export function StorePage({ slug }: { slug: string }) {
-  const store = usePublicStore(slug);
+export function StorePage({ slug, initialStore }: { slug: string; initialStore?: PublicStoreView }) {
+  const store = usePublicStore(slug, initialStore);
   const lines = useBasket(slug);
   const cancelled = useSearchParams().get("checkout") === "cancelled";
   const data = store.data;

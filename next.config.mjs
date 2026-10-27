@@ -13,6 +13,7 @@ const apiProxyTarget = process.env.API_PROXY_TARGET?.replace(/\/$/, "");
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  htmlLimitedBots: /.*/,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
