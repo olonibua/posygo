@@ -147,3 +147,25 @@
     transform: translateY(0) scale(1);
   }
 }
+
+.helper-highlight {
+  outline: 3px solid var(--magenta);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .helper-highlight {
+    animation: helper-pulse 0.8s ease-in-out 3;
+  }
+}
+
+@keyframes helper-pulse {
+  0%,
+  100% {
+    outline-offset: 4px;
+  }
+  50% {
+    outline-offset: 8px;
+  }
+}

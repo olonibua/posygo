@@ -38,9 +38,13 @@ export interface ApiFailure {
 
 type FailureListener = (failure: ApiFailure) => void;
 const failureListeners = new Set<FailureListener>();
+const RECENT_MS = 15_000;
+let recentFailures: Array<{ at: number; failure: ApiFailure }> = [];
 
 export function onApiFailure(listener: FailureListener): () => void {
   failureListeners.add(listener);
+  const since = Date.now() - RECENT_MS;
+  recentFailures.filter((entry) => entry.at >= since).forEach((entry) => listener(entry.failure));
   return () => failureListeners.delete(listener);
 }
 
@@ -49,6 +53,7 @@ function announce(method: string, path: string, error: ApiError): void {
     return;
   }
   const failure = { method, endpoint: path.split("?")[0]!, error };
+  recentFailures = [...recentFailures.filter((entry) => entry.at >= Date.now() - RECENT_MS), { at: Date.now(), failure }].slice(-5);
   failureListeners.forEach((listener) => listener(failure));
 }
 

@@ -28,13 +28,9 @@ function worthNoticing(failure: ApiFailure): boolean {
   return failure.method !== "GET" || failure.error.status >= 500 || failure.error.status === 0;
 }
 
-export function usePageSignals(pathname: string, title: string | undefined, handlers: PageSignalHandlers): void {
+export function usePageSignals(handlers: PageSignalHandlers): void {
   const latest = useRef(handlers);
   latest.current = handlers;
-
-  useEffect(() => {
-    trail.add(`Opened ${title ?? pathname}`);
-  }, [pathname, title]);
 
   useEffect(() => {
     const tracker = new HesitationTracker();
@@ -43,14 +39,12 @@ export function usePageSignals(pathname: string, title: string | undefined, hand
       latest.current.onField(label);
       if (label) {
         tracker.focused(label, Date.now());
-        trail.add(`Went to ${label}`);
       }
     };
     const input = (event: Event) => {
       const label = fieldLabelOf(event.target);
       if (label) {
         tracker.edited(label, Date.now());
-        trail.add(`Changed ${label}`);
       }
     };
     const focusOut = () => tracker.left();
@@ -75,6 +69,11 @@ export function usePageSignals(pathname: string, title: string | undefined, hand
         }
       }, SETTLE_MS);
     });
+    const alreadyOn = fieldLabelOf(document.activeElement);
+    if (alreadyOn) {
+      latest.current.onField(alreadyOn);
+      tracker.focused(alreadyOn, Date.now());
+    }
     document.addEventListener("focusin", focusIn);
     document.addEventListener("focusout", focusOut);
     document.addEventListener("input", input);

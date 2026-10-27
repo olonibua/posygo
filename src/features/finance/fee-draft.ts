@@ -1,4 +1,4 @@
-import { type FeeSchedule, feeScheduleSchema, partnerRates, referralRates, STORAGE_TIERS, type StorageTier, storefrontRates } from "@/shared";
+import { type FeeSchedule, feeScheduleSchema, partnerRates, referralRates, shoppingRates, STORAGE_TIERS, type StorageTier, storefrontRates } from "@/shared";
 
 import { STORAGE_TIER_LABELS } from "@/features/stock/display";
 
@@ -34,6 +34,8 @@ export interface FeeDraft {
   referrerCredit: string;
   refereeCredit: string;
   referralMonthlyCap: string;
+  shoppingCommissionPercent: string;
+  shoppingMinimumFee: string;
 }
 
 export function draftFrom(schedule: FeeSchedule, currency: string): FeeDraft {
@@ -41,6 +43,7 @@ export function draftFrom(schedule: FeeSchedule, currency: string): FeeDraft {
   const partner = partnerRates(schedule);
   const store = storefrontRates(schedule);
   const referral = referralRates(schedule);
+  const shopping = shoppingRates(schedule);
   const tiers = Object.fromEntries(
     STORAGE_TIERS.map((tier) => {
       const rate = schedule.onboarding[tier];
@@ -79,6 +82,8 @@ export function draftFrom(schedule: FeeSchedule, currency: string): FeeDraft {
     referrerCredit: major(referral.referrerCreditMinor),
     refereeCredit: major(referral.refereeCreditMinor),
     referralMonthlyCap: String(referral.monthlyRewardsPerReferrer),
+    shoppingCommissionPercent: String(shopping.commissionBps / 100),
+    shoppingMinimumFee: major(shopping.minimumFeeMinor),
   };
 }
 
@@ -145,6 +150,7 @@ export function scheduleFrom(draft: FeeDraft, currency: string): DraftResult {
       refereeCreditMinor: minor(draft.refereeCredit, "new vendor credit"),
       monthlyRewardsPerReferrer: number(draft.referralMonthlyCap, "referrals per month", 1),
     },
+    shopping: { commissionBps: number(draft.shoppingCommissionPercent, "shopping fee", 100), minimumFeeMinor: minor(draft.shoppingMinimumFee, "shopping minimum fee") },
   };
   if (problems.length > 0) {
     return { ok: false, message: `Check these amounts: ${problems.join(", ").toLowerCase()}.` };

@@ -6,20 +6,22 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/lib/auth/auth-context";
 
-import { type ChatMessage, type HelperAction, helperSays, personSays } from "./conversation/messages";
-import { errorNudge, errorReply, fieldReply, greeting, type NoticedError, pageReply, stuckNudge, understand, unsureReply } from "./conversation/replies";
+import { type ChatMessage, type HelperAction, helperSays } from "./conversation/messages";
+import { errorNudge, errorReply, fieldReply, greeting, type NoticedError, pageReply, stuckNudge, voiceChoice } from "./conversation/replies";
+import { useGuidance } from "./guidance/use-guidance";
 import { knowledgeFor } from "./knowledge/registry";
 import { isQuietPage, quietPage } from "./signals/quiet-pages";
 import { trail } from "./signals/trail";
 import { usePageSignals } from "./signals/use-page-signals";
-import { askTeam, reportError } from "./support-client";
+import { reportError } from "./support-client";
+import { type Mood, useQuestions } from "./use-questions";
+import { useVoice } from "./voice/use-voice";
 
-export type Mood = "rest" | "notice" | "think" | "talk" | "happy";
+export type { Mood } from "./use-questions";
 export type Nudge = { kind: "stuck"; field: string; text: string } | { kind: "error"; error: NoticedError; text: string };
-type Awaiting = { kind: "question" } | { kind: "email"; question: string } | null;
 
 const TALK_MS = 1_800;
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const errorKey = (error: NoticedError) => `${error.code}|${error.endpoint}`;
 
 export function useAssistant() {
   const pathname = usePathname();
@@ -29,51 +31,63 @@ export function useAssistant() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [nudge, setNudge] = useState<Nudge | null>(null);
-  const [mood, setMood] = useState<Mood>("rest");
+  const [mood, setMoodNow] = useState<Mood>("rest");
   const [busy, setBusy] = useState(false);
   const [field, setField] = useState<string | null>(null);
   const lastError = useRef<NoticedError | null>(null);
   const references = useRef(new Map<string, string>());
-  const awaiting = useRef<Awaiting>(null);
-  const lastQuestion = useRef<string | null>(null);
   const settle = useRef<number | undefined>(undefined);
 
-  const settleTo = useCallback((next: Mood, after = TALK_MS) => {
+  const setMood = useCallback((next: Mood, settleAfter?: number) => {
     window.clearTimeout(settle.current);
-    settle.current = window.setTimeout(() => setMood(next), after);
+    setMoodNow(next);
+    if (settleAfter) {
+      settle.current = window.setTimeout(() => setMoodNow("rest"), settleAfter);
+    }
   }, []);
 
+  const voice = useVoice((speaking) => setMood(speaking ? "talk" : "rest"));
+  const voiceSpeak = voice.speak;
+  const hear = useCallback((message: ChatMessage) => setMessages((current) => [...current, message].slice(-60)), []);
   const speak = useCallback(
     (...replies: ChatMessage[]) => {
       setMessages((current) => [...current, ...replies].slice(-60));
-      setMood("talk");
-      settleTo("rest");
+      setMood("talk", TALK_MS);
+      const spoken = replies.filter((reply) => reply.from === "helper").at(-1);
+      if (spoken) {
+        voiceSpeak(spoken.text);
+      }
     },
-    [settleTo],
+    [setMood, voiceSpeak],
   );
-
-  const draft = useCallback(() => ({ page: pathname, trail: trail.recent(), signedIn }), [pathname, signedIn]);
+  const guidance = useGuidance(page, speak);
+  const withFixes = useCallback(
+    (reply: ChatMessage, fields: readonly string[]): ChatMessage => {
+      const fixes = guidance.fixesFor(fields);
+      return fixes.length > 0 ? { ...reply, actions: [...fixes, ...(reply.actions ?? [])] } : reply;
+    },
+    [guidance],
+  );
+  const referenceFor = useCallback((error: NoticedError) => references.current.get(errorKey(error)) ?? null, []);
 
   const report = useCallback(
     async (error: NoticedError): Promise<string | null> => {
-      const key = `${error.code}|${error.endpoint}`;
-      const known = references.current.get(key);
+      const known = referenceFor(error);
       if (known) {
         return known;
       }
       setMood("think");
       try {
-        const result = await reportError(draft(), error);
-        references.current.set(key, result.reference);
-        setMood("happy");
-        settleTo("rest");
+        const result = await reportError({ page: pathname, trail: trail.recent(), signedIn }, error);
+        references.current.set(errorKey(error), result.reference);
+        setMood("happy", TALK_MS);
         return result.reference;
       } catch {
         setMood("rest");
         return null;
       }
     },
-    [draft, settleTo],
+    [pathname, referenceFor, setMood, signedIn],
   );
 
   const onError = useCallback(
@@ -82,13 +96,15 @@ export function useAssistant() {
       const guide = errorGuide(error.code, error.status);
       const reference = guide.side === "SYSTEM" && error.code !== "network_error" ? await report(error) : null;
       if (open) {
-        speak(errorReply(error, reference));
+        speak(withFixes(errorReply(error, reference), error.rejectedFields));
         return;
       }
-      setNudge({ kind: "error", error, text: errorNudge(error, reference) });
+      const text = errorNudge(error, reference);
+      setNudge({ kind: "error", error, text });
       setMood("notice");
+      voice.speak(text, true);
     },
-    [open, report, speak],
+    [open, report, setMood, speak, voice, withFixes],
   );
 
   const onStuck = useCallback(
@@ -98,13 +114,20 @@ export function useAssistant() {
       }
       setNudge((current) => current ?? { kind: "stuck", field: stuckOn, text: stuckNudge(stuckOn) });
       setMood("notice");
+      voice.speak(stuckNudge(stuckOn), true);
     },
-    [open, page],
+    [open, page, setMood, voice],
   );
 
-  usePageSignals(pathname, page?.title, { onStuck, onError: (error) => void onError(error), onField: (label) => label && setField(label) });
+  usePageSignals({ onStuck, onError: (error) => void onError(error), onField: (label) => label && setField(label) });
+  const questions = useQuestions({ pathname, page, signedIn, open, messages, lastError, referenceFor, speak, hear, setMood, setBusy, withFixes });
 
+  const shownPath = useRef(pathname);
   useEffect(() => {
+    if (shownPath.current === pathname) {
+      return;
+    }
+    shownPath.current = pathname;
     setNudge(null);
     setField(null);
     lastError.current = null;
@@ -115,65 +138,42 @@ export function useAssistant() {
   const openPanel = useCallback(() => {
     setOpen(true);
     setNudge(null);
-    setMessages((current) => (current.length > 0 ? current : [greeting(page)]));
-  }, [page]);
+    setMessages((current) => (current.length > 0 ? current : voice.undecided ? [greeting(page), voiceChoice()] : [greeting(page)]));
+  }, [page, voice.undecided]);
 
   const acceptNudge = useCallback(() => {
     const current = nudge;
     openPanel();
     if (current?.kind === "stuck") {
-      speak(fieldReply(current.field, page));
+      speak(withFixes(fieldReply(current.field, page), [current.field]));
     } else if (current) {
-      speak(errorReply(current.error, references.current.get(`${current.error.code}|${current.error.endpoint}`) ?? null));
+      speak(withFixes(errorReply(current.error, referenceFor(current.error)), current.error.rejectedFields));
     }
-  }, [nudge, openPanel, page, speak]);
-
-  const submitQuestion = useCallback(
-    async (question: string, contactEmail?: string) => {
-      awaiting.current = null;
-      setBusy(true);
-      setMood("think");
-      try {
-        const result = await askTeam(draft(), question, contactEmail);
-        lastQuestion.current = null;
-        setMood("happy");
-        settleTo("rest");
-        speak(helperSays(`Sent. Your case number is ${result.reference}. ${signedIn ? "The answer will appear in your notifications." : "We'll reply by email."}`));
-      } catch {
-        speak(helperSays("I couldn't send that just now. Please try again in a minute."));
-      } finally {
-        setBusy(false);
-      }
-    },
-    [draft, settleTo, signedIn, speak],
-  );
-
-  const startQuestion = useCallback(
-    (question: string | null) => {
-      if (!question) {
-        awaiting.current = { kind: "question" };
-        speak(helperSays("Sure. What should I tell our team?"));
-      } else if (!signedIn) {
-        awaiting.current = { kind: "email", question };
-        speak(helperSays("Which email should they reply to?"));
-      } else {
-        void submitQuestion(question);
-      }
-    },
-    [signedIn, speak, submitQuestion],
-  );
+  }, [nudge, openPanel, page, referenceFor, speak, withFixes]);
 
   const act = useCallback(
     (action: HelperAction) => {
       if (action.kind === "explain-page" && page) {
         speak(pageReply(page));
       } else if (action.kind === "explain-field") {
-        speak(fieldReply(action.field, page));
+        speak(withFixes(fieldReply(action.field, page), [action.field]));
+      } else if (action.kind === "voice") {
+        voice.choose(action.on);
+        speak(helperSays(action.on ? "Great, I'll talk you through things. You can turn my voice off at the top." : "Typing it is. You can turn my voice on at the top any time."));
+      } else if (action.kind === "show-field") {
+        guidance.show(action.field);
+      } else if (action.kind === "fix-field") {
+        guidance.fix(action.field, action.value);
+      } else if (action.kind === "tour-start") {
+        guidance.startTour();
+      } else if (action.kind === "tour-next") {
+        guidance.nextStep();
+      } else if (action.kind === "tour-stop") {
+        guidance.stopTour();
       } else if (action.kind === "ask-team") {
-        startQuestion(lastQuestion.current);
+        questions.askTeam();
       } else if (action.kind === "report-error" && lastError.current) {
-        const error = lastError.current;
-        void report(error).then((reference) =>
+        void report(lastError.current).then((reference) =>
           speak(
             reference
               ? helperSays(`Done. Your case number is ${reference}, and our team can see exactly what happened.`)
@@ -182,45 +182,13 @@ export function useAssistant() {
         );
       }
     },
-    [page, report, speak, startQuestion],
+    [guidance, page, questions, report, speak, voice, withFixes],
   );
 
-  const ask = useCallback(
-    (text: string) => {
-      const said = text.trim().slice(0, 1000);
-      if (!said) {
-        return;
-      }
-      setMessages((current) => [...current, personSays(said)]);
-      const waiting = awaiting.current;
-      if (waiting?.kind === "email") {
-        if (EMAIL.test(said)) {
-          void submitQuestion(waiting.question, said.toLowerCase());
-        } else {
-          speak(helperSays("That doesn't look like an email address. Could you check it?"));
-        }
-        return;
-      }
-      if (waiting?.kind === "question") {
-        startQuestion(said);
-        return;
-      }
-      const intent = understand(said, page, lastError.current !== null);
-      if (intent.kind === "field") {
-        speak(fieldReply(intent.label, page));
-      } else if (intent.kind === "page" && page) {
-        speak(pageReply(page));
-      } else if (intent.kind === "error" && lastError.current) {
-        speak(errorReply(lastError.current, references.current.get(`${lastError.current.code}|${lastError.current.endpoint}`) ?? null));
-      } else if (intent.kind === "team") {
-        startQuestion(null);
-      } else {
-        lastQuestion.current = said;
-        speak(unsureReply());
-      }
-    },
-    [page, speak, startQuestion, submitQuestion],
-  );
+  const calm = () => {
+    setNudge(null);
+    setMood("rest");
+  };
 
   return {
     open,
@@ -231,21 +199,21 @@ export function useAssistant() {
     page,
     field,
     openPanel,
-    close: () => setOpen(false),
-    acceptNudge,
-    dismissNudge: () => {
-      setNudge(null);
-      setMood("rest");
+    close: () => {
+      voice.stop();
+      setOpen(false);
     },
+    voice,
+    acceptNudge,
+    dismissNudge: calm,
     quietHere: () => {
       if (page) {
         quietPage(page.route);
       }
-      setNudge(null);
-      setMood("rest");
+      calm();
     },
     act,
-    ask,
+    ask: questions.ask,
   };
 }
 

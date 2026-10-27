@@ -7,6 +7,61 @@ import { CAST } from "./support/cast";
 import { signIn, watchConsole } from "./support/session";
 
 const HELPER = /^Open Posy/;
+const PUBLIC_PAGES = ["/signup", "/login", "/forgot-password", "/shop-for-me", "/track", "/partners"];
+const SELLER_PAGES = [
+  "/overview",
+  "/inbound",
+  "/inbound/new",
+  "/inventory",
+  "/orders",
+  "/orders/new",
+  "/orders/import",
+  "/products",
+  "/products/new",
+  "/products/labels",
+  "/returns",
+  "/returns/new",
+  "/claims",
+  "/settings/integrations",
+  "/settings/markets",
+  "/settings/referrals",
+  "/settings/security",
+  "/settings/team",
+  "/storefront",
+  "/wallet",
+];
+const CONSOLE_PAGES = [
+  "/admin/claims",
+  "/admin/countries",
+  "/admin/custody-alerts",
+  "/admin/fees",
+  "/admin/finance",
+  "/admin/finance/adjustments",
+  "/admin/finance/reconciliation",
+  "/admin/hub-transfers",
+  "/admin/legal",
+  "/admin/orders",
+  "/admin/packaging",
+  "/admin/partners",
+  "/admin/partners/mystery-orders",
+  "/admin/partners/payouts",
+  "/admin/partners/stock-counts",
+  "/admin/receiving",
+  "/admin/referrals",
+  "/admin/returns",
+  "/admin/security",
+  "/admin/shopping",
+  "/admin/shopping-desk",
+  "/admin/staff",
+  "/admin/stock",
+  "/admin/storefront-orders",
+  "/admin/storefront-returns",
+  "/admin/support",
+  "/admin/transfers",
+  "/admin/verifications",
+  "/admin/warehouses",
+];
+const PARTNER_PAGES = ["/admin", "/admin/partnership/claims", "/admin/partnership/earnings", "/admin/partnership/stock-counts", "/admin/partnership/team", "/admin/partnership/transfers"];
 
 function visibleFieldLabels(page: Page): Promise<string[]> {
   return page.evaluate(() => {
@@ -25,15 +80,18 @@ function visibleFieldLabels(page: Page): Promise<string[]> {
   });
 }
 
-async function expectEveryFieldExplained(page: Page, path: string): Promise<void> {
-  await page.goto(path);
-  await page.waitForLoadState("networkidle");
-  const knowledge = knowledgeFor(new URL(page.url()).pathname);
-  expect(knowledge, `knowledge for ${path}`).toBeDefined();
-  const labels = await visibleFieldLabels(page);
-  expect(labels.length, `fields found on ${path}`).toBeGreaterThan(0);
-  const unexplained = labels.filter((label) => !fieldFor(knowledge!, label));
-  expect(unexplained, `fields on ${path} the helper can't explain`).toEqual([]);
+async function unexplainedFields(page: Page, paths: readonly string[]): Promise<Record<string, string[]>> {
+  const gaps: Record<string, string[]> = {};
+  for (const path of paths) {
+    await page.goto(path);
+    await page.waitForLoadState("networkidle");
+    const knowledge = knowledgeFor(new URL(page.url()).pathname);
+    const missing = knowledge ? (await visibleFieldLabels(page)).filter((label) => !fieldFor(knowledge, label)) : ["(no notes for this page)"];
+    if (missing.length > 0) {
+      gaps[path] = missing;
+    }
+  }
+  return gaps;
 }
 
 test.describe.configure({ mode: "serial" });
@@ -59,6 +117,31 @@ test.describe("the helper", () => {
     await page.keyboard.press("Escape");
     await expect(helper).toBeHidden();
     expect(problems).toEqual([]);
+  });
+
+  test("answers open questions in its own words when answers are switched on, and still offers a person", async ({ page }) => {
+    let asked: { page?: string; question?: string } = {};
+    await page.route("**/v1/public/assistant/status", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ answers: true }) }));
+    await page.route("**/v1/public/assistant/answers", async (route) => {
+      asked = route.request().postDataJSON() as typeof asked;
+      const unsure = asked.question?.includes("moon");
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(unsure ? { answer: null, handoff: true } : { answer: "Storage is charged per box, each month.", handoff: false }),
+      });
+    });
+    await page.goto("/signup");
+    await page.getByRole("button", { name: HELPER }).click();
+    const helper = page.getByRole("dialog", { name: /Posy/ });
+    await helper.getByLabel("Message Posy").fill("how is storage charged?");
+    await helper.getByLabel("Message Posy").press("Enter");
+    await expect(helper.getByText("Storage is charged per box, each month.")).toBeVisible();
+    await expect(helper.getByRole("button", { name: "Still need a person?" })).toBeVisible();
+    expect(asked).toMatchObject({ page: "/signup", question: "how is storage charged?" });
+    await helper.getByLabel("Message Posy").fill("do you deliver to the moon?");
+    await helper.getByLabel("Message Posy").press("Enter");
+    await expect(helper.getByText("I'd rather not guess")).toBeVisible();
   });
 
   test("tells people when a failure is on our side, and reports it for them", async ({ page }) => {
@@ -94,11 +177,49 @@ test.describe("the helper", () => {
     await expect(page.getByText(`${reference} resolved`)).toBeVisible();
   });
 
-  test("can explain every field on the vendor forms it covers", async ({ page }) => {
-    await expectEveryFieldExplained(page, "/signup");
+  test("walks a seller through a form, and fixes a format mistake only when they say yes", async ({ page }) => {
     await signIn(page, CAST.vendorOwner);
-    for (const path of ["/inbound/new", "/products/new", "/orders/new", "/wallet"]) {
-      await expectEveryFieldExplained(page, path);
+    await page.goto("/products/new");
+    await page.getByLabel("Product code").fill("wig bw 16");
+    await page.getByRole("button", { name: HELPER }).click();
+    const helper = page.getByRole("dialog", { name: /Posy/ });
+    const typing = helper.getByRole("button", { name: "I prefer typing" });
+    if (await typing.isVisible()) {
+      await typing.click();
+      await expect(helper.getByText("Typing it is.")).toBeVisible();
     }
+    await helper.getByRole("button", { name: "Explain this page" }).click();
+    await helper.getByRole("button", { name: "Walk me through it" }).click();
+    await expect(helper.getByText(/^Step 1 of \d+:/)).toBeVisible();
+    await expect(page.locator(".helper-highlight")).toHaveCount(1);
+    await helper.getByRole("button", { name: "Next" }).last().click();
+    await expect(helper.getByText(/^Step 2 of \d+:/)).toBeVisible();
+    await helper.getByRole("button", { name: "Stop" }).last().click();
+    await expect(helper.getByText("No problem.")).toBeVisible();
+    await expect(page.getByLabel("Product code")).toHaveValue(/^wig bw 16$/i);
+    await helper.getByLabel("Message Posy").fill("what is the product code?");
+    await helper.getByLabel("Message Posy").press("Enter");
+    await helper.getByRole("button", { name: 'Yes, change "Product code" to WIG-BW-16' }).click();
+    await expect(page.getByLabel("Product code")).toHaveValue("WIG-BW-16");
+    await expect(helper.getByText('Done. I\'ve changed "Product code".')).toBeVisible();
+  });
+
+  test("can explain every field on the public pages", async ({ page }) => {
+    expect(await unexplainedFields(page, PUBLIC_PAGES)).toEqual({});
+  });
+
+  test("can explain every field in the seller portal", async ({ page }) => {
+    await signIn(page, CAST.vendorOwner);
+    expect(await unexplainedFields(page, SELLER_PAGES)).toEqual({});
+  });
+
+  test("can explain every field in the platform console", async ({ page }) => {
+    await signIn(page, CAST.superAdmin);
+    expect(await unexplainedFields(page, CONSOLE_PAGES)).toEqual({});
+  });
+
+  test("can explain every field in the partner console", async ({ page }) => {
+    await signIn(page, CAST.partnerLead);
+    expect(await unexplainedFields(page, PARTNER_PAGES)).toEqual({});
   });
 });

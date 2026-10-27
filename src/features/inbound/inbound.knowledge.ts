@@ -1,5 +1,6 @@
 import type { InboundInput } from "@/shared";
 
+import { trackingNumberFix } from "@/features/assistant/guidance/fixes";
 import { describePage, type PageKnowledgeOf } from "@/features/assistant/knowledge/types";
 
 const SHIPMENT: Omit<PageKnowledgeOf<InboundInput>, "route"> = {
@@ -25,6 +26,7 @@ const SHIPMENT: Omit<PageKnowledgeOf<InboundInput>, "route"> = {
       labels: ["Tracking number"],
       meaning: "The tracking number from your carrier, so the hub can follow the delivery. Optional.",
       mistakes: ["Only letters, numbers, spaces and dashes are allowed, between 4 and 60 characters."],
+      fix: trackingNumberFix,
     },
     lines: {
       labels: [/^Product \d+$/, "Units"],

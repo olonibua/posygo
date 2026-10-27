@@ -8,18 +8,22 @@ import { PageHeader } from "@/components/ui/page-header";
 import { LoadingRows } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 
+import { AssistantGaps } from "./assistant-gaps";
 import { SupportCaseCard } from "./support-case-card";
 import { useSupportCases } from "./use-support-cases";
 
-const FILTERS: ReadonlyArray<{ value: SupportCaseStatus; label: string }> = [
+type View = SupportCaseStatus | "GAPS";
+
+const FILTERS: ReadonlyArray<{ value: View; label: string }> = [
   { value: "OPEN", label: "Open" },
   { value: "RESOLVED", label: "Resolved" },
+  { value: "GAPS", label: "Unanswered questions" },
 ];
 
 export function AdminSupportPage() {
   const user = useCurrentUser();
-  const [filter, setFilter] = useState<SupportCaseStatus>("OPEN");
-  const cases = useSupportCases(filter);
+  const [filter, setFilter] = useState<View>("OPEN");
+  const cases = useSupportCases(filter === "GAPS" ? "OPEN" : filter);
   const canManage = hasPermission(user.role, "support.manage");
   return (
     <div className="flex flex-col gap-7">
@@ -29,7 +33,9 @@ export function AdminSupportPage() {
         lead="Problems people hit and questions they asked the helper. The same failure from several people is grouped into one case, with the steps each person took."
       />
       <FilterTabs label="Filter cases" options={FILTERS} value={filter} onChange={setFilter} />
-      {cases.isLoading ? (
+      {filter === "GAPS" ? (
+        <AssistantGaps />
+      ) : cases.isLoading ? (
         <LoadingRows columns={2} />
       ) : (cases.data ?? []).length === 0 ? (
         <EmptyState title={filter === "OPEN" ? "Nothing open" : "Nothing resolved yet"} body="Cases appear here when the helper reports an error or passes on a question." />

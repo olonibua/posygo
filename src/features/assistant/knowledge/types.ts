@@ -3,6 +3,7 @@ export interface FieldHelp {
   meaning: string;
   example?: string;
   mistakes?: readonly string[];
+  fix?: (value: string) => string | null;
 }
 
 export interface PageKnowledge {

@@ -1,5 +1,6 @@
 import type { ProductInput } from "@/shared";
 
+import { productCodeFix, tariffCodeFix } from "@/features/assistant/guidance/fixes";
 import { describePage, type PageKnowledgeOf } from "@/features/assistant/knowledge/types";
 
 const PRODUCT: Omit<PageKnowledgeOf<ProductInput>, "route"> = {
@@ -19,6 +20,7 @@ const PRODUCT: Omit<PageKnowledgeOf<ProductInput>, "route"> = {
       meaning: "Your own short code for this product. It appears on labels and in orders, and must be unique in your catalogue.",
       example: "WIG-BW-16",
       mistakes: ["Use 2 to 40 letters, numbers or dashes; no spaces."],
+      fix: productCodeFix,
     },
     variantLabel: { labels: ["Variant"], meaning: "What makes this version different from others with the same name, like a size or colour. Optional.", example: "16 inch, natural black" },
     countryOfOrigin: { labels: ["Made in"], meaning: "The country where the product was made. Customs needs it when parcels cross borders." },
@@ -32,6 +34,7 @@ const PRODUCT: Omit<PageKnowledgeOf<ProductInput>, "route"> = {
       meaning: "The 6 to 10 digit customs code for the type of product, also called an HS code. Needed to ship abroad. Optional otherwise.",
       example: "670420",
       mistakes: ["Digits only, without dots or spaces."],
+      fix: tariffCodeFix,
     },
     weightGrams: { labels: [/^Weight/], meaning: "The weight of one unit in its packaging. It's used to price shipping." },
     lengthMm: { labels: [/^Length/], meaning: "The length of one packed unit. Give all three sizes or none." },

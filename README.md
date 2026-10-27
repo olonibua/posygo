@@ -66,13 +66,17 @@ Posy, the flower in the bottom-left corner, explains pages and fields, notices w
 
 What it knows comes from knowledge files written next to each page (`*.knowledge.ts`), listed in `src/features/assistant/knowledge/registry.ts`, and from the shared error guide (`src/shared/http/error-guide.ts`). It never reads what people type into forms, only field labels.
 
-Every new form page must:
+Every new page must:
 
-1. Have a knowledge file built with `describePage<TheFormInput>()`. TypeScript refuses it if any field of the form's input type is missing.
-2. Be listed in the registry, and its route added to `FORMS_THAT_MUST_BE_EXPLAINED` in `registry.test.ts`.
-3. Be added to the field check in `e2e/helper.e2e.ts`, which opens the page and fails if any visible field has no explanation.
+1. Have a knowledge file (`*.knowledge.ts`) next to its feature code, built with `describePage<TheFormInput>()` when it has a form. TypeScript refuses it if any field of the form's input type is missing. Field help can carry a `fix` that offers to correct a format mistake when the person taps yes; it runs only in their browser.
+2. Be imported in `src/features/assistant/knowledge/registry.ts`. `registry.test.ts` fails if any page in `src/app` has no notes, or two notes claim the same page.
+3. Be added to the page lists in `e2e/helper.e2e.ts`, which opens each page as the right kind of user and fails if any visible field has no explanation.
 
-Every new error code needs an entry in the shared error guide; the API's unit tests fail without one.
+The helper can also walk people through a page field by field, point at a field, and talk. Voice uses the browser's own speech, so nothing is recorded or sent anywhere; people choose "Talk to me" or "I prefer typing" the first time, and can switch at the top of the chat.
+
+Every new error code needs an entry in the shared error guide, and every order or stock shipment stage an entry in the shared stage guide; neither builds without them.
+
+When the API has answers switched on, questions the written notes don't cover go to the AI, which reads the same notes from `/assistant-knowledge.json` (built from the registry, the guides and the FAQs). If it isn't sure, the person is offered the team.
 
 ## Design system
 

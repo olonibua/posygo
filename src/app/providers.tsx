@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode, useState } from "react";
 
-import { Helper } from "@/features/assistant/helper";
+import { DeferredHelper } from "@/features/assistant/deferred-helper";
 import { ApiError } from "@/lib/api/client";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { Toaster } from "@/lib/toast/toaster";
@@ -21,7 +21,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         {children}
-        <Helper />
+        <DeferredHelper />
         <Toaster />
       </AuthProvider>
     </QueryClientProvider>

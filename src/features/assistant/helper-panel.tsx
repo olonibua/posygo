@@ -109,8 +109,18 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
         <FlowerAvatar mood={helper.mood} size={44} />
         <div className="flex-1">
           <p className="text-[17px] font-semibold leading-tight">{ASSISTANT.name}</p>
-          <p className="text-meta text-ink-soft">{helper.busy ? "Sending…" : ASSISTANT.role}</p>
+          <p className="text-meta text-ink-soft">{helper.busy ? "One moment…" : ASSISTANT.role}</p>
         </div>
+        {helper.voice.canSpeak ? (
+          <button
+            type="button"
+            onClick={() => helper.voice.choose(!helper.voice.on)}
+            aria-pressed={helper.voice.on}
+            className="rounded-chip px-2.5 py-1.5 text-meta font-medium text-ink-soft ring-[1.5px] ring-line hover:bg-paper-sunk aria-pressed:bg-ink aria-pressed:text-on-ink aria-pressed:ring-ink"
+          >
+            {helper.voice.on ? "Voice on" : "Voice off"}
+          </button>
+        ) : null}
         <button type="button" onClick={close} aria-label="Close helper" className="grid h-9 w-9 place-items-center rounded-full text-[20px] text-ink-soft hover:bg-paper-sunk">
           ×
         </button>
@@ -136,6 +146,20 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
           placeholder="Ask about this page…"
           className="h-11 flex-1 rounded-chip border-[1.5px] border-line-strong bg-ground px-3.5 text-base text-ink outline-none placeholder:text-ink-faint focus:border-ink sm:text-[15px]"
         />
+        {helper.voice.canListen ? (
+          <button
+            type="button"
+            onClick={() => helper.voice.hear((text) => helper.ask(text))}
+            aria-label={helper.voice.listening ? "Listening" : "Speak your question"}
+            aria-pressed={helper.voice.listening}
+            className="grid h-11 w-11 place-items-center rounded-full text-ink-soft ring-[1.5px] ring-line hover:bg-paper-sunk aria-pressed:bg-magenta aria-pressed:text-on-ink aria-pressed:ring-magenta"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <rect x="9" y="3" width="6" height="12" rx="3" />
+              <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
+            </svg>
+          </button>
+        ) : null}
         <button type="submit" disabled={!draft.trim() || helper.busy} className="h-11 rounded-chip bg-ink px-4 text-small font-medium text-on-ink transition-opacity disabled:opacity-40">
           Send
         </button>

@@ -23,10 +23,11 @@ export function greeting(page: PageKnowledge | undefined): ChatMessage {
 
 export function pageReply(page: PageKnowledge): ChatMessage {
   const steps = page.steps.map((step, index) => `${index + 1}. ${step}`).join("\n");
-  return helperSays(
-    `${page.purpose}\n\nHere's how it goes:\n${steps}\n\nClick into any field and ask me about it.`,
-    page.related.map((link) => ({ kind: "link", ...link })),
-  );
+  const tour: HelperAction[] = Object.keys(page.fields).length > 0 ? [{ kind: "tour-start", label: "Walk me through it" }] : [];
+  return helperSays(`${page.purpose}\n\nHere's how it goes:\n${steps}\n\nClick into any field and ask me about it.`, [
+    ...tour,
+    ...page.related.map((link): HelperAction => ({ kind: "link", ...link })),
+  ]);
 }
 
 function describeField(label: string, help: FieldHelp): string {
@@ -42,7 +43,16 @@ function describeField(label: string, help: FieldHelp): string {
 
 export function fieldReply(label: string, page: PageKnowledge | undefined): ChatMessage {
   const help = page ? fieldFor(page, label) : undefined;
-  return help ? helperSays(describeField(label, help)) : helperSays(`I don't have notes on "${label}" yet. I can pass your question to our team.`, [ASK_TEAM]);
+  return help
+    ? helperSays(describeField(label, help), [{ kind: "show-field", field: label, label: "Show me where" }])
+    : helperSays(`I don't have notes on "${label}" yet. I can pass your question to our team.`, [ASK_TEAM]);
+}
+
+export function voiceChoice(): ChatMessage {
+  return helperSays("Would you like me to talk, or would you rather type?", [
+    { kind: "voice", on: true, label: "Talk to me" },
+    { kind: "voice", on: false, label: "I prefer typing" },
+  ]);
 }
 
 export function stuckNudge(label: string): string {

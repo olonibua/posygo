@@ -38,6 +38,12 @@ describe("price list draft", () => {
     expect(result).toEqual({ ok: true, schedule });
   });
 
+  it("keeps a market's own personal shopping rates instead of resetting them", () => {
+    const schedule = { ...SEED_FEE_SCHEDULES.GB!, shopping: { commissionBps: 1_250, minimumFeeMinor: 750 } };
+    const result = scheduleFrom(draftFrom(schedule, "GBP"), "GBP");
+    expect(result.ok && result.schedule.shopping).toEqual({ commissionBps: 1_250, minimumFeeMinor: 750 });
+  });
+
   it("names the amounts that can't be read", () => {
     const draft = draftFrom(SEED_FEE_SCHEDULES.GB!, "GBP");
     draft.tiers.SMALL.stocking = "twelve";

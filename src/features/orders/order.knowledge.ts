@@ -1,5 +1,6 @@
 import type { DeliveryInput, Recipient } from "@/shared";
 
+import { orderReferenceFix } from "@/features/assistant/guidance/fixes";
 import { describePage } from "@/features/assistant/knowledge/types";
 
 export const NEW_ORDER_KNOWLEDGE = describePage<DeliveryInput & Recipient>({
@@ -18,6 +19,7 @@ export const NEW_ORDER_KNOWLEDGE = describePage<DeliveryInput & Recipient>({
       meaning: "Your shop's own order number, so you can find this order later and match it to your sale.",
       example: "SHOP-10293",
       mistakes: ["Each order needs its own reference.", "Up to 64 letters, numbers or . _ : # / -"],
+      fix: orderReferenceFix,
     },
     recipient: { labels: ["Ship to"], meaning: "The country the parcel is going to. Only destinations your market ships to are listed." },
     name: { labels: ["Recipient name"], meaning: "The full name of the person receiving the parcel." },

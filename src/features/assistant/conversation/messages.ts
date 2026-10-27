@@ -3,7 +3,13 @@ export type HelperAction =
   | { kind: "explain-field"; label: string; field: string }
   | { kind: "report-error"; label: string }
   | { kind: "ask-team"; label: string }
-  | { kind: "link"; label: string; href: string };
+  | { kind: "link"; label: string; href: string }
+  | { kind: "voice"; label: string; on: boolean }
+  | { kind: "show-field"; label: string; field: string }
+  | { kind: "fix-field"; label: string; field: string; value: string }
+  | { kind: "tour-start"; label: string }
+  | { kind: "tour-next"; label: string }
+  | { kind: "tour-stop"; label: string };
 
 export interface ChatMessage {
   id: string;

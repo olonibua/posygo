@@ -64,3 +64,10 @@ describe("matching questions to fields", () => {
     expect(understand("Referral code??", signup, false)).toEqual({ kind: "field", label: "Referral code (optional)" });
   });
 });
+
+describe("offering more help", () => {
+  it("offers a walkthrough on pages with fields, and to point at a field it explained", () => {
+    expect(pageReply(product).actions?.[0]).toEqual({ kind: "tour-start", label: "Walk me through it" });
+    expect(fieldReply("Tariff code", product).actions?.[0]).toEqual({ kind: "show-field", field: "Tariff code", label: "Show me where" });
+  });
+});

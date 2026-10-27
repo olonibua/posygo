@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { knowledgeFor, PAGE_KNOWLEDGE } from "./registry";
-import { fieldFor } from "./types";
+import { fieldFor, routeMatches } from "./types";
 
 const APP = join(process.cwd(), "src/app");
 
@@ -19,8 +19,6 @@ function appRoutes(directory = APP, prefix = ""): string[] {
   });
 }
 
-const FORMS_THAT_MUST_BE_EXPLAINED = ["/signup", "/inbound/new", "/inbound/[id]/edit", "/products/new", "/products/[id]", "/orders/new", "/wallet"];
-
 describe("page knowledge", () => {
   const routes = appRoutes();
 
@@ -30,13 +28,10 @@ describe("page knowledge", () => {
     }
   });
 
-  it("covers every form the helper is promised for", () => {
-    for (const route of FORMS_THAT_MUST_BE_EXPLAINED) {
-      expect(
-        PAGE_KNOWLEDGE.map((page) => page.route),
-        route,
-      ).toContain(route);
-    }
+  it("covers every page in the app, once", () => {
+    const described = PAGE_KNOWLEDGE.map((page) => page.route);
+    expect(routes.filter((route) => !described.includes(route))).toEqual([]);
+    expect(described.filter((route, index) => described.indexOf(route) !== index)).toEqual([]);
   });
 
   it("explains every field in plain sentences, with the usual steps", () => {
@@ -46,7 +41,10 @@ describe("page knowledge", () => {
         expect(field.meaning.length, `${page.route} ${key}`).toBeGreaterThan(15);
       }
       for (const link of page.related) {
-        expect(routes, `${page.route} links to ${link.href}`).toContain(link.href);
+        expect(
+          routes.some((route) => routeMatches(route, link.href)),
+          `${page.route} links to ${link.href}`,
+        ).toBe(true);
       }
     }
   });
