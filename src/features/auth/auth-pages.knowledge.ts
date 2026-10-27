@@ -140,9 +140,9 @@ export const INVITE_KNOWLEDGE = describePage<AcceptInvitationInput>({
 
 export const STAFF_INVITE_KNOWLEDGE = describePage<AcceptInvitationInput>({
   route: "/staff-invite",
-  title: "Join the platform team",
-  purpose: "Accept an invitation to join the platform team, then set up two-factor sign-in.",
-  steps: ["Open this page from the invitation email.", "Check the role and email shown are right.", "Choose a password and press Continue.", "Set up your authenticator app on the next page."],
+  title: "Set up your account",
+  purpose: "Set a password from an invitation or a partner application email, then set up two-factor sign-in.",
+  steps: ["Open this page from the email we sent you.", "Check the email shown is yours.", "Choose a password and press Continue.", "Set up your authenticator app on the next page."],
   fields: { token: INVITE_TOKEN, password: NEW_PASSWORD },
   related: [
     { href: "/login", label: "Sign in" },

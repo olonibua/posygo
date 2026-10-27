@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 
-import { AuthHeading, AuthShell } from "@/components/layout/auth-shell";
+import { AuthShell } from "@/components/layout/auth-shell";
 import { AcceptStaffInvitationForm } from "@/features/staff/accept-staff-invitation-form";
 
-export const metadata: Metadata = { title: "Join the platform team" };
+export const metadata: Metadata = { title: "Set up your account" };
 
 export default function StaffInvitePage() {
   return (
     <AuthShell
-      railStamp="You’re invited"
+      railStamp="Welcome"
       railTitle={
         <>
-          Join the team
+          Set up your
           <br />
-          running the network.
+          account.
         </>
       }
       railNote={
@@ -24,7 +24,6 @@ export default function StaffInvitePage() {
         </>
       }
     >
-      <AuthHeading title="Join the platform team" />
       <AcceptStaffInvitationForm />
     </AuthShell>
   );

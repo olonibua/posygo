@@ -13,6 +13,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { useSkipMfaSetup, useTestShortcuts } from "@/lib/auth/test-shortcuts";
 import { homeFor } from "@/lib/auth/use-session-gate";
 
+import { RecoveryCodes } from "./recovery-codes";
 import { ResendCode } from "./resend-code";
 
 export function MfaSetup() {
@@ -83,11 +84,7 @@ export function MfaSetup() {
           <Stamp className="text-cocoa">Save these somewhere safe</Stamp>
           <p className="mt-2 text-small">Each recovery code signs you in once if you lose your phone. We won’t show them again.</p>
         </NotebookNote>
-        <Paper className="grid grid-cols-2 gap-2 p-5 font-mono text-[15px] sm:grid-cols-2">
-          {completed.recoveryCodes.map((recoveryCode) => (
-            <span key={recoveryCode}>{recoveryCode}</span>
-          ))}
-        </Paper>
+        <RecoveryCodes codes={completed.recoveryCodes} />
         <div className="flex justify-end border-t border-line pt-6">
           <Button variant="yellow" size="lg" onClick={finish}>
             I’ve saved them, continue →

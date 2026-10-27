@@ -63,7 +63,7 @@ export function ActivityBell() {
           className="absolute right-0 top-[52px] z-40 w-[340px] max-w-[calc(100vw-32px)] origin-top-right rounded-card border border-line bg-paper shadow-frame [animation:popover-in_var(--dur)_var(--ease-out)_both]"
         >
           {messages.length > 0 ? <NotificationFeed items={messages} unread={feed.data?.unread ?? 0} onNavigate={() => setOpen(false)} /> : null}
-          {history.length > 0 || messages.length === 0 ? <p className="border-y border-line px-4 py-3 text-label uppercase text-ink-faint">This session</p> : null}
+          {history.length > 0 ? <p className="border-y border-line px-4 py-3 text-label uppercase text-ink-faint">This session</p> : null}
           {history.length === 0 && messages.length === 0 ? (
             <div className="flex flex-col items-center gap-2 px-6 py-7 text-center">
               <img src="/brand/sticker-clover.svg" alt="" aria-hidden className="motion-pop h-12 w-12 -rotate-[8deg]" />

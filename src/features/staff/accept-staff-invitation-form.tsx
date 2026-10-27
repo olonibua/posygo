@@ -4,6 +4,7 @@ import { type AuthenticatedResult, passwordSchema, type StaffInvitationPreview }
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
 
+import { AuthHeading } from "@/components/layout/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Field, FormAlert, PasswordInput } from "@/components/ui/form-controls";
 import { countryName } from "@/features/onboarding/display";
@@ -57,15 +58,8 @@ export function AcceptStaffInvitationForm() {
 
   return (
     <form noValidate onSubmit={(event) => void onSubmit(event)} className="flex flex-col gap-5">
+      <InvitationHeading preview={preview} />
       <FormAlert message={error} />
-      {preview ? (
-        <p className="text-[17px] leading-[26px] text-ink-soft">
-          You&apos;re joining {preview.partnerName ? <b className="font-medium text-ink">{preview.partnerName}</b> : null}
-          {preview.partnerName ? " " : ""}as <b className="font-medium text-ink">{STAFF_ROLE_LABELS[preview.role]}</b>
-          {preview.countryCode ? ` for ${countryName(preview.countryCode)}` : ""}, signing in as <b className="font-medium text-ink">{preview.email}</b>. Choose a password, then set up two-factor
-          sign-in.
-        </p>
-      ) : null}
       <Field label="Password" hint="At least 12 characters.">
         {({ id, describedBy }) => (
           <PasswordInput id={id} autoComplete="new-password" aria-describedby={describedBy} value={password} onChange={(event) => setPassword(event.target.value)} disabled={!preview} />
@@ -77,5 +71,27 @@ export function AcceptStaffInvitationForm() {
         </Button>
       </div>
     </form>
+  );
+}
+
+function InvitationHeading({ preview }: { preview: StaffInvitationPreview | null }) {
+  if (!preview) {
+    return <AuthHeading title="Set up your account" />;
+  }
+  const you = <b className="font-medium text-ink">{preview.email}</b>;
+  if (preview.purpose === "PARTNER_APPLICATION") {
+    return <AuthHeading title="Set up your partner account" lead={<>Choose a password for {you}, then set up two-factor sign-in. After that you&apos;ll finish your partner checks.</>} />;
+  }
+  const where = preview.countryCode ? ` for ${countryName(preview.countryCode)}` : "";
+  return (
+    <AuthHeading
+      title={preview.partnerName ? `Join ${preview.partnerName}` : "Join the platform team"}
+      lead={
+        <>
+          You&apos;re joining as <b className="font-medium text-ink">{STAFF_ROLE_LABELS[preview.role]}</b>
+          {where}, signing in as {you}. Choose a password, then set up two-factor sign-in.
+        </>
+      }
+    />
   );
 }

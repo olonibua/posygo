@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/api/client";
 
 const KEY = ["notifications"] as const;
-const POLL_MS = 60_000;
+const POLL_MS = 30_000;
 
 export function useNotifications() {
   return useQuery({ queryKey: KEY, queryFn: () => apiRequest<NotificationFeedView>("/v1/notifications"), refetchInterval: POLL_MS, refetchOnWindowFocus: true });
