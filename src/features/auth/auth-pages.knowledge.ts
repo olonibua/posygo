@@ -114,7 +114,11 @@ export const MFA_SETUP_KNOWLEDGE = describePage<MfaConfirmInput>({
       meaning: "The current 6-digit code your authenticator app shows after scanning. It proves the app is set up correctly.",
       mistakes: ["It must be exactly 6 digits.", "The code changes over time, so type the one showing now."],
     },
-    emailCode: { labels: ["8-digit code from your email"], meaning: "Only shown sometimes. A code we email you to prove this set-up is really you.", mistakes: ["It must be exactly 8 digits."] },
+    emailCode: {
+      labels: ["8-digit code from your email"],
+      meaning: "Staff and partner accounts get a code by email to prove this set-up is really you. It can take a minute to arrive, so check your spam folder too.",
+      mistakes: ["It must be exactly 8 digits.", 'If it hasn\'t arrived, choose "Send a new code" under the box. Only the newest code works, and each code lasts 15 minutes.'],
+    },
   },
   related: [
     { href: "/settings/security", label: "Security settings" },
