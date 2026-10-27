@@ -2,14 +2,14 @@
   --ground: #ffffff;
   --paper: #fffdf2;
   --paper-sunk: #ece6cf;
-  --ink: #4d3927;
-  --ink-soft: #6e5a47;
-  --ink-faint: #76644f;
+  --ink: #111111;
+  --ink-soft: #3d3d3d;
+  --ink-faint: #5c5c5c;
   --line: #e3dcc4;
   --line-strong: #c9bea0;
   --on-ink: #f5f1e0;
   --on-ink-soft: #e2d8bf;
-  --cocoa: #4d3927;
+  --cocoa: #111111;
   --cream: #f5f1e0;
   --blue: #4176c5;
   --sky: #8dd0fb;
@@ -22,9 +22,9 @@
   --orange: #ec905d;
   --success: #5f8a2c;
   --danger: #b4473f;
-  --shadow-note: 0 10px 24px -8px #4d392740;
-  --shadow-peek: 0 -10px 50px -20px #4d392740;
-  --shadow-frame: 0 1px 0 #4d39270f, 0 18px 40px -20px #4d392733;
+  --shadow-note: 0 10px 24px -8px #11111140;
+  --shadow-peek: 0 -10px 50px -20px #11111140;
+  --shadow-frame: 0 1px 0 #1111110f, 0 18px 40px -20px #11111133;
   --hole-gap: 36px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -34,10 +34,3 @@
   --dur-slow: 420ms;
 }
 
-.ink-black {
-  --ink: #111111;
-  --ink-soft: #3d3d3d;
-  --ink-faint: #5c5c5c;
-  --cocoa: #111111;
-  color: var(--ink);
-}

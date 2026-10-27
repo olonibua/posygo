@@ -15,7 +15,7 @@ export const metadata = { ...publicPage({ title: BRAND.tagline, description: BRA
 export default async function HomePage() {
   const hubs = await fetchHubs();
   return (
-    <div className="ink-black">
+    <>
       <MarketingHeader />
       <JsonLd
         data={[
@@ -61,6 +61,6 @@ export default async function HomePage() {
         </Reveal>
       </main>
       <MarketingFooter />
-    </div>
+    </>
   );
 }

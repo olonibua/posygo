@@ -38,7 +38,7 @@ export function Sidebar({ console, user, onNavigate }: { console: Console; user:
         {pill ? (
           <span
             aria-hidden
-            className="absolute inset-x-3.5 rounded-nav bg-paper shadow-[0_1px_0_#4d39270f,0_8px_20px_-12px_#4d392759] transition-[top,height] duration-300 ease-[var(--ease-out)]"
+            className="absolute inset-x-3.5 rounded-nav bg-paper shadow-[0_1px_0_#1111110f,0_8px_20px_-12px_#11111159] transition-[top,height] duration-300 ease-[var(--ease-out)]"
             style={{ top: pill.top, height: pill.height }}
           />
         ) : null}
