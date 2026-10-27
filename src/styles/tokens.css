@@ -33,3 +33,11 @@
   --dur: 220ms;
   --dur-slow: 420ms;
 }
+
+.ink-black {
+  --ink: #111111;
+  --ink-soft: #3d3d3d;
+  --ink-faint: #5c5c5c;
+  --cocoa: #111111;
+  color: var(--ink);
+}
