@@ -9,21 +9,23 @@ import { LoadingRows } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 
 import { AssistantGaps } from "./assistant-gaps";
+import { EmailLog } from "./email-log";
 import { SupportCaseCard } from "./support-case-card";
 import { useSupportCases } from "./use-support-cases";
 
-type View = SupportCaseStatus | "GAPS";
+type View = SupportCaseStatus | "GAPS" | "EMAILS";
 
 const FILTERS: ReadonlyArray<{ value: View; label: string }> = [
   { value: "OPEN", label: "Open" },
   { value: "RESOLVED", label: "Resolved" },
   { value: "GAPS", label: "Unanswered questions" },
+  { value: "EMAILS", label: "Emails sent" },
 ];
 
 export function AdminSupportPage() {
   const user = useCurrentUser();
   const [filter, setFilter] = useState<View>("OPEN");
-  const cases = useSupportCases(filter === "GAPS" ? "OPEN" : filter);
+  const cases = useSupportCases(filter === "RESOLVED" ? "RESOLVED" : "OPEN");
   const canManage = hasPermission(user.role, "support.manage");
   return (
     <div className="flex flex-col gap-7">
@@ -35,6 +37,8 @@ export function AdminSupportPage() {
       <FilterTabs label="Filter cases" options={FILTERS} value={filter} onChange={setFilter} />
       {filter === "GAPS" ? (
         <AssistantGaps />
+      ) : filter === "EMAILS" ? (
+        <EmailLog />
       ) : cases.isLoading ? (
         <LoadingRows columns={2} />
       ) : (cases.data ?? []).length === 0 ? (
