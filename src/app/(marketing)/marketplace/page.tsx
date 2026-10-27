@@ -18,7 +18,7 @@ export const metadata = publicPage({
 export default async function Page({ searchParams }: { searchParams: Promise<{ country?: string }> }) {
   const [countries, { country: requested }] = await Promise.all([fetchLiveCountries(), searchParams]);
   const country = countries.find((entry) => entry.code === requested?.toUpperCase()) ?? countries[0];
-  const products = country ? ((await fetchPublic<PublicProductView[]>(`/v1/public/marketplace/${country.code}`)) ?? undefined) : undefined;
+  const products = country ? ((await fetchPublic<PublicProductView[]>(`/v1/public/marketplace/${country.code}`, { live: true })) ?? undefined) : undefined;
   return (
     <>
       <MarketingHeader />

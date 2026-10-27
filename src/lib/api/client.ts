@@ -1,6 +1,7 @@
 import type { ApiErrorBody, AuthenticatedResult } from "@/shared";
 
 import { rememberSignedIn } from "@/lib/auth/session-hint";
+import { BRAND } from "@/lib/brand";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").replace(/\/$/, "");
 
@@ -20,10 +21,35 @@ export class ApiError extends Error {
     readonly code: string,
     message: string,
     readonly fieldErrors: Record<string, string[]> = {},
+    readonly correlationId: string | null = null,
   ) {
     super(message);
     this.name = "ApiError";
   }
+}
+
+export const NETWORK_ERROR = "network_error";
+
+export interface ApiFailure {
+  method: string;
+  endpoint: string;
+  error: ApiError;
+}
+
+type FailureListener = (failure: ApiFailure) => void;
+const failureListeners = new Set<FailureListener>();
+
+export function onApiFailure(listener: FailureListener): () => void {
+  failureListeners.add(listener);
+  return () => failureListeners.delete(listener);
+}
+
+function announce(method: string, path: string, error: ApiError): void {
+  if (path === "/v1/auth/refresh") {
+    return;
+  }
+  const failure = { method, endpoint: path.split("?")[0]!, error };
+  failureListeners.forEach((listener) => listener(failure));
 }
 
 type SessionListener = (result: AuthenticatedResult | null) => void;
@@ -95,12 +121,17 @@ async function send<T>(path: string, options: RequestOptions, withToken: boolean
   if (withToken && accessToken) {
     headers.Authorization = `Bearer ${accessToken}`;
   }
+  const method = options.method ?? "GET";
   const response = await fetch(`${API_URL}${path}`, {
-    method: options.method ?? "GET",
+    method,
     headers,
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
     credentials: carriesSessionCookie(path) ? "include" : "omit",
     cache: "no-store",
+  }).catch(() => {
+    const error = new ApiError(0, NETWORK_ERROR, `We couldn't reach ${BRAND.name}. Check your connection and try again.`);
+    announce(method, path, error);
+    throw error;
   });
   if (response.status === 204) {
     return undefined as T;
@@ -111,7 +142,9 @@ async function send<T>(path: string, options: RequestOptions, withToken: boolean
   const payload: unknown = await response.json().catch(() => null);
   if (!response.ok) {
     const body = (payload ?? {}) as Partial<ApiErrorBody>;
-    throw new ApiError(response.status, body.code ?? "internal_error", body.message ?? "Something went wrong.", body.fieldErrors);
+    const error = new ApiError(response.status, body.code ?? "internal_error", body.message ?? "Something went wrong.", body.fieldErrors, body.correlationId ?? null);
+    announce(method, path, error);
+    throw error;
   }
   return payload as T;
 }

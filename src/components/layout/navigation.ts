@@ -63,6 +63,7 @@ export const ADMIN_CONSOLE: Console = {
     { label: "Claims", icon: "claim", tone: "pink", group: "Trust", href: "/admin/claims", permission: "claims.read" },
     { label: "Custody alerts", icon: "bell", tone: "yellow", group: "Trust", href: "/admin/custody-alerts", permission: "claims.read" },
     { label: "Verifications", icon: "verification", tone: "lime", group: "Trust", href: "/admin/verifications", permission: "verifications.read" },
+    { label: "Support cases", icon: "bell", tone: "pink", group: "Trust", href: "/admin/support", permission: "support.read" },
     { label: "Legal", icon: "document", tone: "sky", group: "Trust", href: "/admin/legal", permission: "legal.manage" },
     { label: "Audit log", icon: "document", tone: "magenta", group: "Trust", permission: "audit.read" },
     { label: "Finance", icon: "wallet", tone: "orange", group: "Money", href: "/admin/finance", permission: "finance.read" },

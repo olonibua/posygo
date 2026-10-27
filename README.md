@@ -60,6 +60,20 @@ Every new public page must:
 
 Private areas inherit `PRIVATE_PAGE` (noindex) from their layout and are listed in `PRIVATE_PATHS`, which `robots.txt` blocks. `robots.txt` names the main AI crawlers explicitly and allows them on public pages. Set `NEXT_PUBLIC_SITE_URL` to the live address in each deployment so canonical links, the sitemap and sharing images point at the right domain.
 
+## The in-app helper
+
+Posy, the flower in the bottom-left corner, explains pages and fields, notices when someone is stuck or hits an error, tells them whether it's their input or our system, and reports system failures to support with the steps that led there. It lives in `src/features/assistant`.
+
+What it knows comes from knowledge files written next to each page (`*.knowledge.ts`), listed in `src/features/assistant/knowledge/registry.ts`, and from the shared error guide (`src/shared/http/error-guide.ts`). It never reads what people type into forms, only field labels.
+
+Every new form page must:
+
+1. Have a knowledge file built with `describePage<TheFormInput>()`. TypeScript refuses it if any field of the form's input type is missing.
+2. Be listed in the registry, and its route added to `FORMS_THAT_MUST_BE_EXPLAINED` in `registry.test.ts`.
+3. Be added to the field check in `e2e/helper.e2e.ts`, which opens the page and fails if any visible field has no explanation.
+
+Every new error code needs an entry in the shared error guide; the API's unit tests fail without one.
+
 ## Design system
 
 Every card, note, tile, band and control follows Posy's light palette; only the page background is white. Colours, shadows and radii come from `src/styles/tokens.css` through Tailwind theme keys. Components never set their own hex values.

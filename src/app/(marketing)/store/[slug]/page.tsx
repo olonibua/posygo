@@ -11,7 +11,9 @@ import { type PublicStoreView, storefrontSlugSchema } from "@/shared";
 
 type Props = { params: Promise<{ slug: string }> };
 
-const loadStore = cache((slug: string) => (storefrontSlugSchema.safeParse(slug).success ? loadPublic<PublicStoreView>(`/v1/public/stores/${slug}`) : Promise.resolve({ kind: "missing" as const })));
+const loadStore = cache((slug: string) =>
+  storefrontSlugSchema.safeParse(slug).success ? loadPublic<PublicStoreView>(`/v1/public/stores/${slug}`, { live: true }) : Promise.resolve({ kind: "missing" as const }),
+);
 
 function describe(store: PublicStoreView): string {
   const about = store.about?.trim();

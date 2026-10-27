@@ -3,9 +3,17 @@ const REVALIDATE_SECONDS = 300;
 
 export type PublicResult<T> = { kind: "found"; data: T } | { kind: "missing" } | { kind: "unavailable" };
 
-export async function loadPublic<T>(path: string): Promise<PublicResult<T>> {
+export interface PublicFetchOptions {
+  live?: boolean;
+}
+
+function caching(options: PublicFetchOptions): RequestInit {
+  return options.live ? { cache: "no-store" } : { next: { revalidate: REVALIDATE_SECONDS } };
+}
+
+export async function loadPublic<T>(path: string, options: PublicFetchOptions = {}): Promise<PublicResult<T>> {
   try {
-    const response = await fetch(`${API_URL}${path}`, { next: { revalidate: REVALIDATE_SECONDS }, signal: AbortSignal.timeout(3000) });
+    const response = await fetch(`${API_URL}${path}`, { ...caching(options), signal: AbortSignal.timeout(3000) });
     if (response.status === 404) {
       return { kind: "missing" };
     }
@@ -15,7 +23,7 @@ export async function loadPublic<T>(path: string): Promise<PublicResult<T>> {
   }
 }
 
-export async function fetchPublic<T>(path: string): Promise<T | null> {
-  const result = await loadPublic<T>(path);
+export async function fetchPublic<T>(path: string, options: PublicFetchOptions = {}): Promise<T | null> {
+  const result = await loadPublic<T>(path, options);
   return result.kind === "found" ? result.data : null;
 }
