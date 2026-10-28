@@ -5,7 +5,7 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 
 import { ASSISTANT } from "./assistant-identity";
 import type { ChatMessage, HelperAction } from "./conversation/messages";
-import { FlowerAvatar } from "./flower-avatar";
+import { PosyAvatar } from "./flower-avatar";
 import { fieldFor } from "./knowledge/types";
 import type { AssistantState } from "./use-assistant";
 
@@ -52,13 +52,21 @@ function Bubble({ message, onAct }: { message: ChatMessage; onAct: (action: Help
 }
 
 function Suggestions({ helper }: { helper: AssistantState }) {
-  const suggestions: HelperAction[] = [
+  const last = helper.messages.at(-1);
+  if (last?.from === "person") {
+    return null;
+  }
+  const shown = new Set(last?.actions?.map((action) => action.label));
+  const suggestions = [
     ...(helper.field && helper.page && fieldFor(helper.page, helper.field) ? [{ kind: "explain-field" as const, field: helper.field, label: `What's "${helper.field}"?` }] : []),
     ...(helper.page ? [{ kind: "explain-page" as const, label: "Explain this page" }] : []),
-    { kind: "ask-team", label: "Ask our team" },
-  ];
+    { kind: "ask-team" as const, label: "Ask our team" },
+  ].filter((action) => !shown.has(action.label));
+  if (suggestions.length === 0) {
+    return null;
+  }
   return (
-    <div className="flex gap-1.5 overflow-x-auto px-4 pb-2 pt-1">
+    <div className="flex gap-1.5 overflow-x-auto px-3 pb-2 pt-1">
       {suggestions.map((action) => (
         <ActionChip key={action.label} action={action} onAct={helper.act} />
       ))}
@@ -103,36 +111,40 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
       data-assistant
       role="dialog"
       aria-label={`${ASSISTANT.name}, your helper`}
-      className="helper-panel-enter fixed bottom-4 left-4 z-50 flex h-[min(600px,calc(100dvh-32px))] w-[min(400px,calc(100vw-32px))] origin-bottom-left flex-col overflow-hidden rounded-[22px] bg-paper shadow-frame ring-[1.5px] ring-line print:hidden"
+      className="helper-panel-enter fixed bottom-3 right-3 z-50 flex h-[min(50dvh,420px)] w-[min(340px,calc(100vw-24px))] origin-bottom-right flex-col overflow-hidden rounded-[20px] bg-paper shadow-frame ring-[1.5px] ring-line sm:bottom-5 sm:right-5 sm:h-[min(460px,calc(100dvh-120px))] print:hidden"
     >
-      <header className="flex items-center gap-3 border-b border-line bg-yellow px-4 py-3">
-        <FlowerAvatar mood={helper.mood} size={44} />
-        <div className="flex-1">
-          <p className="text-[17px] font-semibold leading-tight">{ASSISTANT.name}</p>
-          <p className="text-meta text-ink-soft">{helper.busy ? "One moment…" : ASSISTANT.role}</p>
-        </div>
+      <header className="flex items-center gap-2.5 border-b border-line bg-yellow px-3 py-2">
+        <PosyAvatar mood={helper.mood} size={30} />
+        <p className="flex-1 text-[16px] font-semibold leading-tight">
+          {ASSISTANT.name}
+          {helper.busy ? <span className="ml-2 text-meta font-normal text-ink-soft">One moment…</span> : null}
+        </p>
         {helper.voice.canSpeak ? (
           <button
             type="button"
             onClick={() => helper.voice.choose(!helper.voice.on)}
             aria-pressed={helper.voice.on}
-            className="rounded-chip px-2.5 py-1.5 text-meta font-medium text-ink-soft ring-[1.5px] ring-line hover:bg-paper-sunk aria-pressed:bg-ink aria-pressed:text-on-ink aria-pressed:ring-ink"
+            aria-label={helper.voice.on ? "Stop reading answers aloud" : "Read answers aloud"}
+            className="grid h-8 w-8 place-items-center rounded-full text-ink-soft hover:bg-paper aria-pressed:bg-ink aria-pressed:text-on-ink"
           >
-            {helper.voice.on ? "Voice on" : "Voice off"}
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 9v6h4l5 4V5L8 9H4z" />
+              {helper.voice.on ? <path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" /> : null}
+            </svg>
           </button>
         ) : null}
-        <button type="button" onClick={close} aria-label="Close helper" className="grid h-9 w-9 place-items-center rounded-full text-[20px] text-ink-soft hover:bg-paper-sunk">
+        <button type="button" onClick={close} aria-label="Close helper" className="grid h-8 w-8 place-items-center rounded-full text-[20px] text-ink-soft hover:bg-paper">
           ×
         </button>
       </header>
-      <ol aria-live="polite" className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-4">
+      <ol aria-live="polite" className="flex flex-1 flex-col gap-2.5 overflow-y-auto px-3 py-3">
         {messages.map((message) => (
           <Bubble key={message.id} message={message} onAct={helper.act} />
         ))}
         <li ref={end} aria-hidden />
       </ol>
       <Suggestions helper={helper} />
-      <form onSubmit={submit} className="flex items-center gap-2 border-t border-line px-3 py-3">
+      <form onSubmit={submit} className="flex items-center gap-1.5 border-t border-line px-2.5 py-2.5">
         <label htmlFor="helper-message" className="sr-only">
           Message {ASSISTANT.name}
         </label>
@@ -144,7 +156,7 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
           autoComplete="off"
           onChange={(event) => setDraft(event.target.value)}
           placeholder="Ask about this page…"
-          className="h-11 flex-1 rounded-chip border-[1.5px] border-line-strong bg-ground px-3.5 text-base text-ink outline-none placeholder:text-ink-faint focus:border-ink sm:text-[15px]"
+          className="h-10 min-w-0 flex-1 rounded-chip border-[1.5px] border-line-strong bg-ground px-3.5 text-base text-ink outline-none placeholder:text-ink-faint focus:border-ink sm:text-[15px]"
         />
         {helper.voice.canListen ? (
           <button
@@ -152,7 +164,7 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
             onClick={() => helper.voice.hear((text) => helper.ask(text))}
             aria-label={helper.voice.listening ? "Listening" : "Speak your question"}
             aria-pressed={helper.voice.listening}
-            className="grid h-11 w-11 place-items-center rounded-full text-ink-soft ring-[1.5px] ring-line hover:bg-paper-sunk aria-pressed:bg-magenta aria-pressed:text-on-ink aria-pressed:ring-magenta"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-ink-soft ring-[1.5px] ring-line hover:bg-paper-sunk aria-pressed:bg-magenta aria-pressed:text-on-ink aria-pressed:ring-magenta"
           >
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <rect x="9" y="3" width="6" height="12" rx="3" />
@@ -160,8 +172,15 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
             </svg>
           </button>
         ) : null}
-        <button type="submit" disabled={!draft.trim() || helper.busy} className="h-11 rounded-chip bg-ink px-4 text-small font-medium text-on-ink transition-opacity disabled:opacity-40">
-          Send
+        <button
+          type="submit"
+          aria-label="Send"
+          disabled={!draft.trim() || helper.busy}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-ink text-on-ink transition-opacity disabled:opacity-40"
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 19V5M5 12l7-7 7 7" />
+          </svg>
         </button>
       </form>
     </section>

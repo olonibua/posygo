@@ -21,7 +21,7 @@ export function useToasts() {
 export function Toaster() {
   const { visible } = useToasts();
   return (
-    <div aria-live="polite" aria-relevant="additions" className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col items-stretch gap-2.5 sm:inset-x-auto sm:right-6 sm:w-[380px]">
+    <div aria-live="polite" aria-relevant="additions" className="pointer-events-none fixed inset-x-4 bottom-[84px] z-50 flex flex-col items-stretch gap-2.5 sm:inset-x-auto sm:right-6 sm:w-[380px]">
       {visible.map((item) => (
         <ToastCard key={item.id} toast={item} />
       ))}

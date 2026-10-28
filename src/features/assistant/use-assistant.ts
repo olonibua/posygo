@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth/auth-context";
 
 import { type ChatMessage, type HelperAction, helperSays } from "./conversation/messages";
-import { errorNudge, errorReply, fieldReply, greeting, type NoticedError, pageReply, stuckNudge, voiceChoice } from "./conversation/replies";
+import { errorNudge, errorReply, fieldReply, greeting, type NoticedError, pageReply, stuckNudge } from "./conversation/replies";
 import { useGuidance } from "./guidance/use-guidance";
 import { knowledgeFor } from "./knowledge/registry";
 import { isQuietPage, quietPage } from "./signals/quiet-pages";
@@ -138,8 +138,8 @@ export function useAssistant() {
   const openPanel = useCallback(() => {
     setOpen(true);
     setNudge(null);
-    setMessages((current) => (current.length > 0 ? current : voice.undecided ? [greeting(page), voiceChoice()] : [greeting(page)]));
-  }, [page, voice.undecided]);
+    setMessages((current) => (current.length > 0 ? current : [greeting(page)]));
+  }, [page]);
 
   const acceptNudge = useCallback(() => {
     const current = nudge;

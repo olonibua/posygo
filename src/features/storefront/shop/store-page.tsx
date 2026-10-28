@@ -73,7 +73,7 @@ export function StorePage({ slug, initialStore }: { slug: string; initialStore?:
         )}
       </main>
       {count > 0 ? (
-        <div className="motion-rise fixed inset-x-0 bottom-0 z-20 border-t border-line bg-paper/95 px-4 py-3 backdrop-blur sm:px-8">
+        <div className="motion-rise fixed inset-x-0 bottom-0 z-20 border-t border-line bg-paper/95 py-3 pl-4 pr-20 backdrop-blur sm:pl-8 sm:pr-24">
           <div className="mx-auto flex max-w-container items-center justify-between gap-4">
             <span className="text-small">
               {count} {count === 1 ? "item" : "items"} · <span className="font-semibold tabular-nums">{formatMoney(subtotal, data.currency, locale)}</span>

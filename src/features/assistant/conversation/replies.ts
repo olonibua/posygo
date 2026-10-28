@@ -17,8 +17,8 @@ const ASK_TEAM: HelperAction = { kind: "ask-team", label: "Ask our team" };
 const NETWORK = "network_error";
 
 export function greeting(page: PageKnowledge | undefined): ChatMessage {
-  const intro = `Hi, I'm ${ASSISTANT.name}. I can explain this page or any field on it, sort out errors, or get our team for you.`;
-  return helperSays(intro, page ? [{ kind: "explain-page", label: `Explain "${page.title}"` }, ASK_TEAM] : [ASK_TEAM]);
+  const intro = `Hi, I'm ${ASSISTANT.name}. Ask me anything about this page.`;
+  return helperSays(intro, page ? [{ kind: "explain-page", label: "Explain this page" }, ASK_TEAM] : [ASK_TEAM]);
 }
 
 export function pageReply(page: PageKnowledge): ChatMessage {
@@ -46,13 +46,6 @@ export function fieldReply(label: string, page: PageKnowledge | undefined): Chat
   return help
     ? helperSays(describeField(label, help), [{ kind: "show-field", field: label, label: "Show me where" }])
     : helperSays(`I don't have notes on "${label}" yet. I can pass your question to our team.`, [ASK_TEAM]);
-}
-
-export function voiceChoice(): ChatMessage {
-  return helperSays("Would you like me to talk, or would you rather type?", [
-    { kind: "voice", on: true, label: "Talk to me" },
-    { kind: "voice", on: false, label: "I prefer typing" },
-  ]);
 }
 
 export function stuckNudge(label: string): string {

@@ -1,39 +1,74 @@
-.posy-petals,
-.posy-face {
+.posy-body,
+.posy-head,
+.posy-wave,
+.posy-hold {
   transform-box: view-box;
-  transform-origin: 50px 50px;
 }
 
-.posy-eyes {
+.posy-body {
+  transform-origin: 50px 124px;
+}
+
+.posy-head {
+  transform-origin: 50px 62px;
+}
+
+.posy-wave {
+  transform-origin: 39px 72px;
+}
+
+.posy-hold {
+  transform-origin: 61px 72px;
+}
+
+.posy-bloom,
+.posy-eyes,
+.posy-mouth-talk {
   transform-box: fill-box;
   transform-origin: center;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .posy-rest .posy-petals {
-    animation: posy-sway 6s ease-in-out infinite;
+  .posy-rest .posy-body {
+    animation: posy-breathe 2.8s ease-in-out infinite;
+  }
+  .posy-rest .posy-hold {
+    animation: posy-sway 3.2s ease-in-out infinite;
+  }
+  .posy-rest .posy-bloom {
+    animation: posy-sway 3.2s ease-in-out infinite reverse;
   }
   .posy-rest .posy-eyes {
     animation: posy-blink 5s infinite;
   }
-  .posy-notice .posy-face {
-    animation: posy-perk 0.6s var(--ease-spring) both;
+  .posy-notice .posy-body {
+    animation: posy-hop 0.6s var(--ease-spring) both;
   }
-  .posy-notice .posy-petals {
-    animation: posy-bloom 0.6s var(--ease-spring) both;
+  .posy-notice .posy-wave {
+    animation: posy-wave 1.4s ease-in-out 2 both;
   }
-  .posy-think .posy-petals {
+  .posy-think .posy-head {
+    animation: posy-tilt 2.4s ease-in-out infinite;
+  }
+  .posy-think .posy-bloom {
     animation: posy-spin 4s linear infinite;
   }
   .posy-talk .posy-mouth-talk {
-    transform-box: fill-box;
-    transform-origin: center;
     animation: posy-chatter 0.32s ease-in-out infinite alternate;
   }
-  .posy-talk .posy-face {
+  .posy-talk .posy-head {
     animation: posy-nod 0.9s ease-in-out infinite;
   }
-  .posy-happy .posy-petals {
+  .posy-talk .posy-hold {
+    animation: posy-sway 1.8s ease-in-out infinite;
+  }
+  .posy-happy .posy-body {
+    animation: posy-hop 0.7s var(--ease-spring) 2 both;
+  }
+  .posy-happy .posy-wave {
+    animation: posy-wave 1.4s ease-in-out both;
+  }
+  .posy-happy .posy-bloom {
     animation: posy-twirl 0.9s var(--ease-out) both;
   }
   .helper-panel-enter {
@@ -44,13 +79,23 @@
   }
 }
 
+@keyframes posy-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-1.5px) scaleY(1.015);
+  }
+}
+
 @keyframes posy-sway {
   0%,
   100% {
-    transform: rotate(-4deg);
+    transform: rotate(-5deg);
   }
   50% {
-    transform: rotate(4deg);
+    transform: rotate(5deg);
   }
 }
 
@@ -65,27 +110,48 @@
   }
 }
 
-@keyframes posy-perk {
-  0% {
-    transform: translateY(0) scale(1);
-  }
-  40% {
-    transform: translateY(-4px) scale(1.06);
-  }
+@keyframes posy-hop {
+  0%,
   100% {
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
+  }
+  35% {
+    transform: translateY(-7px);
+  }
+  60% {
+    transform: translateY(0) scaleY(0.96);
   }
 }
 
-@keyframes posy-bloom {
-  0% {
-    transform: scale(1);
-  }
-  45% {
-    transform: scale(1.1) rotate(8deg);
-  }
+@keyframes posy-wave {
+  0%,
   100% {
-    transform: scale(1) rotate(0);
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(120deg);
+  }
+  35% {
+    transform: rotate(95deg);
+  }
+  50% {
+    transform: rotate(125deg);
+  }
+  65% {
+    transform: rotate(95deg);
+  }
+  80% {
+    transform: rotate(120deg);
+  }
+}
+
+@keyframes posy-tilt {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(-7deg);
   }
 }
 
@@ -107,10 +173,10 @@
 @keyframes posy-nod {
   0%,
   100% {
-    transform: translateY(0);
+    transform: rotate(0);
   }
   50% {
-    transform: translateY(1.5px);
+    transform: rotate(3deg);
   }
 }
 
@@ -119,7 +185,7 @@
     transform: rotate(0) scale(1);
   }
   60% {
-    transform: rotate(200deg) scale(1.08);
+    transform: rotate(200deg) scale(1.12);
   }
   to {
     transform: rotate(180deg) scale(1);

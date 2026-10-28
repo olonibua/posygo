@@ -1,7 +1,7 @@
 "use client";
 
 import { ASSISTANT } from "./assistant-identity";
-import { FlowerAvatar } from "./flower-avatar";
+import { PosyAvatar } from "./flower-avatar";
 import type { AssistantState } from "./use-assistant";
 
 const CHIP = "rounded-chip px-3 py-1.5 text-meta font-medium transition-colors duration-150";
@@ -12,7 +12,7 @@ function NudgeBubble({ helper }: { helper: AssistantState }) {
     return null;
   }
   return (
-    <div role="status" className="helper-bubble-enter mb-2 max-w-[260px] rounded-[18px] rounded-bl-[6px] bg-paper px-4 py-3 text-small text-ink shadow-note ring-[1.5px] ring-line">
+    <div role="status" className="helper-bubble-enter mb-2 max-w-[250px] rounded-[18px] rounded-br-[6px] bg-paper px-4 py-3 text-small text-ink shadow-note ring-[1.5px] ring-line">
       <p>{nudge.text}</p>
       <div className="mt-2.5 flex flex-wrap gap-1.5">
         <button type="button" onClick={helper.acceptNudge} className={`${CHIP} bg-ink text-on-ink hover:bg-ink-soft`}>
@@ -36,15 +36,15 @@ export function HelperLauncher({ helper }: { helper: AssistantState }) {
     return null;
   }
   return (
-    <div data-assistant className="fixed bottom-4 left-4 z-40 flex items-end gap-2 print:hidden">
+    <div data-assistant className="fixed bottom-3 right-3 z-40 flex flex-row-reverse items-end gap-2 sm:bottom-5 sm:right-5 print:hidden">
       <button
         type="button"
         onClick={helper.openPanel}
         aria-label={`Open ${ASSISTANT.name}, your helper`}
-        className="peer relative grid h-16 w-16 place-items-center rounded-full bg-paper shadow-note ring-[1.5px] ring-line transition-transform duration-200 ease-[var(--ease-spring)] hover:-translate-y-0.5 hover:scale-105 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ink"
+        className="peer relative shrink-0 rounded-[18px] drop-shadow-[0_6px_10px_rgba(17,17,17,0.18)] transition-transform duration-200 ease-[var(--ease-spring)] hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ink"
       >
-        <FlowerAvatar mood={helper.mood} size={52} />
-        {helper.nudge ? <span aria-hidden className="absolute right-0.5 top-0.5 h-3.5 w-3.5 rounded-full bg-magenta ring-2 ring-paper" /> : null}
+        <PosyAvatar mood={helper.mood} size={72} />
+        {helper.nudge ? <span aria-hidden className="absolute left-1 top-1 h-3.5 w-3.5 rounded-full bg-magenta ring-2 ring-paper" /> : null}
       </button>
       {helper.nudge ? (
         <NudgeBubble helper={helper} />

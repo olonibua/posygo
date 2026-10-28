@@ -48,8 +48,8 @@ export function onApiFailure(listener: FailureListener): () => void {
   return () => failureListeners.delete(listener);
 }
 
-function announce(method: string, path: string, error: ApiError): void {
-  if (path === "/v1/auth/refresh") {
+function announce(method: string, path: string, error: ApiError, quiet = false): void {
+  if (quiet || path === "/v1/auth/refresh") {
     return;
   }
   const failure = { method, endpoint: path.split("?")[0]!, error };
@@ -78,6 +78,7 @@ interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   authenticated?: boolean;
+  quiet?: boolean;
 }
 
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -135,7 +136,7 @@ async function send<T>(path: string, options: RequestOptions, withToken: boolean
     cache: "no-store",
   }).catch(() => {
     const error = new ApiError(0, NETWORK_ERROR, `We couldn't reach ${BRAND.name}. Check your connection and try again.`);
-    announce(method, path, error);
+    announce(method, path, error, options.quiet);
     throw error;
   });
   if (response.status === 204) {
@@ -148,7 +149,7 @@ async function send<T>(path: string, options: RequestOptions, withToken: boolean
   if (!response.ok) {
     const body = (payload ?? {}) as Partial<ApiErrorBody>;
     const error = new ApiError(response.status, body.code ?? "internal_error", body.message ?? "Something went wrong.", body.fieldErrors, body.correlationId ?? null);
-    announce(method, path, error);
+    announce(method, path, error, options.quiet);
     throw error;
   }
   return payload as T;

@@ -13,8 +13,8 @@ interface ReportDraft {
 
 function send(input: SupportReportInput, signedIn: boolean): Promise<SupportReportResult> {
   return signedIn
-    ? apiRequest<SupportReportResult>("/v1/support-cases", { method: "POST", body: input })
-    : apiRequest<SupportReportResult>("/v1/public/support-cases", { method: "POST", body: input, authenticated: false });
+    ? apiRequest<SupportReportResult>("/v1/support-cases", { method: "POST", body: input, quiet: true })
+    : apiRequest<SupportReportResult>("/v1/public/support-cases", { method: "POST", body: input, authenticated: false, quiet: true });
 }
 
 export function reportError(draft: ReportDraft, error: NoticedError, message = ""): Promise<SupportReportResult> {
