@@ -12,9 +12,6 @@ export interface WizardValues {
   contactFullName: string;
   contactRole: string;
   contactPhone: string;
-  idType: string;
-  idNumber: string;
-  idExpiry: string;
   documents: Partial<Record<DocumentSlot, string>>;
   productsDescription: string;
   monthlyUnits: string;
@@ -39,9 +36,6 @@ export function valuesFrom(draft: VerificationDraft): WizardValues {
     contactFullName: draft.contactFullName ?? "",
     contactRole: draft.contactRole ?? "",
     contactPhone: draft.contactPhone ?? "",
-    idType: draft.idType ?? "",
-    idNumber: "",
-    idExpiry: draft.idExpiry ?? "",
     documents: { ...draft.documents },
     productsDescription: draft.productsDescription ?? "",
     monthlyUnits: draft.monthlyUnits ?? "",
@@ -70,7 +64,7 @@ export function patchForStep(step: number, values: WizardValues): DraftPatch {
       },
     },
     { contactFullName: blankToUndefined(values.contactFullName), contactRole: blankToUndefined(values.contactRole), contactPhone: blankToUndefined(values.contactPhone) },
-    { idType: blankToUndefined(values.idType), idNumber: blankToUndefined(values.idNumber), idExpiry: blankToUndefined(values.idExpiry) },
+    {},
     { documents: values.documents },
     {
       productsDescription: blankToUndefined(values.productsDescription),

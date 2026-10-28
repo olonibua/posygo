@@ -1,10 +1,12 @@
 "use client";
 
-import type { RefereeInput } from "@/shared";
+import type { IdentitySessionView, PartnerCheckView, RefereeInput } from "@/shared";
 import { type FormEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Field, FormAlert, Input } from "@/components/ui/form-controls";
+import { IdentityHandoff } from "@/features/identity/identity-handoff";
+import type { IdentityState } from "@/features/identity/identity-state";
 import { errorMessage, fieldError, formError } from "@/features/receiving/api-errors";
 
 import { usePortalMutation } from "../use-partners";
@@ -53,28 +55,26 @@ export function RefereeStep({ check, editable, locale }: StepProps) {
   );
 }
 
+const CHECK_IDENTITY_STATES: Record<PartnerCheckView["status"], IdentityState> = { NOT_STARTED: "NOT_STARTED", SUBMITTED: "WAITING", ACCEPTED: "VERIFIED", REJECTED: "DECLINED" };
+
+function partnerIdentityState(check: PartnerCheckView): IdentityState {
+  return check.status === "SUBMITTED" && (check.details as { inReview?: boolean }).inReview ? "IN_REVIEW" : CHECK_IDENTITY_STATES[check.status];
+}
+
 export function IdentityStep({ check, editable, locale }: StepProps) {
-  const start = usePortalMutation<void, { url: string }>(() => ({ path: "/v1/partner/identity/session" }));
+  const start = usePortalMutation<void, IdentitySessionView>(() => ({ path: "/v1/partner/identity/session" }));
   const refresh = usePortalMutation(() => ({ path: "/v1/partner/identity/refresh" }));
-  const begin = () => start.mutate(undefined, { onSuccess: (result) => window.location.assign(result.url) });
   return (
     <StepCard check={check} locale={locale}>
-      <FormAlert message={errorMessage(start.error) ?? errorMessage(refresh.error)} />
-      {check.status === "SUBMITTED" ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 text-small text-ink-soft">
-          <span>We&apos;re waiting for the result. This usually takes a few minutes.</span>
-          <Button variant="ghost" loading={refresh.isPending} onClick={() => refresh.mutate(undefined)}>
-            Check again
-          </Button>
-        </div>
-      ) : null}
-      {editable && (check.status === "NOT_STARTED" || check.status === "REJECTED") ? (
-        <div className="flex justify-end">
-          <Button variant="lime" loading={start.isPending} onClick={begin}>
-            {check.status === "REJECTED" ? "Try again" : "Start identity check"}
-          </Button>
-        </div>
-      ) : null}
+      <IdentityHandoff
+        state={partnerIdentityState(check)}
+        editable={editable}
+        error={errorMessage(start.error) ?? errorMessage(refresh.error)}
+        starting={start.isPending}
+        checking={refresh.isPending}
+        onStart={() => start.mutateAsync(undefined)}
+        onCheck={() => refresh.mutate(undefined)}
+      />
     </StepCard>
   );
 }

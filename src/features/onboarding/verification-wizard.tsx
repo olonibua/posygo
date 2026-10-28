@@ -4,10 +4,14 @@ import type { VerificationView } from "@/shared";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DraftStatus } from "@/components/ui/draft-status";
 import { FormAlert } from "@/components/ui/form-controls";
 import { SegmentedProgress } from "@/components/ui/progress-bar";
 import { Stepper } from "@/components/ui/stepper";
 import { NotebookNote, Paper, Stamp } from "@/components/ui/surfaces";
+import { useFormDraft } from "@/lib/drafts/use-form-draft";
+
+import { IDENTITY_STATUS_LABELS } from "@/features/identity/identity-state";
 
 import { countryName, HAZARD_LABELS, ORDER_BAND_LABELS, UNIT_BAND_LABELS, WIZARD_STEPS } from "./display";
 import { BusinessStep, ContactStep } from "./steps/business-steps";
@@ -17,9 +21,16 @@ import type { useVerification } from "./use-verification";
 
 type VerificationState = ReturnType<typeof useVerification>;
 
-export function VerificationWizard({ view, state }: { view: VerificationView; state: VerificationState }) {
-  const [step, setStep] = useState(0);
+function withoutSecrets(values: WizardValues): Partial<WizardValues> {
+  return { ...values, documents: {} };
+}
+
+export const IDENTITY_STEP = 2;
+
+export function VerificationWizard({ view, state, initialStep = 0 }: { view: VerificationView; state: VerificationState; initialStep?: number }) {
+  const [step, setStep] = useState(initialStep);
   const [values, setValues] = useState<WizardValues>(() => valuesFrom(view.draft));
+  const draft = useFormDraft({ key: "verification", values, onRestore: setValues, keep: withoutSecrets });
   const set = (patch: Partial<WizardValues>) => setValues((current) => ({ ...current, ...patch }));
   const stepProps = { values, set, errors: state.errors, market: view.market };
   const last = step === WIZARD_STEPS.length - 1;
@@ -27,7 +38,9 @@ export function VerificationWizard({ view, state }: { view: VerificationView; st
   function saveAndContinue() {
     state.save.mutate(patchForStep(step, values), {
       onSuccess: (next) => {
-        setValues((current) => ({ ...valuesFrom(next.draft), idNumber: "", documents: current.documents }));
+        const saved = { ...valuesFrom(next.draft), documents: values.documents };
+        draft.settle(saved);
+        setValues(saved);
         setStep((current) => Math.min(current + 1, WIZARD_STEPS.length - 1));
       },
     });
@@ -57,10 +70,11 @@ export function VerificationWizard({ view, state }: { view: VerificationView; st
           </div>
           <h2 className="text-h2">{WIZARD_STEPS[step]?.title}</h2>
         </div>
+        <DraftStatus draft={draft} />
         <FormAlert message={state.formError} />
         {step === 0 ? <BusinessStep {...stepProps} /> : null}
         {step === 1 ? <ContactStep {...stepProps} /> : null}
-        {step === 2 ? <IdentityStep {...stepProps} savedLast4={view.idNumberLast4} /> : null}
+        {step === IDENTITY_STEP ? <IdentityStep check={view.identityCheck} /> : null}
         {step === 3 ? <DocumentsStep {...stepProps} view={view} /> : null}
         {step === 4 ? <OperationsStep {...stepProps} /> : null}
         {last ? <ReviewSummary view={view} /> : null}
@@ -92,8 +106,8 @@ function ReviewSummary({ view }: { view: VerificationView }) {
     ["Address", [draft.registeredAddress?.line1, draft.registeredAddress?.city, draft.registeredAddress?.postalCode].filter(Boolean).join(", ") || undefined],
     ["Contact", [draft.contactFullName, draft.contactRole].filter(Boolean).join(" · ") || undefined],
     ["Phone", draft.contactPhone],
-    ["ID", view.idNumberLast4 ? `${draft.idType ?? ""} ending ${view.idNumberLast4}, expires ${draft.idExpiry ?? "?"}` : undefined],
-    ["Documents", `${view.documents.filter((document) => document.status === "VERIFIED").length} uploaded`],
+    ["Identity", view.identityCheck ? IDENTITY_STATUS_LABELS[view.identityCheck.status] : undefined],
+    ["Business document", view.documents.some((document) => document.slot === "businessDocument" && document.status === "VERIFIED") ? "Uploaded" : undefined],
     ["Volumes", draft.monthlyUnits && draft.monthlyOrders ? `${UNIT_BAND_LABELS[draft.monthlyUnits]} · ${ORDER_BAND_LABELS[draft.monthlyOrders]}` : undefined],
     ["Handling", draft.hazards?.map((hazard) => HAZARD_LABELS[hazard]).join(", ")],
   ];

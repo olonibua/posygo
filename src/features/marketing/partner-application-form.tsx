@@ -5,11 +5,14 @@ import { useMutation } from "@tanstack/react-query";
 import { type FormEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DraftStatus } from "@/components/ui/draft-status";
 import { Checkbox, Field, FormAlert, Input, Select, Textarea } from "@/components/ui/form-controls";
 import { NotebookNote, Paper, Stamp } from "@/components/ui/surfaces";
 import { HEARD_FROM_LABELS } from "@/features/partners/partner-display";
 import { fieldError, formError } from "@/features/receiving/api-errors";
 import { apiRequest } from "@/lib/api/client";
+import { deviceDraftStore } from "@/lib/drafts/draft-store";
+import { useFormDraft } from "@/lib/drafts/use-form-draft";
 
 interface FormState {
   fullName: string;
@@ -43,9 +46,14 @@ const EMPTY: FormState = {
   consent: false,
 };
 
+function withoutConsent(form: FormState): Partial<FormState> {
+  return { ...form, consent: false };
+}
+
 export function PartnerApplicationForm({ programmes }: { programmes: readonly PartnerProgrammeView[] }) {
   const [form, setForm] = useState<FormState>({ ...EMPTY, countryCode: programmes.length === 1 ? programmes[0]!.countryCode : "" });
   const apply = useMutation({ mutationFn: (input: PartnerApplicationInput) => apiRequest<void>("/v1/public/partner-applications", { method: "POST", body: input, authenticated: false }) });
+  const draft = useFormDraft({ key: "partner-application", values: form, onRestore: setForm, store: deviceDraftStore, keep: withoutConsent });
   const set = (patch: Partial<FormState>) => setForm((current) => ({ ...current, ...patch }));
   const error = (field: string) => fieldError(apply.error, field);
 
@@ -68,19 +76,22 @@ export function PartnerApplicationForm({ programmes }: { programmes: readonly Pa
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    apply.mutate({
-      fullName: form.fullName,
-      email: form.email,
-      phone: form.phone,
-      countryCode: form.countryCode,
-      city: form.city,
-      addressLines: [form.address],
-      postalCode: form.postalCode,
-      spaceDescription: form.spaceDescription,
-      heardFrom: form.heardFrom as HeardFrom,
-      referee: { name: form.refereeName, contact: form.refereeContact, relationship: form.refereeRelationship },
-      consent: true,
-    });
+    apply.mutate(
+      {
+        fullName: form.fullName,
+        email: form.email,
+        phone: form.phone,
+        countryCode: form.countryCode,
+        city: form.city,
+        addressLines: [form.address],
+        postalCode: form.postalCode,
+        spaceDescription: form.spaceDescription,
+        heardFrom: form.heardFrom as HeardFrom,
+        referee: { name: form.refereeName, contact: form.refereeContact, relationship: form.refereeRelationship },
+        consent: true,
+      },
+      { onSuccess: () => void draft.clear() },
+    );
   }
 
   const text = (label: string, key: keyof FormState, field: string, autoComplete = "off", type = "text") => (
@@ -92,7 +103,8 @@ export function PartnerApplicationForm({ programmes }: { programmes: readonly Pa
   return (
     <Paper className="px-6 py-6 sm:px-8">
       <form noValidate onSubmit={onSubmit} className="grid gap-4 md:grid-cols-2">
-        <div className="md:col-span-2">
+        <div className="flex flex-col gap-3 md:col-span-2">
+          <DraftStatus draft={draft} />
           <FormAlert message={formError(apply.error)} />
         </div>
         {text("Full name", "fullName", "fullName", "name")}

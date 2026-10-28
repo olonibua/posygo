@@ -1,6 +1,6 @@
 "use client";
 
-import { DOCUMENT_SLOTS, type DocumentSlot, hasPermission, type VerificationDraft, type VerificationStatus } from "@/shared";
+import { DOCUMENT_SLOTS, type DocumentSlot, hasPermission, type IdentityCheckView, type VerificationDraft, type VerificationStatus } from "@/shared";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -10,6 +10,7 @@ import { FormAlert } from "@/components/ui/form-controls";
 import { PageHeader } from "@/components/ui/page-header";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { PageSkeleton } from "@/components/ui/skeleton";
+import { IDENTITY_STATUS_LABELS } from "@/features/identity/identity-state";
 import { countryName, DOCUMENT_LABELS, humanizeCode, HAZARD_LABELS, ORDER_BAND_LABELS, UNIT_BAND_LABELS, VERIFICATION_STATUS_DISPLAY } from "@/features/onboarding/display";
 import { ApiError, apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
@@ -23,6 +24,7 @@ interface CaseDetail {
   status: VerificationStatus;
   answers: VerificationDraft;
   idNumberLast4: string | null;
+  identityCheck: IdentityCheckView | null;
   submittedAt: string | null;
   decisionReason: string | null;
 }
@@ -108,15 +110,21 @@ export function VerificationCase({ vendorId }: { vendorId: string }) {
         </div>
         <div className="flex flex-col gap-5">
           <Paper className="px-6 py-5">
-            <Stamp>Identity</Stamp>
-            <p className="mt-2 text-small">
-              {humanizeCode(answers.idType) ?? "—"} · expires {answers.idExpiry ?? "—"}
-            </p>
-            <p className="mt-1 font-mono text-[15px]">{idNumber ?? (data.idNumberLast4 ? `•••• ${data.idNumberLast4}` : "Not provided")}</p>
-            {isReviewer && !idNumber && data.idNumberLast4 ? (
-              <Button variant="ghost" className="mt-3" loading={reveal.isPending} onClick={() => reveal.mutate()}>
-                Reveal full number
-              </Button>
+            <Stamp>Identity check</Stamp>
+            <IdentityCheckSummary check={data.identityCheck} />
+            {data.idNumberLast4 ? (
+              <div className="mt-3 border-t border-line pt-3">
+                <p className="text-meta text-ink-faint">ID typed in before identity checks</p>
+                <p className="mt-1 text-small">
+                  {humanizeCode(answers.idType) ?? "—"} · expires {answers.idExpiry ?? "—"}
+                </p>
+                <p className="mt-1 font-mono text-[15px]">{idNumber ?? `•••• ${data.idNumberLast4}`}</p>
+                {isReviewer && !idNumber ? (
+                  <Button variant="ghost" className="mt-3" loading={reveal.isPending} onClick={() => reveal.mutate()}>
+                    Reveal full number
+                  </Button>
+                ) : null}
+              </div>
             ) : null}
           </Paper>
           <Paper className="px-6 py-5">
@@ -140,5 +148,29 @@ export function VerificationCase({ vendorId }: { vendorId: string }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function IdentityCheckSummary({ check }: { check: IdentityCheckView | null }) {
+  if (!check) {
+    return <p className="mt-2 text-small text-ink-soft">Not done yet.</p>;
+  }
+  const rows: Array<[string, string | null]> = [
+    ["Result", IDENTITY_STATUS_LABELS[check.status]],
+    ["Document", check.documentType],
+    ["Issued by", check.issuingCountry],
+    ["Expires", check.documentExpiry],
+    ["Name matches contact", check.nameMatches === null ? null : check.nameMatches ? "Yes" : "No"],
+    ["Reason", check.reason],
+  ];
+  return (
+    <dl className="mt-2">
+      {rows.map(([label, value]) => (
+        <div key={label} className="flex justify-between gap-6 border-t border-line py-2.5 text-small first:border-t-0">
+          <dt className="text-ink-soft">{label}</dt>
+          <dd className={label === "Name matches contact" && check.nameMatches === false ? "text-right text-danger" : "text-right"}>{value || "—"}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

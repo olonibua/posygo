@@ -3,9 +3,10 @@
 import { type CreateOrdersInput, fulfilmentFee, type LotView, type ProductView } from "@/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { type FormEvent, useRef, useState } from "react";
+import { type FormEvent, useMemo, useRef, useState } from "react";
 
 import { Button, ButtonLink } from "@/components/ui/button";
+import { DraftStatus } from "@/components/ui/draft-status";
 import { FormAlert } from "@/components/ui/form-controls";
 import { PageHeader } from "@/components/ui/page-header";
 import { Paper, Stamp } from "@/components/ui/surfaces";
@@ -16,6 +17,7 @@ import { fieldError, formError } from "@/features/receiving/api-errors";
 import { useCountryScope, useSelectedCountry } from "@/features/seller-countries/selected-country";
 import { apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
+import { useFormDraft } from "@/lib/drafts/use-form-draft";
 import { formatMoney, localeFor } from "@/lib/format";
 import { toast } from "@/lib/toast/toast-store";
 
@@ -71,6 +73,12 @@ export function NewOrderPage() {
   const wallet = useVendorWallet();
   const place = usePlaceOrders();
   const [deliveries, setDeliveries] = useState<DeliveryDraft[] | null>(null);
+  const draftValues = useMemo(() => ({ deliveries: deliveries ?? [] }), [deliveries]);
+  const draft = useFormDraft({
+    key: code ? `order:new:${code.toLowerCase()}` : null,
+    values: draftValues,
+    onRestore: (restored) => setDeliveries(restored.deliveries.length > 0 ? restored.deliveries.map((delivery) => ({ ...delivery, key: newKey(), lines: delivery.lines.map((line) => ({ ...line, key: newKey() })) })) : null),
+  });
 
   const available = availableUnits(lots.data ?? []);
   const blank = (): DeliveryDraft => {
@@ -101,6 +109,7 @@ export function NewOrderPage() {
     event.preventDefault();
     place.mutate(toInput(current), {
       onSuccess: (created) => {
+        void draft.clear();
         toast.success(created.length === 1 ? "Order placed" : `${created.length} orders placed`);
         router.push(created.length === 1 ? `/orders/${created[0]!.id}` : "/orders");
       },
@@ -117,6 +126,7 @@ export function NewOrderPage() {
         title={`New order in ${country.name}`}
         lead={`Sent from your stock in ${country.name} to an address in ${country.name}. Sending to several people? Add a delivery for each; every one becomes its own order with its own tracking.`}
       />
+      <DraftStatus draft={draft} locale={locale} />
       <FormAlert message={formError(place.error)} />
       <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
         <div className="flex flex-col gap-5">

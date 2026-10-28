@@ -38,7 +38,7 @@ export function NewProductPage() {
     <div className="flex flex-col gap-7">
       <PageHeader stamp="Products" title="Add a product" lead="Tell us what you're sending so the hub can recognise, store and ship it." />
       {canManage ? (
-        <ProductForm market={market} readOnly={false} submitLabel="Save product" onSave={create} />
+        <ProductForm market={market} readOnly={false} submitLabel="Save product" draftKey="product:new" onSave={create} />
       ) : (
         <NotebookNote tone="yellow" tilt="none" className="max-w-[560px]">
           Only the account owner can add products.

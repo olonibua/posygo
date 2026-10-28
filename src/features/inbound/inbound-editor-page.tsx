@@ -45,7 +45,7 @@ export function NewInboundPage() {
         title={country ? `Send stock in to ${country.name}` : "Send stock in"}
         lead="Tell us what's coming. It stays a draft until you submit it, so you can change anything first."
       />
-      {hasPermission(user.role, "vendor.stock.manage") ? <InboundForm onSave={create} /> : <OwnerOnly />}
+      {hasPermission(user.role, "vendor.stock.manage") ? <InboundForm draftKey={country ? `inbound:new:${country.code.toLowerCase()}` : undefined} onSave={create} /> : <OwnerOnly />}
     </div>
   );
 }

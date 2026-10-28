@@ -74,6 +74,9 @@ export function SupportCaseCard({ supportCase, canManage }: { supportCase: Suppo
             Our side
           </Chip>
         ) : null}
+        <Chip size="sm" tone="lime">
+          {supportCase.source === "SERVER" ? "Caught by the system" : "Reported through Posy"}
+        </Chip>
         <span className="ml-auto text-meta text-ink-soft">
           {supportCase.reports} {supportCase.reports === 1 ? "report" : "reports"} · last {formatDateTime(supportCase.lastSeenAt, LOCALE)}
         </span>

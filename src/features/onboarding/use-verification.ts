@@ -8,16 +8,16 @@ import { ApiError, apiRequest } from "@/lib/api/client";
 import { toast } from "@/lib/toast/toast-store";
 
 export type FieldErrors = Record<string, string[]>;
-export type DraftPatch = VerificationDraft & { idNumber?: string };
+export type DraftPatch = VerificationDraft;
 
-const KEY = ["vendor", "verification"] as const;
+export const VERIFICATION_KEY = ["vendor", "verification"] as const;
 
 export function useVerification() {
   const queryClient = useQueryClient();
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
 
-  const view = useQuery({ queryKey: KEY, queryFn: () => apiRequest<VerificationView>("/v1/vendor/verification") });
+  const view = useQuery({ queryKey: VERIFICATION_KEY, queryFn: () => apiRequest<VerificationView>("/v1/vendor/verification") });
 
   function handleError(error: unknown) {
     if (error instanceof ApiError && Object.keys(error.fieldErrors).length > 0) {
@@ -31,7 +31,7 @@ export function useVerification() {
   function succeed(next: VerificationView) {
     setErrors({});
     setFormError(null);
-    queryClient.setQueryData(KEY, next);
+    queryClient.setQueryData(VERIFICATION_KEY, next);
   }
 
   const save = useMutation({ mutationFn: (patch: DraftPatch) => apiRequest<VerificationView>("/v1/vendor/verification", { method: "PUT", body: patch }), onSuccess: succeed, onError: handleError });

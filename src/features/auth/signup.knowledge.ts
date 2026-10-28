@@ -16,9 +16,9 @@ export const SIGNUP_KNOWLEDGE = describePage<SignupInput>({
   fields: {
     businessName: { labels: ["Business name"], meaning: "The name of your business, as you want it to appear to us and on invoices.", mistakes: ["At least 2 characters."] },
     countryCodes: {
-      labels: ["Where do you want to store stock?"],
+      labels: ["Where do you want to store stock?", "Choose a country", "Add another country"],
       meaning:
-        "The countries where we'll keep your stock. Orders in each country are sent from stock in that same country, so pick every country you sell in. Your first pick is your home country, used for your business checks and the activation fee. You can add more later in Settings.",
+        "The countries where we'll keep your stock. Orders in each country are sent from stock in that same country, so pick every country you sell in from the drop-down; each one is added to the list and the cross removes it. Your first pick is your home country, used for your business checks and the activation fee. You can add more later in Settings.",
       mistakes: ["Pick at least one country.", "Only countries that are open are listed. If none show, we haven't opened yet."],
     },
     email: { labels: ["Work email"], meaning: "The email you'll sign in with. We send a code to confirm it." },

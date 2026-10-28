@@ -26,10 +26,14 @@ const config: Config = {
       orange: token("orange"),
       success: token("success"),
       danger: token("danger"),
+      seal: token("seal"),
+      vellum: token("vellum"),
     },
     fontFamily: {
       sans: ['"Instrument Sans Variable"', '"Helvetica Neue"', "Arial", "sans-serif"],
       mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+      legal: ['"Source Serif 4 Variable"', "Georgia", '"Times New Roman"', "serif"],
+      signature: ['"Great Vibes"', '"Brush Script MT"', "cursive"],
     },
     extend: {
       fontSize: {

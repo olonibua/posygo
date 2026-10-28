@@ -91,10 +91,24 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
   }, [messages]);
 
   useEffect(() => {
+    if (!open) {
+      return;
+    }
     const onKey = (event: KeyboardEvent) => event.key === "Escape" && close();
+    const onOutside = (event: PointerEvent) => {
+      const target = event.target as Element | null;
+      if (target?.closest("[data-assistant]") || document.querySelector(".helper-highlight")) {
+        return;
+      }
+      close();
+    };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [close]);
+    document.addEventListener("pointerdown", onOutside);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onOutside);
+    };
+  }, [open, close]);
 
   if (!open) {
     return null;
@@ -111,7 +125,7 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
       data-assistant
       role="dialog"
       aria-label={`${ASSISTANT.name}, your helper`}
-      className="helper-panel-enter fixed bottom-3 right-3 z-50 flex h-[min(50dvh,420px)] w-[min(340px,calc(100vw-24px))] origin-bottom-right flex-col overflow-hidden rounded-[20px] bg-paper shadow-frame ring-[1.5px] ring-line sm:bottom-5 sm:right-5 sm:h-[min(460px,calc(100dvh-120px))] print:hidden"
+      className="helper-panel-enter fixed inset-x-0 bottom-[max(88px,14dvh)] z-50 mx-auto flex h-[min(52dvh,380px)] w-[min(320px,calc(100vw-48px))] origin-bottom flex-col overflow-hidden rounded-[20px] bg-paper shadow-frame ring-[1.5px] ring-line sm:inset-x-auto sm:bottom-5 sm:right-5 sm:mx-0 sm:h-[min(460px,calc(100dvh-120px))] sm:w-[340px] sm:origin-bottom-right print:hidden"
     >
       <header className="flex items-center gap-2.5 border-b border-line bg-yellow px-3 py-2">
         <PosyAvatar mood={helper.mood} size={30} />
@@ -137,6 +151,25 @@ export function HelperPanel({ helper }: { helper: AssistantState }) {
           ×
         </button>
       </header>
+      {helper.voice.on && helper.voice.voices.length > 1 ? (
+        <div className="flex items-center gap-2 border-b border-line bg-paper-sunk px-3 py-1.5 text-meta">
+          <label htmlFor="helper-voice" className="text-ink-soft">
+            Voice
+          </label>
+          <select
+            id="helper-voice"
+            value={helper.voice.voiceName ?? ""}
+            onChange={(event) => helper.voice.pickVoice(event.target.value)}
+            className="min-w-0 flex-1 truncate rounded-[8px] border border-line bg-paper px-2 py-1 text-meta text-ink"
+          >
+            {helper.voice.voices.map((option) => (
+              <option key={option.name} value={option.name}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
       <ol aria-live="polite" className="flex flex-1 flex-col gap-2.5 overflow-y-auto px-3 py-3">
         {messages.map((message) => (
           <Bubble key={message.id} message={message} onAct={helper.act} />

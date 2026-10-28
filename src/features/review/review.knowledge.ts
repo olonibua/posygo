@@ -34,10 +34,11 @@ export const VERIFICATION_QUEUE_KNOWLEDGE = describePage({
 export const VERIFICATION_CASE_KNOWLEDGE = describePage<VerificationDecisionInput>({
   route: "/admin/verifications/[vendorId]",
   title: "Verification case",
-  purpose: "One vendor's verification answers, identity and documents, and the decision on them. Opening a document or an ID number is written to the audit log.",
+  purpose: "One vendor's verification answers, identity check result and documents, and the decision on them. Opening a document or an ID number is written to the audit log.",
   steps: [
     "Read the business, contact and operations answers.",
-    "Open each document and, if needed, reveal the full ID number.",
+    "Check the identity check result: whether it passed, the document type, issuing country, expiry, and whether the name on the ID matches the contact. We keep only the result, not the ID photos.",
+    "Open the business document. Older cases may also have uploaded ID photos and a typed ID number you can reveal.",
     "Approve, ask for changes or reject. When asking for changes or rejecting, write a note to the vendor.",
   ],
   fields: {

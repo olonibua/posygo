@@ -5,9 +5,11 @@ import { describePage } from "@/features/assistant/knowledge/types";
 export const ADMIN_SUPPORT_KNOWLEDGE = describePage<ResolveSupportCaseInput & { recipient: string }>({
   route: "/admin/support",
   title: "Support cases",
-  purpose: "Problems people hit and questions they asked the helper. The same failure from several people is grouped into one case, with the steps each person took.",
+  purpose:
+    "Failures on our side and questions people asked. The system opens a case by itself the first time something breaks on our side, before anyone reports it, and emails the support team. Typing mistakes are left out. Reports through Posy join the same case, with the steps each person took.",
   steps: [
-    "Open a case and show its details to see each report and the steps the person took.",
+    "System problems lists failures on our side. Caught by the system means nobody had to report it.",
+    "Open a case and show its details to see each report, the technical reason and the steps the person took.",
     "Fix the problem or answer the question.",
     "Write what was done and mark the case resolved. Everyone who reported it sees your note.",
     "Check Unanswered questions for things the helper couldn't answer.",

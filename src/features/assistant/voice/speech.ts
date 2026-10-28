@@ -64,13 +64,56 @@ export function spokenText(text: string): string {
     .trim();
 }
 
-function britishVoice(): SpeechSynthesisVoice | undefined {
-  const voices = window.speechSynthesis.getVoices();
-  return (
-    voices.find((voice) => voice.lang === "en-GB" && /female|libby|sonia|serena|kate/i.test(voice.name)) ??
-    voices.find((voice) => voice.lang === "en-GB") ??
-    voices.find((voice) => voice.lang.startsWith("en"))
-  );
+const FEMALE_NAMES =
+  /libby|sonia|maisie|hazel|susan|zira|aria|jenny|michelle|emma|ava|samantha|karen|moira|tessa|serena|kate|stephanie|martha|fiona|victoria|allison|zoe|shelley|flo|sandy|catherine|female|woman|girl/i;
+const MALE_NAMES = /\b(male|daniel|arthur|oliver|alex|fred|george|ryan|thomas|david|mark|guy|james|aaron|rishi|gordon|lee|reed|eddy|grandpa|ralph|albert|bruce|junior)\b/i;
+const VOICE_KEY = "posygo.helper.voice-name";
+const PITCH_FOR_FEMALE = 1.12;
+const PITCH_FOR_FALLBACK = 1.35;
+
+function isFemale(voice: SpeechSynthesisVoice): boolean {
+  return FEMALE_NAMES.test(voice.name) && !MALE_NAMES.test(voice.name.replace(/female/gi, ""));
+}
+
+function englishVoices(): SpeechSynthesisVoice[] {
+  return window.speechSynthesis.getVoices().filter((voice) => voice.lang.toLowerCase().startsWith("en"));
+}
+
+export function femaleVoices(): SpeechSynthesisVoice[] {
+  if (!canSpeak()) {
+    return [];
+  }
+  const rank = (voice: SpeechSynthesisVoice) => (voice.lang === "en-GB" ? 0 : 1) + (voice.localService ? 0 : 0.5);
+  return englishVoices()
+    .filter(isFemale)
+    .sort((a, b) => rank(a) - rank(b));
+}
+
+export function readVoiceName(): string | null {
+  try {
+    return window.localStorage.getItem(VOICE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function saveVoiceName(name: string): void {
+  try {
+    window.localStorage.setItem(VOICE_KEY, name);
+  } catch {
+    return;
+  }
+}
+
+function chosenVoice(): { voice: SpeechSynthesisVoice | undefined; pitch: number } {
+  const female = femaleVoices();
+  const saved = readVoiceName();
+  const voice = female.find((entry) => entry.name === saved) ?? female[0];
+  if (voice) {
+    return { voice, pitch: PITCH_FOR_FEMALE };
+  }
+  const fallback = englishVoices().find((entry) => !MALE_NAMES.test(entry.name)) ?? englishVoices()[0];
+  return { voice: fallback, pitch: PITCH_FOR_FALLBACK };
 }
 
 export function say(text: string, events: { onStart?: () => void; onEnd?: () => void } = {}): void {
@@ -79,11 +122,12 @@ export function say(text: string, events: { onStart?: () => void; onEnd?: () => 
   }
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(spokenText(text));
-  const voice = britishVoice();
+  const { voice, pitch } = chosenVoice();
   if (voice) {
     utterance.voice = voice;
   }
   utterance.lang = voice?.lang ?? "en-GB";
+  utterance.pitch = pitch;
   utterance.rate = 1.02;
   utterance.onstart = () => events.onStart?.();
   utterance.onend = () => events.onEnd?.();

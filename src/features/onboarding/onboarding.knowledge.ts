@@ -20,16 +20,19 @@ export const TEAM_KNOWLEDGE = describePage<InviteMemberInput>({
 const COMPANY_NUMBER_LABELS = ["Company registration number", "Companies House number", "EIN"];
 const TAX_NUMBER_LABELS = ["Tax number (optional)", "VAT number"];
 
-export const VERIFICATION_KNOWLEDGE = describePage<VerificationSubmission>({
+type VerificationPageInput = Omit<VerificationSubmission, "idType" | "idExpiry"> & { identity: string };
+
+export const VERIFICATION_KNOWLEDGE = describePage<VerificationPageInput>({
   route: "/verification",
   title: "Verify your business",
   purpose: "We check every business against its market's rules before stock can be sent to a warehouse. Once you're verified and accept the vendor agreement, your account is ready to go live.",
   steps: [
     "Fill in your business details and registered address.",
-    "Add the person we speak to, then their ID.",
-    "Upload your ID, a selfie holding it and a business document.",
+    "Add the person we speak to.",
+    "Verify your identity: on a computer, scan the QR code with your phone's camera, or tap Open identity check on a phone. You take a photo of your ID and a short selfie video. It takes about 2 minutes, and this page updates by itself when it's done.",
+    "Upload a business document.",
     "Tell us what you'll store and roughly how much, then check everything and submit for review.",
-    "Once approved, read and accept the vendor agreement.",
+    "Once approved, open the Fulfilment Services Agreement with Review and sign, tap Sign here, then draw your signature or type your name. You can download a signed copy with its certificate afterwards.",
     "If you then see Activate your account, pay the one-off activation fee there. Your account goes live as soon as it's paid. The activation fee isn't refundable.",
   ],
   fields: {
@@ -59,18 +62,20 @@ export const VERIFICATION_KNOWLEDGE = describePage<VerificationSubmission>({
       example: "+447700900123",
       mistakes: ["Start with + and your country code, with no spaces."],
     },
-    idType: { labels: ["ID type"], meaning: "The kind of photo ID you're using. The choices depend on your market." },
-    idNumber: {
-      labels: ["ID number"],
-      meaning: "The number on the ID, exactly as it appears. It's encrypted as soon as you save, and once saved you can leave it blank to keep it.",
-      mistakes: ["Use 5 to 40 letters, numbers, spaces or dashes."],
-    },
-    idExpiry: { labels: ["Expiry date"], meaning: "The date the ID expires.", mistakes: ["An ID that has already expired isn't accepted."] },
-    documents: {
-      labels: ["ID — front", "ID — back", "Selfie holding your ID", "Business document", "Choose file", "Replace"],
+    identity: {
+      labels: ["Verify your identity", "Open identity check", "Scan with your phone's camera", "Continue on this device instead", "Continue check", "Try again"],
       meaning:
-        "Photos or scans of your ID, a selfie with your face and the ID both clearly visible, and a business document such as a certificate of incorporation, or a recent utility bill for sole traders. Files are stored privately and only verification staff can open them.",
-      mistakes: ["Use a JPEG, PNG, WebP image or a PDF.", "The back of the ID isn't needed for a passport, but is for other IDs."],
+        "The identity check confirms the contact person with a photo of their passport, driving licence or ID card and a short selfie video. On a computer, scan the QR code with your phone's camera and keep this page open; it updates when you finish. The name on the ID must match the contact's full name. We keep only the result, never the photos.",
+      mistakes: [
+        "If it didn't pass, the reason shows on the page. Use good light, show the whole ID, and try again.",
+        "If the link expired or the check wasn't finished, press Try again.",
+        "Changing the contact's name means doing the check again.",
+      ],
+    },
+    documents: {
+      labels: ["Business document", "Choose file", "Replace"],
+      meaning: "A business document such as a certificate of incorporation, or a recent utility bill for sole traders. Files are stored privately and only verification staff can open them.",
+      mistakes: ["Use a JPEG, PNG, WebP image or a PDF."],
     },
     productsDescription: { labels: ["What will you store with us?"], meaning: "A sentence or two about the products you'll send in.", mistakes: ["Use 10 to 1000 characters."] },
     monthlyUnits: { labels: ["Units arriving per month"], meaning: "Roughly how many units you expect to send to the hub each month." },

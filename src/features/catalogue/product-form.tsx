@@ -4,10 +4,12 @@ import type { ProductView } from "@/shared";
 import { type FormEvent, type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DraftStatus } from "@/components/ui/draft-status";
 import { FileDrop } from "@/components/ui/file-drop";
 import { FormAlert } from "@/components/ui/form-controls";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { uploadPrivateFile } from "@/lib/api/uploads";
+import { useFormDraft } from "@/lib/drafts/use-form-draft";
 
 import { useFormErrors } from "./form-errors";
 import { BarcodeFields, CustomsFields, IdentityFields, SizeFields } from "./product-fields";
@@ -19,6 +21,7 @@ interface ProductFormProps {
   product?: ProductView;
   readOnly: boolean;
   submitLabel: string;
+  draftKey?: string;
   onSave: (input: ReturnType<typeof valuesToInput>) => Promise<unknown>;
 }
 
@@ -31,8 +34,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-export function ProductForm({ market, product, readOnly, submitLabel, onSave }: ProductFormProps) {
+export function ProductForm({ market, product, readOnly, submitLabel, draftKey, onSave }: ProductFormProps) {
   const [values, setValues] = useState<ProductValues>(() => (product ? productToValues(product, market) : emptyProduct(market)));
+  const draft = useFormDraft({ key: readOnly ? null : (draftKey ?? null), values, onRestore: setValues });
   const [saving, setSaving] = useState(false);
   const { formError, capture, reset, errorFor } = useFormErrors();
   const set = (patch: Partial<ProductValues>) => setValues((current) => ({ ...current, ...patch }));
@@ -44,6 +48,7 @@ export function ProductForm({ market, product, readOnly, submitLabel, onSave }: 
     setSaving(true);
     try {
       await onSave(valuesToInput(values, market));
+      await draft.clear();
     } catch (error) {
       capture(error);
     } finally {
@@ -53,6 +58,7 @@ export function ProductForm({ market, product, readOnly, submitLabel, onSave }: 
 
   return (
     <form onSubmit={(event) => void submit(event)} className="flex max-w-[880px] flex-col gap-5" noValidate>
+      <DraftStatus draft={draft} />
       <FormAlert message={formError} />
       <Section title="What it is">
         <IdentityFields {...fieldProps} />

@@ -1,54 +1,44 @@
 "use client";
 
-import { DOCUMENT_SLOTS, MONTHLY_ORDER_BANDS, MONTHLY_UNIT_BANDS, PRODUCT_HAZARDS, type VerificationView } from "@/shared";
+import { type IdentityCheckView, MONTHLY_ORDER_BANDS, MONTHLY_UNIT_BANDS, PRODUCT_HAZARDS, type VerificationView } from "@/shared";
 
 import { ChoiceChip } from "@/components/ui/choice-chip";
 import { FileDrop } from "@/components/ui/file-drop";
-import { Field, Input, Select, Textarea } from "@/components/ui/form-controls";
+import { Field, Select, Textarea } from "@/components/ui/form-controls";
 import type { Tone } from "@/components/ui/tone";
+import { IdentityHandoff } from "@/features/identity/identity-handoff";
+import { identityStateOf } from "@/features/identity/identity-state";
 import { uploadPrivateFile } from "@/lib/api/uploads";
 
 import { DOCUMENT_LABELS, HAZARD_LABELS, ORDER_BAND_LABELS, UNIT_BAND_LABELS } from "../display";
+import { useVendorIdentity } from "../use-vendor-identity";
 import { errorFor } from "../use-verification";
 import type { StepProps } from "./business-steps";
 
 const CHOICE_TONES: readonly Tone[] = ["yellow", "lime", "sky", "pink", "orange"];
 
-export function IdentityStep({ values, set, errors, market, savedLast4 }: StepProps & { savedLast4: string | null }) {
+export function IdentityStep({ check }: { check: IdentityCheckView | null }) {
+  const identity = useVendorIdentity();
   return (
-    <div className="flex flex-col gap-5">
-      <Field label="ID type" error={errorFor(errors, "idType")}>
-        {({ id }) => (
-          <Select id={id} value={values.idType} onChange={(event) => set({ idType: event.target.value })}>
-            <option value="">Choose one</option>
-            {market.kyc.idTypes.map((type) => (
-              <option key={type.code} value={type.code}>
-                {type.label}
-              </option>
-            ))}
-          </Select>
-        )}
-      </Field>
-      <Field
-        label="ID number"
-        hint={savedLast4 ? `Saved, ending ${savedLast4}. Leave blank to keep it.` : "Encrypted as soon as you save. Our reviewers see it only when they need to."}
-        error={errorFor(errors, "idNumber")}
-      >
-        {({ id, describedBy }) => <Input id={id} autoComplete="off" aria-describedby={describedBy} value={values.idNumber} onChange={(event) => set({ idNumber: event.target.value })} />}
-      </Field>
-      <Field label="Expiry date" error={errorFor(errors, "idExpiry")}>
-        {({ id }) => <Input id={id} type="date" value={values.idExpiry} onChange={(event) => set({ idExpiry: event.target.value })} />}
-      </Field>
-    </div>
+    <IdentityHandoff
+      state={identityStateOf(check)}
+      reason={check?.reason}
+      editable
+      error={identity.error}
+      starting={identity.start.isPending}
+      checking={identity.refresh.isPending}
+      onStart={() => identity.start.mutateAsync()}
+      onCheck={() => identity.refresh.mutate()}
+    />
   );
 }
 
 export function DocumentsStep({ values, set, errors, view }: StepProps & { view: VerificationView }) {
   const statusOf = (fileId: string | undefined) => view.documents.find((document) => document.fileId === fileId)?.status;
-  const slots = DOCUMENT_SLOTS.filter((slot) => slot !== "idBack" || values.idType !== "PASSPORT");
+  const slots = ["businessDocument"] as const;
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-small text-ink-soft">Files go straight to private storage. We check each one is really an image or PDF, and only verification staff can open them.</p>
+      <p className="text-small text-ink-soft">Files go straight to private storage. Only verification staff can open them.</p>
       {slots.map((slot) => {
         const status = statusOf(values.documents[slot]);
         return (

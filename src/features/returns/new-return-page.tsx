@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useMemo, useState } from "react";
 
 import { Button, ButtonLink } from "@/components/ui/button";
+import { DraftStatus } from "@/components/ui/draft-status";
 import { Icon } from "@/components/ui/icon";
 import { Field, FormAlert, Input, Textarea } from "@/components/ui/form-controls";
 import { EmptyState } from "@/components/ui/navigation-controls";
@@ -12,6 +13,7 @@ import { PageSkeleton } from "@/components/ui/skeleton";
 import { NotebookNote, Paper, Stamp } from "@/components/ui/surfaces";
 import { errorMessage, fieldError, formError } from "@/features/receiving/api-errors";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
+import { useFormDraft } from "@/lib/drafts/use-form-draft";
 import { formatDate, formatMoney, localeFor } from "@/lib/format";
 
 import { useOpenReturn, useReturnable } from "./use-returns";
@@ -26,6 +28,16 @@ export function NewReturnPage() {
   const [quantities, setQuantities] = useState<Record<string, string>>({});
   const [reason, setReason] = useState("");
   const [tracking, setTracking] = useState({ carrier: "", trackingNumber: "" });
+  const draftValues = useMemo(() => ({ quantities, reason, tracking }), [quantities, reason, tracking]);
+  const draft = useFormDraft({
+    key: orderId ? `return:new:${orderId}` : null,
+    values: draftValues,
+    onRestore: (restored) => {
+      setQuantities(restored.quantities);
+      setReason(restored.reason);
+      setTracking(restored.tracking);
+    },
+  });
 
   const data = returnable.data;
   if (!data) {
@@ -48,7 +60,12 @@ export function NewReturnPage() {
     event.preventDefault();
     open.mutate(
       { orderId: data!.orderId, reason: reason.trim(), lines, carrier: tracking.carrier.trim() || undefined, trackingNumber: tracking.trackingNumber.trim() || undefined },
-      { onSuccess: (created) => router.push(`/returns?open=${created.id}`) },
+      {
+        onSuccess: (created) => {
+          void draft.clear();
+          router.push(`/returns?open=${created.id}`);
+        },
+      },
     );
   }
 
@@ -65,6 +82,7 @@ export function NewReturnPage() {
           this order until {formatDate(data.returnableUntil, locale)}.
         </p>
       </NotebookNote>
+      <DraftStatus draft={draft} locale={locale} />
       <FormAlert message={formError(open.error)} />
       <Paper className="motion-rise flex flex-col gap-4 px-6 py-6">
         <Stamp>What&apos;s coming back</Stamp>

@@ -28,8 +28,8 @@ export const DOCUMENT_LABELS: Record<DocumentSlot, { label: string; hint: string
 export const WIZARD_STEPS: readonly Step[] = [
   { title: "Business", detail: "Who you are and where you're registered" },
   { title: "Contact", detail: "The person we speak to" },
-  { title: "Identity", detail: "The ID of that person" },
-  { title: "Documents", detail: "Uploads, stored privately" },
+  { title: "Verify your identity", detail: "A quick ID and selfie check" },
+  { title: "Documents", detail: "Your business document" },
   { title: "Operations", detail: "What you'll send us" },
   { title: "Review", detail: "Check and submit" },
 ];

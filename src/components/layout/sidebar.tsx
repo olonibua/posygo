@@ -7,13 +7,13 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import { NotebookNote } from "@/components/ui/surfaces";
-import { toneSurface } from "@/components/ui/tone";
+import { toneOnGroupHover, toneSurface } from "@/components/ui/tone";
 import { BRAND } from "@/lib/brand";
 import { cn } from "@/lib/cn";
 
 import { activeItem, type Console, isLocked, type NavItem, visibleItems } from "./navigation";
 
-const ITEM = "motion-press relative z-[1] flex items-center gap-3 rounded-nav px-2.5 py-[7px] text-[15px] no-underline";
+const ITEM = "motion-press relative z-[1] flex items-center gap-3 rounded-nav px-2.5 py-[7px] text-[15px] no-underline transition-[background-color,color] duration-200 ease-[var(--ease-out)]";
 
 interface SidebarProps {
   console: Console;
@@ -95,7 +95,7 @@ function ToneIcon({ item, active }: { item: NavItem; active: boolean }) {
       aria-hidden
       className={cn(
         "grid h-8 w-8 shrink-0 place-items-center rounded-[9px] transition-[background-color,scale] duration-300 ease-[var(--ease-spring)]",
-        active ? cn(toneSurface[item.tone], "scale-105") : "bg-transparent group-hover:bg-paper",
+        active ? cn(toneSurface[item.tone], "scale-105") : cn("bg-transparent group-hover:scale-105", toneOnGroupHover[item.tone]),
       )}
     >
       <Icon name={item.icon} className="h-[18px] w-[18px]" />
@@ -140,7 +140,7 @@ function SidebarItem({ item, active, locked, collapsed, onNavigate }: SidebarIte
       onClick={onNavigate}
       title={collapsed ? item.label : undefined}
       aria-current={active ? "page" : undefined}
-      className={cn(ITEM, "group", active ? "font-medium text-ink" : "text-ink-soft hover:text-ink")}
+      className={cn(ITEM, "group", active ? "font-medium text-ink" : "text-ink-soft hover:bg-paper-sunk hover:text-ink")}
     >
       <ToneIcon item={item} active={active} />
       {label}

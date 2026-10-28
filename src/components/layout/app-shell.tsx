@@ -29,8 +29,8 @@ export function AppShell({ console, user, children }: { console: Console; user: 
 
   const shell = (
     <div className={cn("min-h-screen lg:grid lg:transition-[grid-template-columns] lg:duration-300 lg:ease-[var(--ease-out)]", collapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[264px_1fr]")}>
-      <aside className="hidden min-w-0 overflow-hidden border-r border-line bg-ground lg:block">
-        <div className="sticky top-0 h-screen">
+      <aside className="sticky top-0 hidden h-dvh min-w-0 self-start overflow-x-clip border-r border-line bg-ground lg:block">
+        <div className="h-full">
           <Sidebar console={console} user={user} collapsed={collapsed} onToggleCollapse={toggleCollapsed} />
         </div>
       </aside>

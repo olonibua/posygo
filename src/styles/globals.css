@@ -1,4 +1,6 @@
 @import "@fontsource-variable/instrument-sans";
+@import "@fontsource-variable/source-serif-4";
+@import "@fontsource/great-vibes";
 @import "./tokens.css";
 
 @tailwind base;
@@ -292,5 +294,11 @@ details.faq[open]::details-content {
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   [data-reveal="waiting"] * {
     animation-play-state: paused !important;
+  }
+}
+
+@media print {
+  body:has(#agreement-signing) > *:not(#agreement-signing) {
+    display: none !important;
   }
 }

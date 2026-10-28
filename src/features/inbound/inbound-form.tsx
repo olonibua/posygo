@@ -5,10 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { type FormEvent, type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DraftStatus } from "@/components/ui/draft-status";
 import { Field, FormAlert, Textarea } from "@/components/ui/form-controls";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { useFormErrors } from "@/features/catalogue/form-errors";
 import { apiRequest } from "@/lib/api/client";
+import { useFormDraft } from "@/lib/drafts/use-form-draft";
 
 import { BoxFields, LineFields, TravelFields } from "./inbound-fields";
 import { emptyInbound, inboundToValues, type InboundValues, valuesToInput } from "./inbound-values";
@@ -29,8 +31,15 @@ function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-export function InboundForm({ inbound, onSave }: { inbound?: InboundDetailView; onSave: (input: InboundInput) => Promise<unknown> }) {
+interface InboundFormProps {
+  inbound?: InboundDetailView;
+  draftKey?: string;
+  onSave: (input: InboundInput) => Promise<unknown>;
+}
+
+export function InboundForm({ inbound, draftKey, onSave }: InboundFormProps) {
   const [values, setValues] = useState<InboundValues>(() => (inbound ? inboundToValues(inbound) : emptyInbound(todayIso())));
+  const draft = useFormDraft({ key: draftKey ?? null, values, onRestore: setValues });
   const [saving, setSaving] = useState(false);
   const { formError, capture, reset, errorFor } = useFormErrors();
   const products = useQuery({ queryKey: ["vendor", "products", "list", "ACTIVE"], queryFn: () => apiRequest<ProductView[]>("/v1/vendor/products?status=ACTIVE") });
@@ -43,6 +52,7 @@ export function InboundForm({ inbound, onSave }: { inbound?: InboundDetailView; 
     setSaving(true);
     try {
       await onSave(valuesToInput(values));
+      await draft.clear();
     } catch (error) {
       capture(error);
     } finally {
@@ -52,6 +62,7 @@ export function InboundForm({ inbound, onSave }: { inbound?: InboundDetailView; 
 
   return (
     <form onSubmit={(event) => void submit(event)} className="flex max-w-[880px] flex-col gap-5" noValidate>
+      <DraftStatus draft={draft} />
       <FormAlert message={errorFor("warehouseId") ?? formError} />
       <Section title="Getting there">
         <TravelFields {...fieldProps} />

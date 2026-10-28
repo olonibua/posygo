@@ -9,12 +9,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { ChoiceChip } from "@/components/ui/choice-chip";
 import { Checkbox, Field, FormAlert, Input, PasswordInput } from "@/components/ui/form-controls";
 import { apiRequest } from "@/lib/api/client";
 import { applyServerErrors } from "@/lib/forms";
 
-import { countryFlag } from "@/features/seller-countries/country-flag";
+import { CountryPicker } from "@/features/seller-countries/country-picker";
 
 export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email: string; password: string }) => void }) {
   const [formError, setFormError] = useState<string | null>(null);
@@ -24,8 +23,7 @@ export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email
   const { errors, isSubmitting, isSubmitted } = formState;
   const chosen = watch("countryCodes");
 
-  function toggleCountry(code: string) {
-    const next = chosen.includes(code) ? chosen.filter((entry) => entry !== code) : [...chosen, code];
+  function chooseCountries(next: string[]) {
     setValue("countryCodes", next, { shouldValidate: isSubmitted });
   }
 
@@ -47,16 +45,10 @@ export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email
       </Field>
       <fieldset>
         <legend className="mb-2 text-small font-medium">Where do you want to store stock?</legend>
-        <p className="mb-3 text-meta font-normal text-ink-faint">Pick every country you sell in. Your first pick is your home country.</p>
-        <div className="flex flex-wrap gap-2.5">
-          {countries.isLoading ? <span className="text-small text-ink-soft">Loading countries…</span> : null}
-          {countries.data?.length === 0 ? <span className="text-small text-ink-soft">No countries are open yet.</span> : null}
-          {countries.data?.map((country) => (
-            <ChoiceChip key={country.code} tone="lime" selected={chosen.includes(country.code)} onToggle={() => toggleCountry(country.code)}>
-              {countryFlag(country.code)} {country.name} · {country.currency}
-            </ChoiceChip>
-          ))}
-        </div>
+        <p className="mb-3 text-meta font-normal text-ink-faint">Pick every country you sell in. Your first pick is your home country. You can add more later.</p>
+        {countries.isLoading ? <span className="text-small text-ink-soft">Loading countries…</span> : null}
+        {countries.data?.length === 0 ? <span className="text-small text-ink-soft">No countries are open yet.</span> : null}
+        {countries.data?.length ? <CountryPicker countries={countries.data} chosen={chosen} onChange={chooseCountries} invalid={Boolean(errors.countryCodes)} /> : null}
         {errors.countryCodes ? (
           <p role="alert" className="motion-rise mt-1.5 text-meta text-danger">
             {errors.countryCodes.message ?? errors.countryCodes.root?.message}

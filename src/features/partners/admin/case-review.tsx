@@ -41,6 +41,8 @@ export function ChecksReview({ partner, canReview, locale }: { partner: PartnerD
   );
 }
 
+const IDENTITY_PROVIDER_NAMES: Record<string, string> = { DIDIT: "Didit", STRIPE_IDENTITY: "Stripe Identity", PRACTICE: "the practice provider" };
+
 function detailLines(partner: PartnerDetailView, check: PartnerCheckView, locale: string): string[] {
   const details = check.details;
   switch (check.kind) {
@@ -48,7 +50,8 @@ function detailLines(partner: PartnerDetailView, check: PartnerCheckView, locale
       return details.name ? [`${String(details.name)} · ${String(details.relationship ?? "")}`, String(details.contact ?? "")] : [];
     case "IDENTITY":
       return [
-        details.provider ? `Checked by ${String(details.provider) === "PRACTICE" ? "the practice provider" : "Stripe Identity"}` : "",
+        details.provider ? `Checked by ${IDENTITY_PROVIDER_NAMES[String(details.provider)] ?? String(details.provider)}` : "",
+        details.inReview ? "Being checked by the provider's team" : "",
         details.failureReason ? `Didn't pass: ${String(details.failureReason)}` : "",
       ].filter(Boolean);
     case "PROOF_OF_ADDRESS":

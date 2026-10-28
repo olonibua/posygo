@@ -101,6 +101,17 @@ test.describe.configure({ mode: "serial" });
 test.describe("the helper", () => {
   let reference = "";
 
+  test("closes when someone taps anywhere outside it", async ({ page }) => {
+    await page.goto("/signup");
+    await page.getByRole("button", { name: HELPER }).click();
+    const helper = page.getByRole("dialog", { name: /Posy/ });
+    await expect(helper).toBeVisible();
+    await helper.getByLabel(/Message Posy/).click();
+    await expect(helper).toBeVisible();
+    await page.getByRole("heading", { name: "Create your account" }).click();
+    await expect(helper).toHaveCount(0);
+  });
+
   test("explains the page and the field someone is on, and won't guess", async ({ page }) => {
     const problems = watchConsole(page);
     await page.goto("/signup");

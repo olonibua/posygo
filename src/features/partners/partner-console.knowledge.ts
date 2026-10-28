@@ -21,6 +21,7 @@ export const PARTNERSHIP: Omit<PageKnowledgeOf<PartnershipInput>, "route"> = {
   purpose: "For fulfilment partners: your partnership from verification to running your hub, with your tier, scorecard and trust score once you're approved.",
   steps: [
     "Check your details, then complete each verification step: identity, proof of address, your storage space, work and tax status, and a referee.",
+    "For identity, press Verify your identity. On a computer, scan the QR code with your phone's camera, or choose Continue on this device instead. On a phone, tap Open identity check. It takes about 2 minutes and the step updates by itself when it's done.",
     "Read and sign the partner agreement, and set up payouts with our payment provider.",
     "When every step is done, press Send for review.",
     "Once approved, follow your scorecard and trust score here.",
@@ -46,10 +47,6 @@ export const PARTNERSHIP: Omit<PageKnowledgeOf<PartnershipInput>, "route"> = {
       meaning: "Photos or videos of your storage space.",
       mistakes: ["Add at least two.", "Photos can be up to 15 MB and videos up to 100 MB."],
     },
-    consent: {
-      labels: ["I've read the agreement and I'm signing it electronically."],
-      meaning: "Confirms you've read the partner agreement and are signing it electronically. Open the agreement to read it first.",
-    },
     declaration: { labels: [/^I /], meaning: "Confirms the work and tax declaration for your country, such as having the right to work and declaring what you earn." },
     taxId: {
       labels: [/\(optional\)$/, "Tax reference", "Unique Taxpayer Reference (UTR)", "EIN or SSN"],
@@ -60,7 +57,11 @@ export const PARTNERSHIP: Omit<PageKnowledgeOf<PartnershipInput>, "route"> = {
     contact: { labels: ["Email or phone"], meaning: "How we can contact your referee.", mistakes: ["Between 5 and 160 characters."] },
     relationship: { labels: ["How they know you"], meaning: "How your referee knows you, for example a former employer.", mistakes: ["Between 2 and 160 characters."] },
     documentId: { labels: [], meaning: "The version of the partner agreement you're signing. It's filled in for you." },
-    signatureName: { labels: ["Type your full name to sign"], meaning: "Your full name as your signature.", mistakes: ["It must match the name on your application exactly."] },
+    signature: {
+      labels: ["Full name", "Draw", "Type", /electronic signature/],
+      meaning: "Your signature on the partner agreement. Open Review and sign, tap Sign here, then draw it with your finger or mouse, or type your name.",
+      mistakes: ["The name must match the name on your application exactly.", "Tick the box to confirm your electronic signature."],
+    },
     insurer: { labels: ["Insurer"], meaning: "The company that provides your own insurance.", mistakes: ["Between 2 and 120 characters."] },
     policyNumber: { labels: ["Policy number"], meaning: "The number of your insurance policy.", mistakes: ["Between 3 and 60 characters."] },
     coverMinor: { labels: ["Cover"], meaning: "How much your policy covers. We ask for a set amount of cover, shown above the form." },
