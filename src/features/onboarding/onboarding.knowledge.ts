@@ -35,13 +35,14 @@ const TAX_NUMBER_LABELS = ["Tax number (optional)", "VAT number"];
 export const VERIFICATION_KNOWLEDGE = describePage<VerificationSubmission>({
   route: "/verification",
   title: "Verify your business",
-  purpose: "We check every business against its market's rules before stock can be sent to a hub. Your account goes live once you're verified and accept the vendor agreement.",
+  purpose: "We check every business against its market's rules before stock can be sent to a warehouse. Once you're verified and accept the vendor agreement, your account is ready to go live.",
   steps: [
     "Fill in your business details and registered address.",
     "Add the person we speak to, then their ID.",
     "Upload your ID, a selfie holding it and a business document.",
     "Tell us what you'll store and roughly how much, then check everything and submit for review.",
-    "Once approved, read and accept the vendor agreement to make your account live.",
+    "Once approved, read and accept the vendor agreement.",
+    "If you then see Activate your account, pay the one-off activation fee there. Your account goes live as soon as it's paid. The activation fee isn't refundable.",
   ],
   fields: {
     businessType: { labels: ["Business type"], meaning: "How your business is set up, for example a sole trader or a limited company. The choices depend on your market." },

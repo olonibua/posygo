@@ -46,6 +46,7 @@ const CONSOLE_PAGES = [
   "/admin/partners/mystery-orders",
   "/admin/partners/payouts",
   "/admin/partners/stock-counts",
+  "/admin/products",
   "/admin/receiving",
   "/admin/referrals",
   "/admin/returns",
@@ -58,6 +59,7 @@ const CONSOLE_PAGES = [
   "/admin/storefront-returns",
   "/admin/support",
   "/admin/transfers",
+  "/admin/vendors",
   "/admin/verifications",
   "/admin/warehouses",
 ];

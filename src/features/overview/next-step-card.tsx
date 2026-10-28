@@ -2,16 +2,21 @@
 
 import { hasPermission, type RequiredAgreementView, type VerificationStatus, type VerificationView } from "@/shared";
 import { useQuery } from "@tanstack/react-query";
+import type { ReactNode } from "react";
 
 import { ButtonLink } from "@/components/ui/button";
 import { FeaturePanel } from "@/components/ui/surfaces";
+import { ActivationPayButton } from "@/features/onboarding/activation/activation-pay-button";
+import { useActivation } from "@/features/onboarding/activation/use-activation";
 import { apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
+import { formatMoney, localeFor } from "@/lib/format";
 
 interface StepCopy {
   title: string;
   body: string;
   action: string | null;
+  payment?: ReactNode;
 }
 
 const COPY: Record<VerificationStatus, StepCopy> = {
@@ -23,7 +28,7 @@ const COPY: Record<VerificationStatus, StepCopy> = {
   IN_PROGRESS: { title: "Finish verifying your business", body: "Your answers are saved. Pick up where you left off.", action: "Continue verification" },
   RESUBMISSION_REQUIRED: { title: "Your verification needs changes", body: "Our reviewer left a note explaining what to update.", action: "See what's needed" },
   SUBMITTED: { title: "We're reviewing your business", body: "Most reviews finish within one working day. We'll email you the result.", action: "View status" },
-  APPROVED: { title: "Accept the vendor agreement", body: "You're verified. Accepting the agreement makes your account live.", action: "Review agreement" },
+  APPROVED: { title: "Accept the vendor agreement", body: "You're verified. Accept the agreement to finish setting up your account.", action: "Review agreement" },
   REJECTED: { title: "We couldn't verify your business", body: "Check the email we sent for the reason.", action: "View details" },
 };
 
@@ -33,6 +38,8 @@ const UPDATED_AGREEMENT = {
   action: "Review agreement",
 };
 
+const ACTIVATION_DUE = { title: "Activate your account", action: null };
+
 const MEMBER_WAITING = { title: "Your business is being set up", body: "The account owner is verifying the business. You'll be able to work with stock and orders once that's done.", action: null };
 
 export function NextStepCard({ vendorActive }: { vendorActive: boolean }) {
@@ -40,6 +47,7 @@ export function NextStepCard({ vendorActive }: { vendorActive: boolean }) {
   const isOwner = hasPermission(user.role, "vendor.verification.manage");
   const verification = useQuery({ queryKey: ["vendor", "verification"], queryFn: () => apiRequest<VerificationView>("/v1/vendor/verification"), enabled: !vendorActive });
   const agreements = useQuery({ queryKey: ["vendor", "agreements"], queryFn: () => apiRequest<RequiredAgreementView[]>("/v1/vendor/agreements"), enabled: vendorActive && isOwner });
+  const activation = useActivation({ enabled: !vendorActive && isOwner });
   const copy = stepCopy();
   if (!copy) {
     return null;
@@ -49,11 +57,12 @@ export function NextStepCard({ vendorActive }: { vendorActive: boolean }) {
       stamp="Next step"
       title={copy.title}
       action={
-        copy.action ? (
+        copy.payment ??
+        (copy.action ? (
           <ButtonLink href="/verification" variant="yellow">
             {copy.action} →
           </ButtonLink>
-        ) : null
+        ) : null)
       }
     >
       {copy.body}
@@ -66,6 +75,15 @@ export function NextStepCard({ vendorActive }: { vendorActive: boolean }) {
     }
     if (!isOwner) {
       return MEMBER_WAITING;
+    }
+    const due = activation.data;
+    if (due?.state === "DUE" && due.feeMinor !== null) {
+      const fee = formatMoney(due.feeMinor, due.currency, localeFor(user.countryCode));
+      return {
+        ...ACTIVATION_DUE,
+        body: `You're verified and the agreement is accepted. Pay the one-off activation fee of ${fee} and your account goes live.`,
+        payment: <ActivationPayButton fee={fee} />,
+      };
     }
     return verification.data ? COPY[verification.data.status] : null;
   }

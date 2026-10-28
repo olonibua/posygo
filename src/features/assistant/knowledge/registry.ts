@@ -16,6 +16,7 @@ import * as InboundPages from "@/features/inbound/inbound-pages.knowledge";
 import * as Inbound from "@/features/inbound/inbound.knowledge";
 import * as Inventory from "@/features/inventory/inventory.knowledge";
 import * as Marketing from "@/features/marketing/marketing.knowledge";
+import * as ActivationSandbox from "@/features/onboarding/activation/activation-sandbox.knowledge";
 import * as Onboarding from "@/features/onboarding/onboarding.knowledge";
 import * as OrderPages from "@/features/orders/order-pages.knowledge";
 import * as Order from "@/features/orders/order.knowledge";
@@ -36,6 +37,7 @@ import * as Storefront from "@/features/storefront/storefront.knowledge";
 import * as VendorStorefront from "@/features/storefront/vendor/storefront.knowledge";
 import * as Support from "@/features/support/support.knowledge";
 import * as Tracking from "@/features/tracking/tracking.knowledge";
+import * as Vendors from "@/features/vendors/vendors.knowledge";
 import * as Warehouses from "@/features/warehouses/warehouses.knowledge";
 
 import { type PageKnowledge, routeMatches } from "./types";
@@ -59,6 +61,7 @@ const SOURCES: ReadonlyArray<Record<string, unknown>> = [
   Inbound,
   Inventory,
   Marketing,
+  ActivationSandbox,
   Onboarding,
   OrderPages,
   Order,
@@ -79,6 +82,7 @@ const SOURCES: ReadonlyArray<Record<string, unknown>> = [
   VendorStorefront,
   Support,
   Tracking,
+  Vendors,
   Warehouses,
 ];
 

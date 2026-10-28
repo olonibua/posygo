@@ -36,7 +36,7 @@ export function AuthShell({ railStamp, railTitle, railNote, steps, currentStep =
             {railNote}
           </NotebookNote>
         </aside>
-        <main id="main" className="flex justify-center px-4 py-10 sm:px-10 sm:py-[54px]">
+        <main id="main" className="flex justify-center px-4 pb-36 pt-10 sm:px-10 sm:pb-40 sm:pt-[54px]">
           <div className="motion-rise w-full max-w-[560px] [--i:2]">{children}</div>
         </main>
       </div>

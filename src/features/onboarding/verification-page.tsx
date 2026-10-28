@@ -9,6 +9,7 @@ import { PageSkeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatDate } from "@/lib/format";
 
+import { ActivationPanel } from "./activation/activation-panel";
 import { AgreementsPanel } from "./agreements-panel";
 import { countryName, VERIFICATION_STATUS_DISPLAY } from "./display";
 import { useVerification } from "./use-verification";
@@ -16,7 +17,7 @@ import { VerificationWizard } from "./verification-wizard";
 
 const OUTCOME_COPY: Partial<Record<VerificationView["status"], { title: string; body: string }>> = {
   SUBMITTED: { title: "We're reviewing your business", body: "Most reviews finish within one working day. We'll email you as soon as there's a decision." },
-  APPROVED: { title: "Your business is verified", body: "Accept the vendor agreement below and your account goes live." },
+  APPROVED: { title: "Your business is verified", body: "Accept the vendor agreement below to finish setting up your account." },
   REJECTED: { title: "We couldn't verify your business", body: "Reply to the email we sent if you think this is a mistake." },
 };
 
@@ -50,6 +51,7 @@ export function VerificationPage() {
         </Paper>
       ) : null}
       <AgreementsPanel />
+      <ActivationPanel />
     </div>
   );
 }

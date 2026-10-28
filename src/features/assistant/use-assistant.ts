@@ -23,6 +23,10 @@ export type Nudge = { kind: "stuck"; field: string; text: string } | { kind: "er
 const TALK_MS = 1_800;
 const errorKey = (error: NoticedError) => `${error.code}|${error.endpoint}`;
 
+function withoutRepeats(current: readonly ChatMessage[], replies: readonly ChatMessage[]): ChatMessage[] {
+  return replies.reduce<ChatMessage[]>((all, reply) => (all.at(-1)?.text === reply.text ? all : [...all, reply]), [...current]);
+}
+
 export function useAssistant() {
   const pathname = usePathname();
   const page = knowledgeFor(pathname);
@@ -51,7 +55,7 @@ export function useAssistant() {
   const hear = useCallback((message: ChatMessage) => setMessages((current) => [...current, message].slice(-60)), []);
   const speak = useCallback(
     (...replies: ChatMessage[]) => {
-      setMessages((current) => [...current, ...replies].slice(-60));
+      setMessages((current) => withoutRepeats(current, replies).slice(-60));
       setMood("talk", TALK_MS);
       const spoken = replies.filter((reply) => reply.from === "helper").at(-1);
       if (spoken) {

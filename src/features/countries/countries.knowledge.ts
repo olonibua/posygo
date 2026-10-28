@@ -1,18 +1,26 @@
-import type { PartnerProgramme } from "@/shared";
+import type { ActivationFeeInput, PartnerProgramme } from "@/shared";
 
 import { describePage } from "@/features/assistant/knowledge/types";
 
-export const COUNTRIES_KNOWLEDGE = describePage<PartnerProgramme>({
+export const COUNTRIES_KNOWLEDGE = describePage<PartnerProgramme & ActivationFeeInput>({
   route: "/admin/countries",
   title: "Markets",
-  purpose: "Every country on the network, its status, and the rules for its fulfilment partner programme. Going live needs at least one approved fulfilment hub.",
+  purpose: "Every country on the network, its status, its activation fee for new vendors, and the rules for its fulfilment partner programme. Going live needs at least one approved fulfilment hub.",
   steps: [
     "Filter by status to find a country.",
+    "Press Activation fee to set the one-off fee new vendors in that country pay before going live, then save it. Only a super admin can change it.",
     "Press Partner settings to open that country's partner programme.",
     "Set whether it takes applications, the tax and work rules, the safeguards, the custody rules and the tiers.",
     "Save the partner settings.",
   ],
   fields: {
+    activationFeeMinor: {
+      labels: ["Activation fee"],
+      meaning:
+        "A one-off fee, in the country's currency, that vendors pay once they're verified and have accepted the agreement. We keep it and it isn't refundable. Zero means no fee, so vendors go live straight away, and setting it to zero makes anyone waiting to pay live. A change applies to vendors who haven't paid yet, never to vendors already live.",
+      example: "8.00",
+      mistakes: ["Use a number like 8 or 8.50, with no more decimal places than the currency allows.", "It can't be negative."],
+    },
     acceptingApplications: { labels: ["Take partner applications in this country"], meaning: "When ticked, people in this country can apply to become fulfilment partners." },
     taxId: {
       labels: ["Tax reference name", "Format (pattern)", "Required"],

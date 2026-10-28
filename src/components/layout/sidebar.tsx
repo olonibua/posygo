@@ -15,7 +15,17 @@ import { activeItem, type Console, type NavItem, visibleItems } from "./navigati
 
 const ITEM = "motion-press relative z-[1] flex items-center gap-3 rounded-nav px-2.5 py-[7px] text-[15px] no-underline";
 
-export function Sidebar({ console, user, onNavigate }: { console: Console; user: SessionUser; onNavigate?: () => void }) {
+interface SidebarProps {
+  console: Console;
+  user: SessionUser;
+  onNavigate?: () => void;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+}
+
+const FADE = "whitespace-nowrap transition-opacity duration-200";
+
+export function Sidebar({ console, user, onNavigate, collapsed = false, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname();
   const items = visibleItems(console, user);
   const current = activeItem(items, pathname);
@@ -26,15 +36,28 @@ export function Sidebar({ console, user, onNavigate }: { console: Console; user:
   useLayoutEffect(() => {
     const active = nav.current?.querySelector<HTMLElement>('[aria-current="page"]');
     setPill(active ? { top: active.offsetTop, height: active.offsetHeight } : null);
-  }, [pathname, items.length]);
+  }, [pathname, items.length, collapsed]);
 
   return (
     <div className="flex h-full flex-col">
-      <div className="border-b border-line px-6 pb-[22px] pt-[26px]">
-        <b className="block text-[20px] font-semibold tracking-[-0.4px]">{BRAND.name}</b>
-        <span className="text-label uppercase tracking-[1.4px] text-ink-faint">{console.label}</span>
+      <div className={cn("flex h-[76px] shrink-0 items-center gap-2 border-b border-line px-5", collapsed && "justify-center px-0")}>
+        <div className={cn("min-w-0 flex-1", FADE, collapsed && "hidden")}>
+          <b className="block text-[20px] font-semibold leading-tight tracking-[-0.4px]">{BRAND.name}</b>
+          <span className="block truncate text-label uppercase tracking-[1.4px] text-ink-faint">{console.label}</span>
+        </div>
+        {onToggleCollapse ? (
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-expanded={!collapsed}
+            className="motion-press grid h-9 w-9 shrink-0 place-items-center rounded-nav text-ink-soft hover:bg-paper-sunk hover:text-ink"
+          >
+            <Icon name="collapse" className={cn("h-[18px] w-[18px] transition-transform duration-300 ease-[var(--ease-out)]", collapsed && "rotate-180")} />
+          </button>
+        ) : null}
       </div>
-      <nav ref={nav} aria-label={console.label} className="relative min-h-0 flex-1 overflow-y-auto px-3.5 py-3">
+      <nav ref={nav} aria-label={console.label} className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3.5 py-3">
         {pill ? (
           <span
             aria-hidden
@@ -44,16 +67,18 @@ export function Sidebar({ console, user, onNavigate }: { console: Console; user:
         ) : null}
         {groups.map((group) => (
           <div key={group} className="mb-2">
-            <p className="px-2.5 pb-1 pt-2 text-label uppercase text-ink-faint">{group}</p>
+            <p aria-hidden={collapsed} className={cn("px-2.5 pb-1 pt-2 text-label uppercase text-ink-faint", FADE, collapsed && "opacity-0")}>
+              {group}
+            </p>
             {items
               .filter((item) => item.group === group)
               .map((item) => (
-                <SidebarItem key={item.label} item={item} active={item === current} onNavigate={onNavigate} />
+                <SidebarItem key={item.label} item={item} active={item === current} collapsed={collapsed} onNavigate={onNavigate} />
               ))}
           </div>
         ))}
       </nav>
-      <div className="mx-4 mb-[18px] mt-3">
+      <div className={cn("mx-4 mb-[18px] mt-3", collapsed && "hidden")}>
         <NotebookNote tone="lime" tilt="slight" className="py-4 pl-[42px] pr-4 text-small">
           <b className="font-semibold">Need a hand?</b>
           <br />
@@ -78,21 +103,31 @@ function ToneIcon({ item, active }: { item: NavItem; active: boolean }) {
   );
 }
 
-function SidebarItem({ item, active, onNavigate }: { item: NavItem; active: boolean; onNavigate?: () => void }) {
+function SidebarItem({ item, active, collapsed, onNavigate }: { item: NavItem; active: boolean; collapsed: boolean; onNavigate?: () => void }) {
+  const label = <span className={cn(FADE, collapsed && "opacity-0")}>{item.label}</span>;
   if (!item.href) {
     return (
-      <span className={cn(ITEM, "cursor-default text-ink-faint")} aria-disabled>
+      <span className={cn(ITEM, "cursor-default text-ink-faint")} aria-disabled title={collapsed ? item.label : undefined}>
         <ToneIcon item={item} active={false} />
-        {item.label}
-        <span className="ml-auto rounded-chip bg-paper px-2 py-0.5 text-label uppercase">Soon</span>
+        {label}
+        <span className={cn("ml-auto rounded-chip bg-paper px-2 py-0.5 text-label uppercase", FADE, collapsed && "opacity-0")}>Soon</span>
       </span>
     );
   }
   return (
-    <Link href={item.href} onClick={onNavigate} aria-current={active ? "page" : undefined} className={cn(ITEM, "group", active ? "font-medium text-ink" : "text-ink-soft hover:text-ink")}>
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      title={collapsed ? item.label : undefined}
+      aria-current={active ? "page" : undefined}
+      className={cn(ITEM, "group", active ? "font-medium text-ink" : "text-ink-soft hover:text-ink")}
+    >
       <ToneIcon item={item} active={active} />
-      {item.label}
-      <span aria-hidden className={cn("ml-auto h-2 w-2 rounded-full transition-[scale,opacity] duration-300", toneSurface[item.tone], active ? "scale-100 opacity-100" : "scale-0 opacity-0")} />
+      {label}
+      <span
+        aria-hidden
+        className={cn("ml-auto h-2 w-2 shrink-0 rounded-full transition-[scale,opacity] duration-300", toneSurface[item.tone], active && !collapsed ? "scale-100 opacity-100" : "scale-0 opacity-0")}
+      />
     </Link>
   );
 }

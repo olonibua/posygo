@@ -53,3 +53,20 @@ describe("active section", () => {
     expect(activeItem(ADMIN_CONSOLE.items, "/overview")).toBeUndefined();
   });
 });
+
+describe("vendor directory navigation", () => {
+  const staff = (role: SessionUser["role"]) => ({ ...partnerLead("ACTIVE"), role, partnerId: null, partnerStatus: null }) as unknown as SessionUser;
+
+  it("shows vendors after partners and products beside stock to staff who can read vendors", () => {
+    const labels = visibleItems(ADMIN_CONSOLE, staff("COUNTRY_OPS")).map((item) => item.label);
+    expect(labels.slice(labels.indexOf("Partners"), labels.indexOf("Partners") + 2)).toEqual(["Partners", "Vendors"]);
+    expect(labels.slice(labels.indexOf("Products"), labels.indexOf("Products") + 2)).toEqual(["Products", "Stock"]);
+    expect(activeItem(ADMIN_CONSOLE.items, "/admin/vendors/123")?.label).toBe("Vendors");
+  });
+
+  it("keeps them from warehouse operators", () => {
+    const labels = visibleItems(ADMIN_CONSOLE, staff("WAREHOUSE_OPERATOR")).map((item) => item.label);
+    expect(labels).not.toContain("Vendors");
+    expect(labels).not.toContain("Products");
+  });
+});

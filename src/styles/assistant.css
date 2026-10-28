@@ -71,11 +71,26 @@
   .posy-happy .posy-bloom {
     animation: posy-twirl 0.9s var(--ease-out) both;
   }
+  .posy-glow {
+    animation: posy-glow 2.8s ease-in-out infinite;
+  }
   .helper-panel-enter {
     animation: helper-open var(--dur-slow) var(--ease-spring) both;
   }
   .helper-bubble-enter {
     animation: helper-bubble 0.38s var(--ease-spring) both;
+  }
+}
+
+@keyframes posy-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
   }
 }
 

@@ -75,9 +75,13 @@ export function errorReply(error: NoticedError, reference: string | null): ChatM
       : "I can tell our team right now, with everything they need to see what happened.";
     return helperSays(`This isn't something you did. ${guide.meaning} ${told}\n\n${guide.nextStep}`, reference ? undefined : [{ kind: "report-error", label: "Tell the team" }]);
   }
-  const intro = error.message && error.message !== guide.meaning ? `The page said: "${error.message}"\n\n` : "";
+  const detail = error.message && error.message !== guide.meaning ? error.message : null;
+  if (guide.general && detail) {
+    return helperSays(detail, [...fieldActions, ASK_TEAM]);
+  }
+  const link: HelperAction[] = guide.link ? [{ kind: "link", ...guide.link }] : [];
   const support: HelperAction[] = guide.needsSupport ? [{ kind: "report-error", label: "Get our team to help" }] : [];
-  return helperSays(`${intro}${guide.meaning} ${guide.nextStep}`, [...fieldActions, ...support]);
+  return helperSays(`${detail ?? guide.meaning} ${guide.nextStep}`, [...link, ...fieldActions, ...support]);
 }
 
 const STOP_WORDS = new Set(["what", "does", "the", "this", "that", "mean", "means", "for", "how", "do", "i", "is", "a", "an", "my", "to", "in", "of", "and", "should", "put", "enter", "field", "box"]);

@@ -28,9 +28,23 @@ describe("what the helper says", () => {
     const reply = errorReply(failure({ code: "validation_failed", status: 400, message: "Some fields need attention.", rejectedFields: ["Tariff code"] }), null);
     expect(reply.text).toContain("Fix the fields marked in red");
     expect(reply.actions).toEqual([{ kind: "explain-field", field: "Tariff code", label: 'Explain "Tariff code"' }]);
-    const funds = errorReply(failure({ code: "insufficient_funds", status: 409, message: "Your wallet is £4.00 short. Top up and try again." }), null);
-    expect(funds.text).toContain("£4.00 short");
-    expect(funds.text).toContain("Top up your wallet");
+    const funds = errorReply(failure({ code: "insufficient_funds", status: 409, message: "Your wallet is £4.00 short." }), null);
+    expect(funds.text).toBe("Your wallet is £4.00 short. Top up your wallet, then try again.");
+    expect(funds.actions).toEqual([{ kind: "link", href: "/wallet", label: "Go to wallet" }]);
+  });
+
+  it("tells an unverified seller to finish verification, with a way there, instead of guessing at permissions", () => {
+    const reply = errorReply(failure({ code: "verification_required", status: 403, message: "Finish verifying your business before sending stock." }), null);
+    expect(reply.text).toMatch(/^Finish verifying your business before sending stock\. /);
+    expect(reply.text).not.toMatch(/permission|role/i);
+    expect(reply.actions).toEqual([{ kind: "link", href: "/verification", label: "Go to verification" }]);
+  });
+
+  it("trusts the page's own reason over a general guess", () => {
+    const reply = errorReply(failure({ code: "forbidden", status: 403, message: "Only partner managers can make this decision." }), null);
+    expect(reply.text).toBe("Only partner managers can make this decision.");
+    expect(reply.actions).toEqual([{ kind: "ask-team", label: "Ask our team" }]);
+    expect(errorReply(failure({ code: "forbidden", status: 403, message: "Your account can't do this." }), null).text).toContain("whoever manages your account");
   });
 
   it("offers our team when the account needs a person", () => {

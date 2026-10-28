@@ -1,6 +1,6 @@
 "use client";
 
-import { COUNTRY_STATUSES, type CountryStatus, hasPermission } from "@/shared";
+import { activationFeeOf, COUNTRY_STATUSES, type CountryStatus, hasPermission } from "@/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -12,12 +12,14 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatTile, StatTileGrid } from "@/components/ui/stat-tile";
 import { apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatMoney } from "@/lib/format";
 
+import { ActivationFeeForm } from "./activation-fee-form";
 import { type AdminCountry, COUNTRY_STATUS_DISPLAY, describeTax } from "./country-display";
 import { PartnerProgrammeForm } from "./partner-programme-form";
 
 type StatusFilter = "ALL" | CountryStatus;
+type SettingsPanel = "partners" | "activation";
 
 export function useAdminCountries(enabled = true) {
   return useQuery({ queryKey: ["admin", "countries"], queryFn: () => apiRequest<AdminCountry[]>("/v1/admin/countries"), enabled });
@@ -40,17 +42,18 @@ export function AdminCountries() {
   const user = useCurrentUser();
   const countries = useAdminCountries();
   const [filter, setFilter] = useState<StatusFilter>("ALL");
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<{ code: string; panel: SettingsPanel } | null>(null);
   const all = countries.data ?? [];
   const rows = filter === "ALL" ? all : all.filter((country) => country.status === filter);
-  const selectedCountry = all.find((country) => country.code === selected);
+  const selectedCountry = all.find((country) => country.code === selected?.code);
+  const editable = hasPermission(user.role, "countries.manage");
 
   return (
     <div className="flex flex-col gap-7">
       <PageHeader
         stamp="Countries"
         title="Markets"
-        lead="Every country is a configuration: currency, tax, address rules, identity checks and the partner programme. Going live needs at least one approved fulfilment hub."
+        lead="Every country is a configuration: currency, tax, address rules, identity checks, the activation fee and the partner programme. Going live needs at least one approved fulfilment hub."
       />
       <CountriesSummary />
       <div className="flex flex-col gap-3">
@@ -72,9 +75,14 @@ export function AdminCountries() {
               header: "",
               align: "right",
               render: (row) => (
-                <Button variant="ghost" onClick={() => setSelected(row.code)}>
-                  Partner settings
-                </Button>
+                <div className="flex justify-end gap-1">
+                  <Button variant="ghost" onClick={() => setSelected({ code: row.code, panel: "activation" })}>
+                    Activation fee
+                  </Button>
+                  <Button variant="ghost" onClick={() => setSelected({ code: row.code, panel: "partners" })}>
+                    Partner settings
+                  </Button>
+                </div>
               ),
             },
           ]}
@@ -83,7 +91,8 @@ export function AdminCountries() {
           empty={countries.isLoading ? "Loading countries…" : <EmptyState title="No countries match" body="Try another status filter." />}
         />
       </div>
-      {selectedCountry ? <PartnerProgrammeForm key={selectedCountry.code} country={selectedCountry} editable={hasPermission(user.role, "countries.manage")} /> : null}
+      {selectedCountry && selected?.panel === "partners" ? <PartnerProgrammeForm key={selectedCountry.code} country={selectedCountry} editable={editable} /> : null}
+      {selectedCountry && selected?.panel === "activation" ? <ActivationFeeForm key={selectedCountry.code} country={selectedCountry} editable={editable} /> : null}
     </div>
   );
 }
@@ -93,6 +102,14 @@ const COLUMNS: readonly Column<AdminCountry>[] = [
   { key: "name", header: "Country", render: (row) => row.name },
   { key: "currency", header: "Currency", render: (row) => row.currency },
   { key: "tax", header: "Tax", render: (row) => <span className="text-ink-soft">{describeTax(row.config.tax)}</span> },
+  {
+    key: "activationFee",
+    header: "Activation fee",
+    render: (row) => {
+      const fee = activationFeeOf(row.config);
+      return fee > 0 ? formatMoney(fee, row.currency, "en-GB") : <span className="text-ink-soft">None</span>;
+    },
+  },
   { key: "status", header: "Status", render: (row) => <StatusPill tone={COUNTRY_STATUS_DISPLAY[row.status].tone}>{COUNTRY_STATUS_DISPLAY[row.status].label}</StatusPill> },
   { key: "updated", header: "Updated", align: "right", render: (row) => <span className="text-ink-soft">{formatDate(row.updatedAt, "en-GB")}</span> },
 ];

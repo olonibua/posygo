@@ -21,18 +21,24 @@ export function AppShell({ console, user, children }: { console: Console; user: 
   const pathname = usePathname();
   const [drawer, setDrawer] = useState<DrawerState>("closed");
   const close = useCallback(() => setDrawer((state) => (state === "open" ? "closing" : state)), []);
+  const [collapsed, toggleCollapsed] = useCollapsedSidebar();
 
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[264px_1fr]">
-      <aside className="hidden border-r border-line bg-ground lg:block">
+    <div
+      className={cn(
+        "min-h-screen lg:grid lg:transition-[grid-template-columns] lg:duration-300 lg:ease-[var(--ease-out)]",
+        collapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[264px_1fr]",
+      )}
+    >
+      <aside className="hidden min-w-0 overflow-hidden border-r border-line bg-ground lg:block">
         <div className="sticky top-0 h-screen">
-          <Sidebar console={console} user={user} />
+          <Sidebar console={console} user={user} collapsed={collapsed} onToggleCollapse={toggleCollapsed} />
         </div>
       </aside>
       {drawer === "closed" ? null : <Drawer state={drawer} console={console} user={user} onClose={close} onClosed={() => setDrawer("closed")} />}
       <div className="flex min-w-0 flex-col">
         <Topbar console={console} user={user} onOpenMenu={() => setDrawer("open")} />
-        <main id="main" className="px-4 py-6 sm:px-9 sm:py-[30px]">
+        <main id="main" className="px-4 pb-36 pt-6 sm:px-9 sm:pb-40 sm:pt-[30px]">
           <div key={pathname} className="motion-rise">
             {children}
           </div>
@@ -40,6 +46,30 @@ export function AppShell({ console, user, children }: { console: Console; user: 
       </div>
     </div>
   );
+}
+
+const COLLAPSED_KEY = "posygo.sidebar-collapsed";
+
+function useCollapsedSidebar(): [boolean, () => void] {
+  const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => {
+    try {
+      setCollapsed(window.localStorage.getItem(COLLAPSED_KEY) === "1");
+    } catch {
+      setCollapsed(false);
+    }
+  }, []);
+  const toggle = useCallback(() => {
+    setCollapsed((current) => {
+      try {
+        window.localStorage.setItem(COLLAPSED_KEY, current ? "0" : "1");
+      } catch {
+        return !current;
+      }
+      return !current;
+    });
+  }, []);
+  return [collapsed, toggle];
 }
 
 function Drawer({ state, console, user, onClose, onClosed }: { state: DrawerState; console: Console; user: SessionUser; onClose: () => void; onClosed: () => void }) {

@@ -24,6 +24,6 @@ export interface AdminCountry {
   name: string;
   currency: string;
   status: CountryStatus;
-  config: { tax: TaxRules; locale: string; partners?: unknown };
+  config: { tax: TaxRules; locale: string; partners?: unknown; activationFeeMinor?: number };
   updatedAt: string;
 }

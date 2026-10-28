@@ -6,7 +6,7 @@ export const OVERVIEW_KNOWLEDGE = describePage<Record<"destinations", unknown>>(
   purpose: "A quick look at your business: stock on the way, units in storage, your wallet balance and where you can ship.",
   steps: [
     "Check the tiles for shipments on the way, units in storage, open destinations and your wallet balance.",
-    "If there's a next step card, follow it to finish verifying your business or accept an agreement.",
+    "If there's a next step card, follow it to finish verifying your business, accept an agreement or pay the activation fee.",
     "Start a new stock shipment once your account is live.",
     "Look through the list of places you can ship to, filtered by domestic or international.",
   ],
