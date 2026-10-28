@@ -35,6 +35,7 @@ describe("IdentityHandoff", () => {
   it("shows a QR code made on this page and a same-device link on a computer", async () => {
     useScreen(true);
     const props = renderHandoff();
+    await userEvent.click(screen.getByRole("checkbox", { name: /compare my selfie/ }));
     await userEvent.click(screen.getByRole("button", { name: "Verify your identity" }));
     const qr = await screen.findByRole("img", { name: "QR code that opens your identity check" });
     expect(qr.getAttribute("src")).toMatch(/^data:image\/png;base64,/);
@@ -46,6 +47,7 @@ describe("IdentityHandoff", () => {
   it("shows a button that opens the check on a phone", async () => {
     useScreen(false);
     renderHandoff();
+    await userEvent.click(screen.getByRole("checkbox", { name: /compare my selfie/ }));
     await userEvent.click(screen.getByRole("button", { name: "Verify your identity" }));
     expect(await screen.findByRole("link", { name: "Open identity check" })).toHaveAttribute("href", SESSION_URL);
     expect(screen.queryByRole("img")).toBeNull();
@@ -74,5 +76,12 @@ describe("IdentityHandoff", () => {
     expect(screen.getByText("Identity verified")).toBeInTheDocument();
     renderHandoff({ state: "IN_REVIEW" });
     expect(screen.getByText("We're checking your ID")).toBeInTheDocument();
+  });
+
+  it("waits for consent before starting the check", async () => {
+    const onStart = vi.fn(() => Promise.resolve({ url: "https://verify.didit.test/session/abc" }));
+    render(<IdentityHandoff state="NOT_STARTED" editable error={null} starting={false} checking={false} onStart={onStart} onCheck={() => undefined} />);
+    expect(screen.getByRole("button", { name: "Verify your identity" })).toBeDisabled();
+    expect(onStart).not.toHaveBeenCalled();
   });
 });

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/ui/chip";
 import { FormAlert } from "@/components/ui/form-controls";
 import { Paper, Stamp } from "@/components/ui/surfaces";
+import { AgreementBody } from "@/features/agreements/agreement-body";
 import { AgreementSigning } from "@/features/agreements/agreement-signing";
 import { ApiError, apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
@@ -67,7 +68,9 @@ export function AgreementsPanel() {
             </div>
             {!signed && reading === document.id ? (
               <div className="mt-4 flex flex-col gap-4">
-                <div className="max-h-[360px] overflow-y-auto whitespace-pre-wrap rounded-card bg-paper-sunk px-5 py-4 text-small leading-[22px] text-ink-soft">{document.body}</div>
+                <div className="max-h-[420px] overflow-y-auto rounded-card bg-vellum px-5 py-5 font-legal ring-1 ring-line sm:px-8">
+                  <AgreementBody body={document.body} />
+                </div>
                 {!acceptedAt && canAccept ? (
                   <Button variant="yellow" className="self-end" loading={accept.isPending} onClick={() => accept.mutate({ documentId: document.id })}>
                     I accept on behalf of my business

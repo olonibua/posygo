@@ -22,3 +22,20 @@ export const STAFF_KNOWLEDGE = describePage<InviteStaffInput>({
   },
   related: [{ href: "/admin/security", label: "Security" }],
 });
+
+export const EMAIL_ALERTS_KNOWLEDGE = describePage({
+  route: "/admin/email-alerts",
+  title: "Email alerts",
+  purpose:
+    "Choose which staff alerts are also sent by email. Every alert always appears in the bell; switching one on also emails the staff who handle that work, which uses the email allowance.",
+  steps: [
+    "Find the alert, for example Stock shipments sent by sellers.",
+    "Switch it on to email the staff who handle it, or off to keep it in the bell only.",
+    "Support cases are emailed by default so system problems reach the team quickly.",
+  ],
+  fields: {},
+  related: [
+    { href: "/admin/staff", label: "Staff" },
+    { href: "/admin/support", label: "Support cases" },
+  ],
+});

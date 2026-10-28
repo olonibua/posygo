@@ -78,6 +78,7 @@ export const ADMIN_CONSOLE: Console = {
     { label: "Referrals", icon: "team", tone: "lime", group: "Money", href: "/admin/referrals", permission: "referrals.read" },
     { label: "Prices", icon: "document", tone: "pink", group: "Money", href: "/admin/fees", permission: "fees.read" },
     { label: "Staff", icon: "team", tone: "sky", group: "People", href: "/admin/staff", permission: "staff.manage" },
+    { label: "Email alerts", icon: "bell", tone: "yellow", group: "People", href: "/admin/email-alerts", permission: "staff.manage" },
     { label: "Security", icon: "shield", tone: "lime", group: "People", href: "/admin/security" },
   ],
 };

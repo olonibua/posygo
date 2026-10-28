@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button, buttonClasses } from "@/components/ui/button";
 import { CheckMark } from "@/components/ui/check-mark";
-import { FormAlert } from "@/components/ui/form-controls";
+import { Checkbox, FormAlert } from "@/components/ui/form-controls";
 import { toneSurface } from "@/components/ui/tone";
 import { cn } from "@/lib/cn";
 
@@ -104,6 +104,7 @@ function StartPanel({
   onStart: () => void;
   onCheck: () => void;
 }) {
+  const [consent, setConsent] = useState(false);
   return (
     <div className="flex flex-col gap-4">
       {state === "DECLINED" ? <p className={cn("rounded-card px-4 py-3 text-small", toneSurface.pink)}>{reason ? `Your check didn't pass: ${reason}.` : "Your check didn't pass."}</p> : null}
@@ -113,13 +114,20 @@ function StartPanel({
           : "Have your passport, driving licence or ID card ready. You'll take a photo of it and a short selfie video. It takes about 2 minutes."}
       </p>
       {editable ? (
+        <Checkbox
+          label="I agree that Didit may compare my selfie with the photo on my ID to confirm it's me. Posygo keeps only the result, not the photos."
+          checked={consent}
+          onChange={(event) => setConsent(event.target.checked)}
+        />
+      ) : null}
+      {editable ? (
         <div className="flex flex-wrap items-center justify-end gap-3">
           {state === "WAITING" ? (
             <Button variant="ghost" loading={checking} onClick={onCheck}>
               Check again
             </Button>
           ) : null}
-          <Button variant="lime" loading={starting} onClick={onStart}>
+          <Button variant="lime" loading={starting} disabled={!consent} onClick={onStart}>
             {state === "DECLINED" ? "Try again" : state === "WAITING" ? "Continue check" : "Verify your identity"}
           </Button>
         </div>

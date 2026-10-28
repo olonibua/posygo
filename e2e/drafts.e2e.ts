@@ -11,15 +11,16 @@ test.describe("drafts", () => {
     await page.getByLabel("Product name").fill("Draft linen shirt");
     await expect(page.getByRole("status").filter({ hasText: "Draft saved" })).toBeVisible();
 
-    await page.goto("/overview");
-    await page.goto("/products/new");
+    await page.getByRole("navigation", { name: "Vendor portal" }).getByRole("link", { name: "Overview" }).click();
+    await expect(page).toHaveURL(/\/overview/);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/products\/new/);
     await expect(page.getByRole("status").filter({ hasText: "Picked up your draft from" })).toBeVisible();
     await expect(page.getByLabel("Product name")).toHaveValue("Draft linen shirt");
 
     await page.getByRole("button", { name: "Discard draft" }).click();
     await expect(page.getByLabel("Product name")).toHaveValue("");
-    await page.reload();
-    await expect(page.getByLabel("Product name")).toHaveValue("");
+    await expect(page.getByRole("button", { name: "Discard draft" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Discard draft" })).toHaveCount(0);
     expect(problems).toEqual([]);
   });

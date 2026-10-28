@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { MarketingFooter, MarketingHeader } from "@/components/layout/marketing-chrome";
 import { PageHeader } from "@/components/ui/page-header";
 import { Paper } from "@/components/ui/surfaces";
+import { AgreementBody } from "@/features/agreements/agreement-body";
 import { fetchLiveCountries } from "@/features/marketing/live-countries";
 import { fetchPublic } from "@/lib/api/public-server";
 import { cn } from "@/lib/cn";
@@ -13,9 +14,9 @@ import { formatDate } from "@/lib/format";
 import { publicPage } from "@/lib/site";
 
 const DOCUMENTS: Record<string, { kind: LegalDocumentKind; title: string; summary: string }> = {
-  terms: { kind: "TERMS", title: "Terms of service", summary: "The terms that apply when you use Posygo, for each country we serve." },
-  privacy: { kind: "PRIVACY", title: "Privacy policy", summary: "What personal information Posygo keeps, why, for how long and who it's shared with, for each country we serve." },
-  "vendor-agreement": { kind: "VENDOR_AGREEMENT", title: "Vendor agreement", summary: "The agreement between Posygo and sellers who store stock with us, for each country we serve." },
+  terms: { kind: "TERMS", title: "Terms of Service", summary: "The terms that apply when you use Posygo, for each country we serve." },
+  privacy: { kind: "PRIVACY", title: "Privacy Policy", summary: "What personal information Posygo keeps, why, for how long and who it's shared with, for each country we serve." },
+  "vendor-agreement": { kind: "VENDOR_AGREEMENT", title: "Fulfilment Services Agreement", summary: "The agreement between Posygo and sellers who store stock with us, for each country we serve." },
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ document: string }> }): Promise<Metadata> {
@@ -64,7 +65,11 @@ export default async function LegalPage({ params, searchParams }: { params: Prom
             ))}
           </nav>
         ) : null}
-        {published ? <Paper className="whitespace-pre-wrap px-6 py-6 text-body leading-[26px] text-ink-soft">{published.body}</Paper> : null}
+        {published ? (
+          <Paper className="max-w-[860px] px-6 py-8 font-legal sm:px-12 sm:py-12">
+            <AgreementBody body={published.body} />
+          </Paper>
+        ) : null}
       </main>
       <MarketingFooter />
     </>

@@ -65,11 +65,9 @@ export function spokenText(text: string): string {
 }
 
 const FEMALE_NAMES =
-  /libby|sonia|maisie|hazel|susan|zira|aria|jenny|michelle|emma|ava|samantha|karen|moira|tessa|serena|kate|stephanie|martha|fiona|victoria|allison|zoe|shelley|flo|sandy|catherine|female|woman|girl/i;
+  /libby|sonia|maisie|hazel|susan|zira|aria|jenny|michelle|emma|ava|samantha|karen|moira|tessa|serena|kate|stephanie|martha|fiona|victoria|allison|zoe|shelley|catherine|female|woman/i;
 const MALE_NAMES = /\b(male|daniel|arthur|oliver|alex|fred|george|ryan|thomas|david|mark|guy|james|aaron|rishi|gordon|lee|reed|eddy|grandpa|ralph|albert|bruce|junior)\b/i;
 const VOICE_KEY = "posygo.helper.voice-name";
-const PITCH_FOR_FEMALE = 1.12;
-const PITCH_FOR_FALLBACK = 1.35;
 
 function isFemale(voice: SpeechSynthesisVoice): boolean {
   return FEMALE_NAMES.test(voice.name) && !MALE_NAMES.test(voice.name.replace(/female/gi, ""));
@@ -105,15 +103,10 @@ export function saveVoiceName(name: string): void {
   }
 }
 
-function chosenVoice(): { voice: SpeechSynthesisVoice | undefined; pitch: number } {
+function chosenVoice(): SpeechSynthesisVoice | undefined {
   const female = femaleVoices();
   const saved = readVoiceName();
-  const voice = female.find((entry) => entry.name === saved) ?? female[0];
-  if (voice) {
-    return { voice, pitch: PITCH_FOR_FEMALE };
-  }
-  const fallback = englishVoices().find((entry) => !MALE_NAMES.test(entry.name)) ?? englishVoices()[0];
-  return { voice: fallback, pitch: PITCH_FOR_FALLBACK };
+  return female.find((entry) => entry.name === saved) ?? female[0] ?? englishVoices().find((entry) => entry.lang === "en-GB") ?? englishVoices()[0];
 }
 
 export function say(text: string, events: { onStart?: () => void; onEnd?: () => void } = {}): void {
@@ -122,13 +115,12 @@ export function say(text: string, events: { onStart?: () => void; onEnd?: () => 
   }
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(spokenText(text));
-  const { voice, pitch } = chosenVoice();
+  const voice = chosenVoice();
   if (voice) {
     utterance.voice = voice;
   }
   utterance.lang = voice?.lang ?? "en-GB";
-  utterance.pitch = pitch;
-  utterance.rate = 1.02;
+  utterance.rate = 1;
   utterance.onstart = () => events.onStart?.();
   utterance.onend = () => events.onEnd?.();
   utterance.onerror = () => events.onEnd?.();

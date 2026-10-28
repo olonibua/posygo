@@ -54,6 +54,7 @@ const CONSOLE_PAGES = [
   "/admin/shopping",
   "/admin/shopping-desk",
   "/admin/staff",
+  "/admin/email-alerts",
   "/admin/stock",
   "/admin/storefront-orders",
   "/admin/storefront-returns",
