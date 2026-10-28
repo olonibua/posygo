@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { type FormEvent, useState } from "react";
 
 import { Button, ButtonLink } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { Field, FormAlert, Input, Textarea } from "@/components/ui/form-controls";
 import { EmptyState } from "@/components/ui/navigation-controls";
 import { PageHeader } from "@/components/ui/page-header";
@@ -32,7 +33,9 @@ export function NewReturnPage() {
       <EmptyState
         title="This order can't be returned"
         body={errorMessage(returnable.error) ?? "Open the order you want to return and choose Start a return."}
-        action={<ButtonLink href="/orders">Back to orders</ButtonLink>}
+        action={<ButtonLink href="/orders" icon={<Icon name="back" className="h-4 w-4" />}>
+            Back to orders
+          </ButtonLink>}
       />
     ) : (
       <PageSkeleton />
@@ -114,7 +117,7 @@ export function NewReturnPage() {
         </div>
       </Paper>
       <div className="flex justify-end gap-2">
-        <ButtonLink href={`/orders/${data.orderId}`} variant="ghost">
+        <ButtonLink href={`/orders/${data.orderId}`} variant="ghost" icon={<Icon name="back" className="h-4 w-4" />}>
           Back to the order
         </ButtonLink>
         <Button type="submit" variant="yellow" loading={open.isPending} disabled={lines.length === 0 || reason.trim().length < 5}>

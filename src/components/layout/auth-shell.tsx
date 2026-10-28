@@ -1,6 +1,6 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { BackLink } from "@/components/ui/back-link";
 import { Logo } from "@/components/brand/logo";
 import { type Step, Stepper } from "@/components/ui/stepper";
 import { NotebookNote, Stamp, Sticker } from "@/components/ui/surfaces";
@@ -21,9 +21,9 @@ export function AuthShell({ railStamp, railTitle, railNote, steps, currentStep =
     <div className="flex min-h-screen flex-col">
       <header className="flex h-[76px] items-center justify-between border-b border-line px-4 sm:px-9">
         <Logo />
-        <Link href="/" className="text-small text-ink no-underline hover:underline">
-          ‹ Back to home
-        </Link>
+        <BackLink href="/" className="text-small">
+          Back to home
+        </BackLink>
       </header>
       <div className="grid flex-1 lg:grid-cols-[400px_1fr]">
         <aside className={cn("grain relative hidden overflow-hidden px-10 py-[46px] lg:block", rail)}>

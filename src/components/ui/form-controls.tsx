@@ -4,6 +4,8 @@ import { type ComponentProps, type ReactNode, useId, useState } from "react";
 
 import { cn } from "@/lib/cn";
 
+import { Icon } from "./icon";
+
 const CONTROL =
   "h-12 w-full rounded-card border-[1.5px] border-line-strong bg-paper px-3.5 text-base text-ink outline-none sm:text-[15px] transition-[border-color,box-shadow] duration-200 placeholder:text-ink-faint hover:border-ink-faint focus:border-ink focus:shadow-[0_0_0_4px_var(--yellow)] aria-[invalid=true]:border-danger";
 
@@ -53,9 +55,7 @@ export function Select({ className, children, ...props }: ComponentProps<"select
       <select className={cn(CONTROL, "appearance-none pr-10", className)} {...props}>
         {children}
       </select>
-      <span aria-hidden className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft">
-        ⌄
-      </span>
+      <Icon name="chevronDown" className="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-soft" />
     </div>
   );
 }

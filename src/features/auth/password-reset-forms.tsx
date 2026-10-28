@@ -2,11 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { emailOnlySchema, passwordSchema } from "@/shared";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { BackLink } from "@/components/ui/back-link";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Field, FormAlert, Input, PasswordInput } from "@/components/ui/form-controls";
 import { apiRequest } from "@/lib/api/client";
@@ -37,9 +37,9 @@ export function ForgotPasswordForm() {
         {({ id, describedBy, invalid }) => <Input id={id} type="email" autoComplete="email" aria-describedby={describedBy} aria-invalid={invalid} {...register("email")} />}
       </Field>
       <div className="flex items-center justify-between gap-4 border-t border-line pt-6">
-        <Link href="/login" className="text-[13px] text-ink-soft">
+        <BackLink href="/login" className="text-[13px] text-ink-soft">
           Back to sign in
-        </Link>
+        </BackLink>
         <Button type="submit" variant="yellow" size="lg" loading={formState.isSubmitting}>
           Send reset link →
         </Button>

@@ -18,7 +18,9 @@ export async function uploadPrivateFile(file: File, purpose: UploadPurpose): Pro
   const intent = await apiRequest<UploadIntent>("/v1/files/uploads", { method: "POST", body: { purpose, contentType: file.type, sizeBytes: file.size } }).catch((error: unknown) => {
     throw new Error(error instanceof ApiError ? "That file type isn't accepted here." : "Upload failed. Try again.");
   });
-  const response = await fetch(intent.upload.url, { method: "PUT", headers: intent.upload.headers, body: file });
+  const response = await fetch(intent.upload.url, { method: "PUT", headers: intent.upload.headers, body: file }).catch(() => {
+    throw new Error("We couldn't upload the file. Check your connection and try again.");
+  });
   if (!response.ok) {
     throw new Error("Upload failed. Try again.");
   }

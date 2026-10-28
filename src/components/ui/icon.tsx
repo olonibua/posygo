@@ -88,6 +88,7 @@ export const ICONS = {
   menu: <path d="M4 7h16M4 12h16M4 17h10" />,
   close: <path d="M6 6l12 12M18 6 6 18" />,
   back: <path d="M15 5l-7 7 7 7" />,
+  chevronDown: <path d="m6 9 6 6 6-6" />,
 } satisfies Record<string, ReactNode>;
 
 export type IconName = keyof typeof ICONS;
