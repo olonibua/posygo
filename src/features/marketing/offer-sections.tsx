@@ -11,13 +11,13 @@ const ARRIVALS: readonly DotListItem[] = [
 
 export function FeatureSection() {
   return (
-    <section id="features" className="mt-24 rounded-band bg-sky px-6 py-12 sm:mt-[120px] md:px-16 md:py-[70px]">
+    <section id="features" className="mt-24 rounded-band bg-yellow px-6 py-12 sm:mt-[120px] md:px-16 md:py-[70px]">
       <Stamp className="text-cocoa">Under one roof</Stamp>
       <h2 className="mt-3.5 max-w-[820px] text-[44px] font-medium leading-[46px] tracking-[-1.8px] md:text-display">Every unit counted. Every order where it belongs.</h2>
       <div className="mt-[50px] grid gap-6 md:grid-cols-2">
         <FeatureCard
           title="See every box arrive"
-          body="Each carton is counted and photographed when it reaches the hub, so you know exactly what you have before you sell it."
+          body="Each carton is counted and photographed when it arrives, so you know exactly what you have before you sell it."
           footer={<DotList items={ARRIVALS} />}
         />
         <FeatureCard
@@ -42,14 +42,14 @@ export function AudienceSection() {
   return (
     <section id="who-its-for" className="pt-24 text-center sm:pt-[120px]">
       <Stamp>Who it’s for</Stamp>
-      <h2 className="mx-auto mt-3.5 max-w-[820px] text-[44px] font-medium leading-[46px] tracking-[-1.8px] md:text-display">One network, three ways in</h2>
+      <h2 className="mx-auto mt-3.5 max-w-[820px] text-[44px] font-medium leading-[46px] tracking-[-1.8px] md:text-display">Built for every kind of seller</h2>
       <div className="mt-[54px] grid gap-6 md:grid-cols-3">
         <PlanCard
           tone="yellow"
           title="Sellers"
-          line="Start in the market you know."
+          line="Start in the country you know."
           headline="1"
-          headlineNote="market to start"
+          headlineNote="country to start"
           action={<ButtonLink href="/signup">Start selling</ButtonLink>}
           points={[
             { text: "Verified once, in your own country", dot: "orange" },
@@ -73,15 +73,15 @@ export function AudienceSection() {
         />
         <PlanCard
           tone="sky"
-          title="Fulfilment partners"
-          line="Run a hub where you live."
-          headline="70%"
-          headlineNote="of the hub fees"
-          action={<ButtonLink href="/partners">Become a partner</ButtonLink>}
+          title="No website yet"
+          line="Sell from your own Posygo shop."
+          headline="1"
+          headlineNote="link to share with buyers"
+          action={<ButtonLink href="/signup">Open your shop</ButtonLink>}
           points={[
-            { text: "No upfront cost", dot: "orange" },
-            { text: "Choose how much stock you take", dot: "lime" },
-            { text: "We bring the vendors", dot: "pink" },
+            { text: "Your products on your own shop page", dot: "orange" },
+            { text: "Payments taken for you", dot: "lime" },
+            { text: "Orders go straight to packing", dot: "pink" },
           ]}
         />
       </div>

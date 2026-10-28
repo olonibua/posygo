@@ -24,7 +24,10 @@ const nextConfig = {
     ];
   },
   async redirects() {
-    return FORMER_HOSTS.map((host) => ({ source: "/:path*", has: [{ type: "host", value: host }], destination: `${OFFICIAL_ORIGIN}/:path*`, permanent: true }));
+    return [
+      { source: "/guides/keeping-stock-safe-at-a-fulfilment-hub", destination: "/guides/keeping-your-stock-safe", permanent: true },
+      ...FORMER_HOSTS.map((host) => ({ source: "/:path*", has: [{ type: "host", value: host }], destination: `${OFFICIAL_ORIGIN}/:path*`, permanent: true })),
+    ];
   },
   async rewrites() {
     return apiProxyTarget ? [{ source: "/v1/:path*", destination: `${apiProxyTarget}/v1/:path*` }] : [];

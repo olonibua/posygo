@@ -7,10 +7,8 @@ import { BRAND } from "@/lib/brand";
 const LINKS = [
   { href: "/how-it-works", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/fulfilment", label: "Hubs" },
+  { href: "/fulfilment", label: "Countries" },
   { href: "/marketplace", label: "Shop" },
-  { href: "/shop-for-me", label: "Shop for me" },
-  { href: "/partners", label: "Become a partner" },
   { href: "/login", label: "Sign in" },
 ];
 
@@ -18,6 +16,7 @@ const FOOTER_LINKS = [
   ...LINKS.filter((link) => link.href !== "/login"),
   { href: "/guides", label: "Guides" },
   { href: "/track", label: "Track a parcel" },
+  { href: "/partners", label: "Partners" },
   { href: "/legal/terms", label: "Terms" },
   { href: "/legal/privacy", label: "Privacy" },
 ];

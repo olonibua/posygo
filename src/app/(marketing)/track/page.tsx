@@ -5,7 +5,7 @@ import { publicPage } from "@/lib/site";
 
 export const metadata = publicPage({
   title: "Track a parcel",
-  description: "Track an order shipped from a Posygo fulfilment hub. Enter the tracking number from your shipping email to see where your parcel is.",
+  description: "Track an order sent by Posygo. Enter the tracking number from your shipping email to see where your parcel is.",
   path: "/track",
 });
 

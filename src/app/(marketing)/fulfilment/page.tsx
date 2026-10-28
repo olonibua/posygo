@@ -12,8 +12,8 @@ import { publicPage } from "@/lib/site";
 import { breadcrumbs, fulfilmentService } from "@/lib/structured-data";
 
 export const metadata = publicPage({
-  title: "Fulfilment and fulfillment services by country",
-  description: "Find a local fulfilment hub in the country you sell to. See where Posygo has vetted hubs today, what each one costs and how quickly orders reach customers.",
+  title: "Ecommerce fulfilment by country: fast delivery to your customers",
+  description: "See the countries where Posygo stores your stock and delivers your orders, what it costs and how quickly orders reach your customers.",
   path: "/fulfilment",
 });
 
@@ -37,11 +37,11 @@ export default async function FulfilmentIndexPage() {
         ]}
       />
       <main id="main" className="mx-auto max-w-container px-4 pb-24 sm:px-8">
-        <PageIntro stamp="Hubs by country" title="Local fulfilment in the countries you sell to">
-          <p>Each country below has vetted local hubs that receive, store and pack your stock. Pick one to see its prices and how it works there.</p>
+        <PageIntro stamp="Where we deliver" title="Fast delivery in the countries you sell to">
+          <p>In each country below we store your stock, then pack and deliver every order in days. Pick one to see its prices and how it works there.</p>
         </PageIntro>
         {markets.length === 0 ? (
-          <p className="mt-10 text-ink-soft">Our first hubs are being set up.</p>
+          <p className="mt-10 text-ink-soft">We&apos;re opening our first countries soon.</p>
         ) : (
           <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {markets.map((market, index) => (

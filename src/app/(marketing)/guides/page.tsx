@@ -10,8 +10,8 @@ import { absoluteUrl, publicPage } from "@/lib/site";
 import { breadcrumbs } from "@/lib/structured-data";
 
 export const metadata = publicPage({
-  title: "Guides to selling abroad and local fulfilment",
-  description: "Plain guides for online sellers: how to sell in another country without a warehouse, what fulfilment costs and how stock is kept safe at a local hub.",
+  title: "Guides to selling abroad and faster delivery",
+  description: "Plain guides for online sellers: how to sell in another country without a warehouse, what fulfilment costs and how we keep your stock safe.",
   path: "/guides",
 });
 

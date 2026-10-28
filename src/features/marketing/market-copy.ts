@@ -13,7 +13,7 @@ export function marketDescription(market: Market): string {
   const word = fulfilmentWord(market.country.code);
   const name = countryPhrase(market.country);
   const packing = market.prices ? ` Packing from ${money(market, market.prices.schedule.fulfilment.baseMinor)}.` : "";
-  return `Ecommerce ${word} in ${name}: vetted local hubs store your stock, pack every order and ship it tracked. No subscription.${packing}`;
+  return `Ecommerce ${word} in ${name}: we store your stock close to your customers, pack every order and deliver it in days, tracked. No subscription.${packing}`;
 }
 
 function money(market: Market, minor: number): string {
@@ -43,19 +43,19 @@ export function marketFaq(market: Market): FaqItem[] {
   }
   items.push(
     {
-      question: `Is my stock insured at a ${name} hub?`,
+      question: `Is my stock insured while you hold it in ${name}?`,
       answer:
         market.hub && market.hub.insuredCoverMinor > 0
-          ? `Yes. Stock at our ${name} hubs is insured up to ${money(market, market.hub.insuredCoverMinor)}, and we hold the cover, not the partner. Every arrival and every parcel is photographed.`
-          : `Yes. We hold the insurance for stock while it's at a hub, and every arrival and every parcel is photographed.`,
+          ? `Yes. Your stock in ${name} is insured up to ${money(market, market.hub.insuredCoverMinor)} while we hold it. Every arrival and every parcel is photographed.`
+          : `Yes. Your stock is insured while we hold it, and every arrival and every parcel is photographed.`,
     },
     {
       question: `Do I need a company in ${name} to use ${word} there?`,
-      answer: `No. You sign up as a seller, send stock to the hub we give you and pay in ${market.country.currency}. Orders are packed in ${name} and handed to a local carrier.`,
+      answer: `No. You sign up as a seller, send your stock to the address we give you and pay in ${market.country.currency}. Orders are packed in ${name} and delivered in days.`,
     },
     {
       question: `How do I start ${word} in ${name}?`,
-      answer: `Create an account, add your products, then tell us what you're sending. We give you the hub address. When your boxes arrive they're counted and photographed, and your stock is ready to sell.`,
+      answer: `Create an account, add your products, then tell us what you're sending. We give you the address to send it to. When your boxes arrive they're counted and photographed, and your stock is ready to sell.`,
     },
   );
   return items;

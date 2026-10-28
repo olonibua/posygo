@@ -123,7 +123,6 @@ export const ACCOUNT_KNOWLEDGE = describePage<BuyerLinkInput & ReturnRequestInpu
   },
   related: [
     { href: "/track", label: "Track a parcel" },
-    { href: "/shop-for-me", label: "Ask us to shop for you" },
     { href: "/marketplace", label: "Marketplace" },
   ],
 });
@@ -140,12 +139,11 @@ export const ACCOUNT_SIGN_IN_KNOWLEDGE = describePage({
 export const MARKETPLACE_KNOWLEDGE = describePage({
   route: "/marketplace",
   title: "Marketplace",
-  purpose: "Browse products from independent sellers in one country, all packed and sent from a local warehouse with tracking.",
+  purpose: "Browse products from independent sellers in one country, all packed close to you and sent with tracking.",
   steps: ["Choose a country if more than one is shown.", "Browse the products.", "Open a seller's name to visit their store and buy from it."],
   fields: {},
   related: [
     { href: "/account", label: "Your orders" },
     { href: "/track", label: "Track a parcel" },
-    { href: "/shop-for-me", label: "Ask us to shop for you" },
   ],
 });

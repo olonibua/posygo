@@ -19,7 +19,7 @@ function describe(store: PublicStoreView): string {
   const about = store.about?.trim();
   return about && about.length >= 50
     ? about.slice(0, 160)
-    : `Shop ${store.displayName}. ${store.products.length} products, packed and tracked from a local hub${store.returnsAllowed ? `, with ${store.returnWindowDays}-day returns` : ""}.`;
+    : `Shop ${store.displayName}. ${store.products.length} products, delivered in days with tracking${store.returnsAllowed ? `, with ${store.returnWindowDays}-day returns` : ""}.`;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

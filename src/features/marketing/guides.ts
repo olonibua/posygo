@@ -11,27 +11,27 @@ export const GUIDES: readonly Guide[] = [
   {
     slug: "sell-abroad-without-a-warehouse",
     title: "How to sell in another country without your own warehouse",
-    description: "A plain guide to selling abroad with local fulfilment: where your stock lives, how orders get packed and how customers get them in days instead of weeks.",
+    description: "A plain guide to faster delivery abroad: keep your stock closer to your customers so every order reaches them in days instead of weeks.",
     updated: "2026-10-27",
     sections: [
       {
         heading: "Why shipping every order from home is slow and costly",
         paragraphs: [
           "When every order crosses a border on its own, each one pays international postage, waits in customs and takes weeks to arrive. Customers notice, and returns become expensive.",
-          "Local fulfilment flips this. You send your stock in bulk to a hub in your customers' country once, and each order then travels only a short local journey.",
+          "Keeping your stock in the country you sell to flips this. You send your stock in bulk once, and each order then makes only a short trip to your customer.",
         ],
       },
       {
-        heading: "What a local fulfilment hub does",
+        heading: "What we do with your stock",
         paragraphs: [
-          "A hub receives your boxes, counts every unit and photographs each arrival. It stores your stock, and when an order comes in it picks the items, packs them, photographs the sealed parcel and hands it to a local carrier with tracking.",
-          "With Posygo, hubs are run by vetted local partners. You see every box from the moment you declare it to the moment it's counted, and every order from packing to delivery.",
+          "We receive your boxes, count every unit and photograph each arrival. We store your stock, and when an order comes in we pick the items, pack them, photograph the sealed parcel and send it with tracking.",
+          "You see every box from the moment you declare it to the moment it's counted, and every order from packing to delivery.",
         ],
       },
       {
         heading: "The steps to get started",
         paragraphs: [
-          "Create a seller account and choose the country you sell to. Add your products with their weights and sizes. Declare the shipment you're sending and we give you the hub address.",
+          "Create a seller account and choose the country you sell to. Add your products with their weights and sizes. Tell us what you're sending and we give you the address to send it to.",
           "Once your boxes are counted, your stock is ready to sell. Orders can come from your own shop, a spreadsheet upload or your Posygo storefront.",
         ],
       },
@@ -56,14 +56,14 @@ export const GUIDES: readonly Guide[] = [
       {
         heading: "Stocking: paid once when a box arrives",
         paragraphs: [
-          "When a box reaches the hub it's opened, every unit is counted and the arrival is photographed. The stocking fee covers that work and is charged once per box, together with that box's first month of storage. In some countries your first shipment's stocking fee is waived.",
+          "When your box arrives it's opened, every unit is counted and the arrival is photographed. The stocking fee covers that work and is charged once per box, together with that box's first month of storage. In some countries your first shipment's stocking fee is waived.",
         ],
       },
       {
         heading: "Storage: per box, by size, each month",
         paragraphs: [
           "Storage is charged per box rather than per shelf or per square metre, so you pay for the space your stock actually takes. Boxes come in sizes from small to pallet, and the largest are priced by quote.",
-          "Storage is billed at the start of each month for every box still at the hub. Selling through stock faster lowers this cost.",
+          "Storage is billed at the start of each month for every box we're holding for you. Selling through stock faster lowers this cost.",
         ],
       },
       {
@@ -73,7 +73,7 @@ export const GUIDES: readonly Guide[] = [
       {
         heading: "Shipping and returns",
         paragraphs: [
-          "Shipping is charged at the carrier's price plus a small percentage. Returns that come back to the hub have a fixed handling fee for checking the item and putting it back into stock or setting it aside.",
+          "Shipping is charged at the carrier's price plus a small percentage. Returns that come back to us have a fixed handling fee for checking the item and putting it back into stock or setting it aside.",
         ],
       },
       {
@@ -87,66 +87,33 @@ export const GUIDES: readonly Guide[] = [
     ],
   },
   {
-    slug: "keeping-stock-safe-at-a-fulfilment-hub",
-    title: "How we keep your stock safe at a local fulfilment hub",
-    description: "The checks, limits and evidence that protect a seller's stock at a Posygo hub, from partner vetting to surprise counts and insurance.",
+    slug: "keeping-your-stock-safe",
+    title: "How we keep your stock safe",
+    description: "How Posygo protects a seller's stock: every unit counted, every parcel photographed, regular stock checks and insurance while we hold it.",
     updated: "2026-10-27",
     sections: [
       {
-        heading: "Every partner is checked before taking stock",
-        paragraphs: [
-          "Each hub partner passes an identity check, proves their address, gives a referee we contact, shows us their storage space and signs our partner agreement before receiving any stock.",
-        ],
-      },
-      {
-        heading: "Trust is earned in steps",
-        paragraphs: [
-          "New partners can only hold low-value stock up to a low limit. The limit grows as they build a track record. Part of every partner's pay is held back for two months in case of claims.",
-        ],
+        heading: "Counted and photographed on arrival",
+        paragraphs: ["Every box is opened, every unit is counted and the arrival is photographed, so you know exactly what you have before you sell it."],
       },
       {
         heading: "Evidence at every step",
         paragraphs: [
-          "Every arrival is photographed when it's counted, and every parcel is photographed sealed before it leaves. A partner isn't paid for an order until it has a dispatch photo and tracking.",
-          "We also run surprise video stock counts and send test orders that partners can't tell apart from real ones.",
+          "Every parcel is photographed sealed before it leaves and sent with tracking. You can see every box and every order in your account at any time.",
+          "We also run surprise stock counts and test orders to check that everything is where it should be.",
         ],
       },
       {
-        heading: "Insurance we hold, not the partner",
+        heading: "Insured while we hold it",
         paragraphs: [
-          "Your stock is insured while it's at a hub, and the cover is ours, not the partner's. If something is lost or damaged, the photos and the custody record make the claim quick to settle, and approved claims are credited to your wallet.",
+          "Your stock is insured while we hold it. If something is lost or damaged, the photos and the record of every movement make the claim quick to settle, and approved claims are credited to your wallet.",
         ],
       },
     ],
     related: [
       { href: "/how-it-works", label: "How Posygo works" },
-      { href: "/partners", label: "How partners are vetted" },
+      { href: "/pricing", label: "Prices by country" },
     ],
-  },
-  {
-    slug: "buy-from-shops-abroad",
-    title: "How to buy from shops abroad that don't ship to you",
-    description: "How Posygo's personal shopping works: send links, get one price up front, and we buy the items and send them to you in a single tracked parcel.",
-    updated: "2026-10-27",
-    sections: [
-      {
-        heading: "Send us the links",
-        paragraphs: [
-          "Paste links to the things you want from shops in one of the countries we serve, with quantities and any notes. Then confirm your request from the email we send you. Nothing happens until you confirm.",
-        ],
-      },
-      {
-        heading: "Get one price before you pay",
-        paragraphs: ["We price the items, our fee and shipping to your address, and send you a single total. You pay nothing until you accept it, and you can cancel before then."],
-      },
-      {
-        heading: "We buy, check and ship",
-        paragraphs: [
-          "Once you've paid we buy the items. They arrive at our hub, where they're checked and photographed. If anything doesn't arrive, it's refunded. Everything then goes to you in one parcel with tracking.",
-        ],
-      },
-    ],
-    related: [{ href: "/shop-for-me", label: "Start a shopping request" }],
   },
 ];
 

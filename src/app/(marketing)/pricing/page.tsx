@@ -56,7 +56,7 @@ export default async function PricingPage() {
             <ButtonLink href="/signup">Get started →</ButtonLink>
           </div>
         </PageIntro>
-        {markets.length === 0 ? <p className="mt-10 text-ink-soft">Prices appear here when our first hubs open.</p> : null}
+        {markets.length === 0 ? <p className="mt-10 text-ink-soft">Prices appear here when we open our first countries.</p> : null}
         {markets.map((market) => (
           <PageSection key={market.country.code} title={market.country.name}>
             <div className="max-w-[640px]">

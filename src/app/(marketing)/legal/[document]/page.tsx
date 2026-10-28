@@ -15,7 +15,7 @@ import { publicPage } from "@/lib/site";
 const DOCUMENTS: Record<string, { kind: LegalDocumentKind; title: string; summary: string }> = {
   terms: { kind: "TERMS", title: "Terms of service", summary: "The terms that apply when you use Posygo, for each country we serve." },
   privacy: { kind: "PRIVACY", title: "Privacy policy", summary: "What personal information Posygo keeps, why, for how long and who it's shared with, for each country we serve." },
-  "vendor-agreement": { kind: "VENDOR_AGREEMENT", title: "Vendor agreement", summary: "The agreement between Posygo and sellers who store stock at our hubs, for each country we serve." },
+  "vendor-agreement": { kind: "VENDOR_AGREEMENT", title: "Vendor agreement", summary: "The agreement between Posygo and sellers who store stock with us, for each country we serve." },
 };
 
 export async function generateMetadata({ params }: { params: Promise<{ document: string }> }): Promise<Metadata> {

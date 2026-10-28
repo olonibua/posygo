@@ -7,26 +7,24 @@ export interface FaqItem {
 
 export const VENDOR_FAQ: readonly FaqItem[] = [
   {
-    question: "Who looks after my stock?",
-    answer:
-      "Vetted local fulfilment partners. Each one passes an identity check, proves their address, gives a referee we contact, shows us their storage space and signs our partner agreement before taking any stock.",
+    question: "How fast do my customers get their orders?",
+    answer: "Your stock is already in their country, so we pack orders quickly and send them with tracking. Most arrive in a few days rather than weeks.",
+  },
+  {
+    question: "How do I know my stock is safe?",
+    answer: "Every unit is counted when it arrives, we run surprise stock counts, and every parcel is photographed before it goes. You can see all of it in your dashboard at any time.",
   },
   {
     question: "What if something goes missing or gets damaged?",
-    answer: "Your stock is insured while it's at a hub, and we hold the cover, not the partner. Every arrival and every parcel is photographed, so there's evidence to settle a claim quickly.",
-  },
-  {
-    question: "How do you keep hubs honest?",
-    answer:
-      "New partners can only hold low-value stock up to a low limit. We run surprise video stock counts and send test orders they can't tell apart from real ones. Part of every partner's pay is held back for two months, and a partner isn't paid for an order until it has a dispatch photo and tracking.",
+    answer: "Your stock is insured the whole time we hold it. Every arrival and every parcel is photographed, so there's evidence to settle a claim quickly.",
   },
   {
     question: "Can I see where my stock is?",
-    answer: "Yes. You see every box from the moment it's declared to the moment it's counted at the hub, and every order from packing to delivery, with tracking for each parcel.",
+    answer: "Yes. You see every box from the moment it's sent to the moment it's counted, and every order from packing to delivery, with tracking for each parcel.",
   },
   {
-    question: "How fast do customers get their orders?",
-    answer: "Orders are packed at the hub in the customer's country and handed to a local carrier, so most arrive in a few days rather than weeks.",
+    question: "Which countries can I sell to?",
+    answer: "Our countries page lists where we store stock today. Pick the ones your customers are in, and add more whenever you're ready.",
   },
 ];
 

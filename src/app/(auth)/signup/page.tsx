@@ -6,8 +6,8 @@ import { publicPage } from "@/lib/site";
 
 export const metadata: Metadata = {
   ...publicPage({
-    title: "Start selling with local fulfilment",
-    description: "Create a free Posygo account, send your stock to a vetted local hub, and ship orders to customers in days.",
+    title: "Start selling with fast delivery to your customers",
+    description: "Create a free Posygo account, send us your stock, and get your orders to customers in days.",
     path: "/signup",
   }),
   robots: { index: true, follow: true },

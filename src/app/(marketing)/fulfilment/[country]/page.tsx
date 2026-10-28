@@ -58,8 +58,8 @@ export default async function MarketPage({ params }: Props) {
       <main id="main" className="mx-auto max-w-container px-4 sm:px-8">
         <PageIntro stamp={country.name} title={`Ecommerce ${word} in ${place}`}>
           <p>
-            Store your stock at a vetted local hub in {place}. Every box is counted and photographed when it arrives, every order is packed and photographed before it leaves, and parcels go out with a
-            local carrier and tracking. You pay in {country.currency}, with no monthly subscription.
+            Get your products closer to your customers in {place}. We count and photograph every box when it arrives, pack and photograph every order before it leaves, and deliver it in days with
+            tracking. You pay in {country.currency}, with no monthly subscription.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/signup">Start selling in {place} →</ButtonLink>
@@ -79,7 +79,7 @@ export default async function MarketPage({ params }: Props) {
         <HowItWorks />
         <FaqSection items={faq} heading={`${capitalised(word)} in ${place}: questions sellers ask`} />
         {others.length > 0 ? (
-          <PageSection title="Other countries with hubs">
+          <PageSection title="Other countries we deliver in">
             <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[17px]">
               {others.map((other) => (
                 <li key={other.code}>

@@ -37,7 +37,6 @@ export const SHOP_FOR_ME_KNOWLEDGE = describePage<ShoppingRequestInput & ShipTo 
   },
   related: [
     { href: "/account", label: "Your orders and shopping requests" },
-    { href: "/guides/buy-from-shops-abroad", label: "Guide to buying from shops abroad" },
     { href: "/track", label: "Track a parcel" },
   ],
 });

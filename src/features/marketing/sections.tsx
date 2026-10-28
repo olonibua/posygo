@@ -10,28 +10,26 @@ import { formatMoney, localeFor } from "@/lib/format";
 import { countryPath } from "./markets";
 
 const TRUST_POINTS: ReadonlyArray<{ title: string; body: string; tone: Tone }> = [
-  { title: "Vetted local hubs", body: "Identity, address and referee checks before a hub takes any stock.", tone: "sky" },
+  { title: "Delivered in days", body: "Orders go out from the country your customer is in.", tone: "sky" },
   { title: "Real-time tracking", body: "Every box, unit and parcel is logged as it moves.", tone: "lime" },
-  { title: "Photo proof on every order", body: "A photo of each sealed parcel before it leaves the hub.", tone: "yellow" },
-  { title: "Insured stock", body: "We hold the cover for your stock while it's in a hub.", tone: "pink" },
+  { title: "Photo proof on every order", body: "A photo of each sealed parcel before it's sent.", tone: "yellow" },
+  { title: "Insured stock", body: "Your stock is covered the whole time we hold it.", tone: "pink" },
 ];
 
 const STEPS = [
-  { title: "Choose your hubs.", body: "Pick the countries you sell to. Each has vetted local fulfilment partners, tracked in real time and insured.", tone: "yellow", tilt: "left" },
+  { title: "Choose your countries.", body: "Pick the countries your customers are in. We store your stock there, close to them.", tone: "yellow", tilt: "left" },
   { title: "Send your stock.", body: "Declare the shipment and send it in. Every box is counted and photographed when it arrives.", tone: "lime", tilt: "right" },
-  { title: "Sell as usual.", body: "Orders come in from your shop or a spreadsheet. The hub picks, packs and photographs each parcel.", tone: "sky", tilt: "slight" },
-  { title: "Customers get it in days.", body: "Parcels go out with a local carrier and tracking, so delivery is quick and you can see every step.", tone: "pink", tilt: "left" },
+  { title: "Sell as usual.", body: "Orders come in from your shop or a spreadsheet. We pick, pack and photograph each parcel.", tone: "sky", tilt: "slight" },
+  { title: "Customers get it in days.", body: "Parcels go out with tracking from inside their country, so delivery is quick and you can see every step.", tone: "pink", tilt: "left" },
 ] as const;
 
 const SAFEGUARDS: ReadonlyArray<{ label: string; tone: Tone }> = [
-  { label: "Identity-checked partners", tone: "sky" },
-  { label: "Referees we contact", tone: "magenta" },
-  { label: "Photo evidence", tone: "lime" },
+  { label: "Counted on arrival", tone: "sky" },
+  { label: "Photo of every parcel", tone: "lime" },
   { label: "Insured stock", tone: "blue" },
   { label: "Surprise stock counts", tone: "orange" },
-  { label: "Test orders", tone: "yellow" },
-  { label: "Stock limits that grow with trust", tone: "cocoa" },
-  { label: "Signed agreements", tone: "pink" },
+  { label: "Tracking on every order", tone: "yellow" },
+  { label: "See your stock any time", tone: "pink" },
 ];
 
 export function TrustStrip() {
@@ -74,12 +72,11 @@ export function TrustBand() {
         <Sticker src="/brand/badge-scallop-orange.svg" className="motion-wobble pointer-events-auto -left-6 -top-8 hidden w-[150px] -rotate-[8deg] md:block" />
         <Sticker src="/brand/sticker-flower-pink.svg" className="right-10 top-8 w-[86px] rotate-[10deg]" />
         <h2 className="relative text-[40px] font-medium leading-[42px] tracking-[-1.6px] text-on-ink md:mt-16 md:text-[58px] md:leading-[58px] md:tracking-[-2.4px]">
-          How safe is your stock at a hub?
+          How safe is your stock with us?
         </h2>
         <div className="relative">
           <p className="mb-[22px] text-[17px] leading-[26px] text-on-ink-soft">
-            Hubs are run by vetted local fulfilment partners. New partners start with low-value stock and a low limit, and earn more as their record builds. Part of their pay is held back for months,
-            and we hold the insurance.
+            Every unit is counted when it arrives and checked again with surprise stock counts. Every parcel is photographed before it goes, and your stock is insured the whole time we hold it.
           </p>
           <div className="stagger flex flex-wrap gap-2.5">
             {SAFEGUARDS.map((item) => (
@@ -96,20 +93,20 @@ export function TrustBand() {
   );
 }
 
-export function HubsBand({ hubs }: { hubs: readonly HubView[] }) {
+export function CountriesBand({ hubs }: { hubs: readonly HubView[] }) {
   return (
-    <section id="hubs" className="pt-24 sm:pt-[120px]">
+    <section id="countries" className="pt-24 sm:pt-[120px]">
       <div className="relative grid gap-10 overflow-hidden rounded-band bg-blue px-6 py-12 text-white md:grid-cols-[1fr_1.1fr] md:px-16 md:py-[70px]">
         <div>
-          <span className="text-stamp uppercase text-white/80">Fulfilment hubs</span>
-          <h2 className="mt-3.5 text-[44px] font-medium leading-[46px] tracking-[-1.8px] text-white md:text-[58px] md:leading-[58px]">Where you can store stock today</h2>
-          <p className="mt-5 max-w-[420px] text-lead text-white/90">We open hubs in a country once local partners pass our checks. Only live hubs are shown here.</p>
+          <span className="text-stamp uppercase text-white/80">Countries</span>
+          <h2 className="mt-3.5 text-[44px] font-medium leading-[46px] tracking-[-1.8px] text-white md:text-[58px] md:leading-[58px]">Where your customers can get orders in days</h2>
+          <p className="mt-5 max-w-[420px] text-lead text-white/90">Store your stock in any of these countries. More are on the way.</p>
         </div>
         <div className="flex flex-col gap-[22px]">
           {hubs.length === 0 ? (
             <NotebookNote tone="yellow">
               <h3 className="mb-1.5 mt-2.5 text-[24px] font-medium tracking-[-0.6px]">Opening soon</h3>
-              <p className="text-small">Our first hubs are being set up.</p>
+              <p className="text-small">Our first countries open soon.</p>
             </NotebookNote>
           ) : (
             hubs.map((hub, index) => (
@@ -135,25 +132,6 @@ export function HubsBand({ hubs }: { hubs: readonly HubView[] }) {
           )}
         </div>
       </div>
-    </section>
-  );
-}
-
-export function PartnerBand() {
-  return (
-    <section aria-labelledby="partner-band" className="pt-24 sm:pt-[120px]">
-      <NotebookNote tone="yellow" tilt="none" className="flex flex-col items-start justify-between gap-5 px-8 py-8 md:flex-row md:items-center">
-        <div>
-          <Stamp className="text-cocoa">Fulfilment partners</Stamp>
-          <h2 id="partner-band" className="mt-2 text-[30px] font-medium leading-[32px] tracking-[-1px]">
-            Got space and a few hours a week?
-          </h2>
-          <p className="mt-2 max-w-[520px] text-small">Earn by receiving, storing and packing for our vendors where you live. No upfront cost.</p>
-        </div>
-        <ButtonLink href="/partners" variant="primary" size="lg">
-          Become a fulfilment partner →
-        </ButtonLink>
-      </NotebookNote>
     </section>
   );
 }

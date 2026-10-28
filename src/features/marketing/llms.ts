@@ -9,14 +9,13 @@ import { VENDOR_FAQ } from "./faq";
 import { GUIDES } from "./guides";
 import type { Market } from "./market-data";
 import { marketFaq } from "./market-copy";
-import { PARTNER_FAQ } from "./partner-landing";
 import type { SitePage } from "./site-pages";
 
 const ABOUT = [
-  `${BRAND.name} is a fulfilment network for online sellers. Sellers store stock at vetted local hubs in the countries they sell to. Each hub counts and photographs every arrival, packs and photographs every order, and ships it with a local carrier and tracking.`,
-  "Hubs are run by local partners who pass identity, address, referee and premises checks. Stock is insured while at a hub, with the cover held by Posygo rather than the partner.",
+  `${BRAND.name} is ecommerce fulfilment for online sellers who want faster delivery. Sellers store their stock in the country they sell to, closer to their customers. ${BRAND.name} counts and photographs every arrival, picks, packs and photographs every order, and delivers it with tracking, so customers get their orders in days, not weeks.`,
+  `Stock is insured while ${BRAND.name} holds it, and sellers can see every box and every order at any time.`,
   "Pricing is pay-as-you-go with no subscription: a stocking fee and monthly storage per box, a fee per packed order, and shipping at carrier cost plus a small markup.",
-  "Posygo also offers a marketplace of independent sellers, storefronts for sellers, and a personal shopping service that buys from shops in a country it serves and ships to the buyer.",
+  "Posygo also offers a marketplace of independent sellers and ready-made storefronts for sellers.",
 ];
 
 const pageLine = (page: SitePage) => `- [${page.title}](${absoluteUrl(page.path)}): ${page.summary}`;
@@ -70,8 +69,6 @@ export function llmsFull(markets: readonly Market[]): string {
     ...markets.flatMap((market) => [`## ${market.country.name} (${market.country.currency})`, priceList(market), faqBlock(marketFaq(market))].filter(Boolean)),
     "## Questions sellers ask",
     faqBlock(VENDOR_FAQ),
-    "## Questions partners ask",
-    faqBlock(PARTNER_FAQ),
     ...GUIDES.flatMap((guide) => [
       `## ${guide.title}`,
       `Source: ${absoluteUrl(`/guides/${guide.slug}`)}`,

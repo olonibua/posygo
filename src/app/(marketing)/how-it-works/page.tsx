@@ -9,12 +9,12 @@ import { publicPage } from "@/lib/site";
 import { breadcrumbs, faqPage } from "@/lib/structured-data";
 
 export const metadata = publicPage({
-  title: "How local fulfilment works",
-  description: "How Posygo works: choose a country, send your stock to a vetted local hub, sell as usual, and every order is packed, photographed and shipped with tracking.",
+  title: "How fast ecommerce fulfilment works",
+  description: "How Posygo gets your products closer to your customers: send us your stock, sell as usual, and every order is packed, photographed and delivered in days with tracking.",
   path: "/how-it-works",
 });
 
-const STEPS = ["Choose the countries you sell to", "Send your stock to the hub", "Sell as usual", "Customers get their orders in days"];
+const STEPS = ["Choose the countries you sell to", "Send us your stock", "Sell as usual", "Customers get their orders in days"];
 
 export default function HowItWorksPage() {
   return (
@@ -22,7 +22,7 @@ export default function HowItWorksPage() {
       <MarketingHeader />
       <JsonLd
         data={[
-          { "@type": "HowTo", name: `How to use ${BRAND.name} for local fulfilment`, step: STEPS.map((name, index) => ({ "@type": "HowToStep", position: index + 1, name })) },
+          { "@type": "HowTo", name: `How to get your products closer to your customers with ${BRAND.name}`, step: STEPS.map((name, index) => ({ "@type": "HowToStep", position: index + 1, name })) },
           faqPage(VENDOR_FAQ),
           breadcrumbs([
             { name: BRAND.name, path: "/" },
@@ -32,7 +32,7 @@ export default function HowItWorksPage() {
       />
       <main id="main" className="mx-auto max-w-container px-4 sm:px-8">
         <PageIntro stamp="How it works" title="Sell abroad without opening a warehouse">
-          <p>Your stock sits at a vetted hub in your customers&apos; country. The hub counts it, packs each order and hands it to a local carrier, and you watch every step.</p>
+          <p>We keep your stock in your customers&apos; country. We count it, pack each order and deliver it in days, and you see every step.</p>
           <div className="mt-8">
             <ButtonLink href="/signup">Get started →</ButtonLink>
           </div>

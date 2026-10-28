@@ -17,7 +17,7 @@ export const SIGNUP_KNOWLEDGE = describePage<SignupInput>({
     businessName: { labels: ["Business name"], meaning: "The name of your business, as you want it to appear to us and on invoices.", mistakes: ["At least 2 characters."] },
     countryCode: {
       labels: ["Where will your stock live?"],
-      meaning: "The country whose hub will store your stock. You can ship from there to any destination that market has enabled.",
+      meaning: "The country where we'll store your stock, close to your customers. You can ship from there to any destination that market has enabled.",
       mistakes: ["Only open markets are listed. If none show, we haven't opened yet."],
     },
     email: { labels: ["Work email"], meaning: "The email you'll sign in with. We send a code to confirm it." },

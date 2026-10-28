@@ -110,7 +110,7 @@ test.describe("the helper", () => {
     await expect(helper.getByText("The email you'll sign in with")).toBeVisible();
     await helper.getByLabel("Message Posy").fill("what does where will your stock live mean?");
     await helper.getByLabel("Message Posy").press("Enter");
-    await expect(helper.getByText("The country whose hub will store your stock")).toBeVisible();
+    await expect(helper.getByText("The country where we'll store your stock")).toBeVisible();
     await helper.getByLabel("Message Posy").fill("do you deliver to the moon?");
     await helper.getByLabel("Message Posy").press("Enter");
     await expect(helper.getByText("I'd rather not guess")).toBeVisible();

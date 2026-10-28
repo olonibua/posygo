@@ -11,7 +11,7 @@ import type { PublicProductView } from "@/shared";
 
 export const metadata = publicPage({
   title: "Marketplace: shop independent sellers",
-  description: "Shop independent brands in one place. Every order is packed at a local hub near you and sent with tracking, so it arrives in days, not weeks.",
+  description: "Shop independent brands in one place. Every order is packed close to you and sent with tracking, so it arrives in days, not weeks.",
   path: "/marketplace",
 });
 

@@ -47,14 +47,13 @@ export const PARTNERS_KNOWLEDGE = describePage<PartnerApplicationInput & Referee
 export const HOME_KNOWLEDGE = describePage({
   route: "/",
   title: "Posygo",
-  purpose: "An overview of how sellers store stock at vetted local hubs that pack and ship their orders.",
-  steps: ["Read how it works.", "See which countries have hubs.", "Create an account when you're ready to send stock."],
+  purpose: "An overview of how sellers get their products closer to their customers: we store their stock in the country they sell to, then pack and deliver every order in days.",
+  steps: ["Read how it works.", "See which countries we deliver in.", "Create an account when you're ready to send stock."],
   fields: {},
   related: [
     { href: "/how-it-works", label: "How it works" },
     { href: "/pricing", label: "Prices" },
     { href: "/signup", label: "Create an account" },
-    { href: "/partners", label: "Become a partner" },
   ],
 });
 
@@ -65,7 +64,7 @@ export const PRICING_KNOWLEDGE = describePage({
   steps: ["Find the country you sell to.", "Check the prices, shown in that country's currency.", "Read the questions at the bottom for how charges work."],
   fields: {},
   related: [
-    { href: "/fulfilment", label: "Hubs by country" },
+    { href: "/fulfilment", label: "Where we deliver" },
     { href: "/guides/fulfilment-costs-explained", label: "Fulfilment costs explained" },
     { href: "/signup", label: "Create an account" },
   ],
@@ -74,20 +73,20 @@ export const PRICING_KNOWLEDGE = describePage({
 export const HOW_IT_WORKS_KNOWLEDGE = describePage({
   route: "/how-it-works",
   title: "How it works",
-  purpose: "How selling abroad works here: choose a country, send stock to a vetted hub, sell as usual, and each order is packed, photographed and shipped with tracking.",
-  steps: ["Choose the countries you sell to.", "Send your stock to the hub.", "Sell as usual.", "Customers get their orders in days."],
+  purpose: "How selling abroad works here: choose a country, send us your stock, sell as usual, and each order is packed, photographed and delivered with tracking.",
+  steps: ["Choose the countries you sell to.", "Send us your stock.", "Sell as usual.", "Customers get their orders in days."],
   fields: {},
   related: [
     { href: "/pricing", label: "Prices" },
-    { href: "/fulfilment", label: "Hubs by country" },
+    { href: "/fulfilment", label: "Where we deliver" },
     { href: "/signup", label: "Create an account" },
   ],
 });
 
 export const FULFILMENT_KNOWLEDGE = describePage({
   route: "/fulfilment",
-  title: "Hubs by country",
-  purpose: "Lists the countries with vetted local hubs, with the currency and starting packing price for each.",
+  title: "Where we deliver",
+  purpose: "Lists the countries where we store stock and deliver orders, with the currency and starting packing price for each.",
   steps: ["Find the country you sell to.", "Open it to see its prices and how it works there."],
   fields: {},
   related: [
@@ -99,8 +98,8 @@ export const FULFILMENT_KNOWLEDGE = describePage({
 export const FULFILMENT_COUNTRY_KNOWLEDGE = describePage({
   route: "/fulfilment/[country]",
   title: "Fulfilment in one country",
-  purpose: "Prices, how it works and common questions for storing stock at a local hub in this country.",
-  steps: ["Check the prices for this country.", "Read how it works and the questions sellers ask.", "Start selling here, or look at other countries with hubs."],
+  purpose: "Prices, how it works and common questions for storing your stock and delivering orders in this country.",
+  steps: ["Check the prices for this country.", "Read how it works and the questions sellers ask.", "Start selling here, or look at the other countries we deliver in."],
   fields: {},
   related: [
     { href: "/fulfilment", label: "All countries" },
@@ -124,7 +123,7 @@ export const GUIDES_KNOWLEDGE = describePage({
 export const GUIDE_KNOWLEDGE = describePage({
   route: "/guides/[slug]",
   title: "Guide",
-  purpose: "A guide to one topic about selling abroad or using a local hub.",
+  purpose: "A guide to one topic about selling abroad and getting orders to customers fast.",
   steps: ["Read the guide section by section.", "Follow the related links at the end for more."],
   fields: {},
   related: [

@@ -1,15 +1,6 @@
 import { ButtonLink } from "@/components/ui/button";
-import { Chip } from "@/components/ui/chip";
 import { NotebookNote, Sticker } from "@/components/ui/surfaces";
 import { cn } from "@/lib/cn";
-
-import { listNames } from "./live-countries";
-
-const SHORT_NAMES: Record<string, string> = { "United Kingdom": "the UK", "United States": "the US" };
-
-function shortName(name: string): string {
-  return SHORT_NAMES[name] ?? name;
-}
 
 const PEEK_NAV = [
   { label: "Overview", dot: "bg-orange", active: true },
@@ -20,24 +11,24 @@ const PEEK_NAV = [
 
 const PEEK_TILES = [
   { label: "Awaiting receipt", value: "03", note: "Expected this week", tone: "bg-sky" },
-  { label: "Units in storage", value: "1,248", note: "Across 2 hubs", tone: "bg-lime" },
+  { label: "Units in storage", value: "1,248", note: "In 2 countries", tone: "bg-lime" },
   { label: "Orders today", value: "27", note: "Packed by 4pm", tone: "bg-yellow" },
 ];
 
-export function Hero({ hubCountries }: { hubCountries: readonly string[] }) {
-  const where = hubCountries.length > 0 ? `in ${listNames(hubCountries.map(shortName))}` : "close to your customers";
+export function Hero() {
   return (
-    <div className="relative mx-2 overflow-hidden rounded-band bg-sky bg-[url(/brand/confetti-scatter.svg)] bg-[length:1400px_auto] bg-center pt-12 sm:mx-5 sm:pt-[70px]">
-      <div className="mx-auto max-w-container px-4 sm:px-8">
-        <Sticker src="/brand/badge-scallop-orange.svg" className="right-14 top-[300px] hidden w-[170px] rotate-12 lg:block" />
-        <Chip tone="yellow" className="motion-pop">
-          {hubCountries.length > 0 ? `${hubCountries.length} ${hubCountries.length === 1 ? "country" : "countries"} with live hubs` : "Fulfilment hubs opening soon"}
-        </Chip>
-        <h1 className="[--i:1] motion-rise mt-[26px] max-w-[1000px] text-[44px] font-medium leading-[46px] tracking-[-2px] md:text-[64px] md:leading-[64px] md:tracking-[-2.6px]">
-          Store your stock {where}, and deliver to customers in days.
+    <div className="relative mx-2 overflow-hidden rounded-band bg-sky pt-12 sm:mx-5 sm:pt-[70px]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 hidden bg-[url(/brand/confetti-scatter.svg)] bg-[length:1400px_auto] bg-center [mask-image:linear-gradient(to_right,black_0,transparent_16%,transparent_84%,black_100%)] lg:block"
+      />
+      <div className="relative mx-auto max-w-container px-4 sm:px-8">
+        <Sticker src="/brand/badge-scallop-orange.svg" className="right-16 top-[150px] hidden w-[170px] rotate-12 xl:block" />
+        <h1 className="[--i:1] motion-rise max-w-[900px] text-[44px] font-medium leading-[46px] tracking-[-2px] md:text-[72px] md:leading-[72px] md:tracking-[-2.8px]">
+          Get your products closer to your customers
         </h1>
-        <p className="[--i:2] motion-rise my-7 max-w-[560px] text-[20px] leading-[30px] text-ink-soft">
-          Send inventory to a local fulfilment hub in the country you sell to. Every unit is counted, every order is photographed and tracked, and your stock is insured while it&apos;s with us.
+        <p className="[--i:2] motion-rise my-7 max-w-[600px] text-[20px] leading-[30px] text-ink-soft">
+          We store your stock in the country you sell to, then pack and deliver every order fast, so your customers get them in days, not weeks.
         </p>
         <div className="[--i:3] motion-rise flex flex-wrap items-center gap-3">
           <ButtonLink href="/signup" variant="yellow" size="lg">

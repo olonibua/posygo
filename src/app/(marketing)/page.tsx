@@ -5,7 +5,7 @@ import { FaqSection, VENDOR_FAQ } from "@/features/marketing/faq";
 import { Hero } from "@/features/marketing/hero";
 import { fetchHubs } from "@/features/marketing/live-countries";
 import { AudienceSection, FeatureSection } from "@/features/marketing/offer-sections";
-import { ClosingBand, HowItWorks, HubsBand, PartnerBand, TrustBand, TrustStrip } from "@/features/marketing/sections";
+import { ClosingBand, HowItWorks, CountriesBand, TrustBand, TrustStrip } from "@/features/marketing/sections";
 import { BRAND } from "@/lib/brand";
 import { publicPage } from "@/lib/site";
 import { faqPage, fulfilmentService, organization, website } from "@/lib/structured-data";
@@ -31,14 +31,14 @@ export default async function HomePage() {
         ]}
       />
       <main id="main">
-        <Hero hubCountries={hubs.map((hub) => hub.countryName)} />
+        <Hero />
         <div className="mx-auto max-w-container px-4 sm:px-8">
           <TrustStrip />
           <Reveal>
             <HowItWorks />
           </Reveal>
           <Reveal>
-            <HubsBand hubs={hubs} />
+            <CountriesBand hubs={hubs} />
           </Reveal>
           <Reveal>
             <FeatureSection />
@@ -51,9 +51,6 @@ export default async function HomePage() {
           </Reveal>
           <Reveal>
             <FaqSection items={VENDOR_FAQ} />
-          </Reveal>
-          <Reveal>
-            <PartnerBand />
           </Reveal>
         </div>
         <Reveal>
