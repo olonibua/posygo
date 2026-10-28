@@ -1,6 +1,6 @@
 "use client";
 
-import { type CreateOrdersInput, type DestinationPreferenceView, fulfilmentFee, type ProductView } from "@/shared";
+import { type CreateOrdersInput, fulfilmentFee, type LotView, type ProductView } from "@/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useRef, useState } from "react";
@@ -13,6 +13,7 @@ import { PageSkeleton } from "@/components/ui/skeleton";
 import { PRODUCTS_KEY } from "@/features/catalogue/product-editor-page";
 import { useVendorFees, useVendorWallet } from "@/features/finance/use-vendor-wallet";
 import { fieldError, formError } from "@/features/receiving/api-errors";
+import { useCountryScope, useSelectedCountry } from "@/features/seller-countries/selected-country";
 import { apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatMoney, localeFor } from "@/lib/format";
@@ -28,6 +29,14 @@ function optional(value: string): string | undefined {
   return trimmed === "" ? undefined : trimmed;
 }
 
+function availableUnits(lots: readonly LotView[]): Map<string, number> {
+  const units = new Map<string, number>();
+  for (const lot of lots.filter((entry) => entry.condition === "SELLABLE")) {
+    units.set(lot.productId, (units.get(lot.productId) ?? 0) + lot.quantityAvailable);
+  }
+  return units;
+}
+
 function toInput(deliveries: DeliveryDraft[]): CreateOrdersInput {
   return {
     deliveries: deliveries.map((delivery) => ({
@@ -40,7 +49,6 @@ function toInput(deliveries: DeliveryDraft[]): CreateOrdersInput {
         city: delivery.city.trim(),
         region: optional(delivery.region),
         postalCode: delivery.postalCode.trim().toUpperCase(),
-        countryCode: delivery.countryCode,
         phone: optional(delivery.phone),
         email: optional(delivery.email),
       },
@@ -55,20 +63,20 @@ export function NewOrderPage() {
   const router = useRouter();
   const counter = useRef(0);
   const newKey = () => `k${(counter.current += 1)}`;
-  const markets = useQuery({ queryKey: ["vendor", "markets"], queryFn: () => apiRequest<DestinationPreferenceView[]>("/v1/vendor/markets") });
+  const { country } = useSelectedCountry();
+  const { code, ready, path } = useCountryScope();
   const products = useQuery({ queryKey: [...PRODUCTS_KEY, "list", "ACTIVE"], queryFn: () => apiRequest<ProductView[]>("/v1/vendor/products?status=ACTIVE") });
+  const lots = useQuery({ queryKey: ["vendor", "inventory", "lots", code], queryFn: () => apiRequest<LotView[]>(path("/v1/vendor/inventory/lots")), enabled: ready });
   const fees = useVendorFees();
   const wallet = useVendorWallet();
   const place = usePlaceOrders();
   const [deliveries, setDeliveries] = useState<DeliveryDraft[] | null>(null);
 
-  const destinations = markets.data ?? [];
+  const available = availableUnits(lots.data ?? []);
   const blank = (): DeliveryDraft => {
-    const preferred = destinations.find((destination) => destination.preferred) ?? destinations.find((destination) => destination.code === user.countryCode) ?? destinations[0];
     return {
       key: newKey(),
       externalReference: "",
-      countryCode: preferred?.code ?? user.countryCode ?? "GB",
       name: "",
       company: "",
       line1: "",
@@ -81,7 +89,7 @@ export function NewOrderPage() {
       lines: [{ key: newKey(), productId: "", quantity: "1" }],
     };
   };
-  const current = deliveries ?? (markets.data ? [blank()] : []);
+  const current = deliveries ?? [blank()];
   const update = (index: number, next: DeliveryDraft) => setDeliveries(current.map((delivery, position) => (position === index ? next : delivery)));
 
   const unitsPer = current.map((delivery) => delivery.lines.reduce((total, line) => total + (line.productId ? Number(line.quantity) || 0 : 0), 0));
@@ -99,15 +107,15 @@ export function NewOrderPage() {
     });
   }
 
-  if (markets.isLoading || products.isLoading) {
+  if (!country || products.isLoading || lots.isLoading) {
     return <PageSkeleton />;
   }
   return (
     <form noValidate onSubmit={submit} className="flex flex-col gap-7">
       <PageHeader
         stamp="Orders"
-        title="New order"
-        lead="Add who it's going to and what to send. Sending to several people? Add a delivery for each; every one becomes its own order with its own tracking."
+        title={`New order in ${country.name}`}
+        lead={`Sent from your stock in ${country.name} to an address in ${country.name}. Sending to several people? Add a delivery for each; every one becomes its own order with its own tracking.`}
       />
       <FormAlert message={formError(place.error)} />
       <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
@@ -117,8 +125,9 @@ export function NewOrderPage() {
               key={delivery.key}
               index={index}
               delivery={delivery}
-              destinations={destinations}
+              country={country}
               products={products.data ?? []}
+              available={available}
               errorFor={(field) => fieldError(place.error, field)}
               onChange={(next) => update(index, next)}
               onRemove={current.length > 1 ? () => setDeliveries(current.filter((_, position) => position !== index)) : undefined}

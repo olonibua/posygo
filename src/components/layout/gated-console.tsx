@@ -1,15 +1,28 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { type ReactNode, useEffect } from "react";
 
 import { type GateRequirement, useSessionGate } from "@/lib/auth/use-session-gate";
 
 import { AppShell } from "./app-shell";
-import { type Console, consoleFor } from "./navigation";
+import { activeItem, type Console, consoleFor, isLocked, visibleItems } from "./navigation";
 
 export function GatedConsole({ console, requirement, children }: { console?: Console; requirement: GateRequirement; children: ReactNode }) {
   const user = useSessionGate(requirement);
-  if (!user) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const shown = user ? (console ?? consoleFor(user)) : null;
+  const section = user && shown ? activeItem(visibleItems(shown, user), pathname) : undefined;
+  const locked = Boolean(user && section && isLocked(section, user));
+
+  useEffect(() => {
+    if (locked) {
+      router.replace("/overview");
+    }
+  }, [locked, router]);
+
+  if (!user || !shown || locked) {
     return (
       <div className="grid min-h-screen place-items-center" role="status" aria-live="polite">
         <span className="flex items-center gap-3 text-small text-ink-soft">
@@ -20,7 +33,7 @@ export function GatedConsole({ console, requirement, children }: { console?: Con
     );
   }
   return (
-    <AppShell console={console ?? consoleFor(user)} user={user}>
+    <AppShell console={shown} user={user}>
       {children}
     </AppShell>
   );

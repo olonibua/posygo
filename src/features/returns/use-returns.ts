@@ -3,6 +3,7 @@
 import type { CreateVendorReturnInput, InstructVendorReturnInput, ReceiveVendorReturnInput, ReturnableOrderView, VendorReturnStatus, VendorReturnTrackingInput, VendorReturnView } from "@/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { useCountryScope } from "@/features/seller-countries/selected-country";
 import { apiRequest } from "@/lib/api/client";
 import { toast } from "@/lib/toast/toast-store";
 
@@ -12,7 +13,10 @@ const PATHS: Record<ReturnsSide, string> = { vendor: "/v1/vendor/returns", wareh
 const key = (side: ReturnsSide) => ["returns", side] as const;
 
 export function useReturns(side: ReturnsSide, status?: VendorReturnStatus) {
-  return useQuery({ queryKey: [...key(side), "list", status ?? "ALL"], queryFn: () => apiRequest<VendorReturnView[]>(`${PATHS[side]}${status ? `?status=${status}` : ""}`) });
+  const { code, ready, path } = useCountryScope();
+  const vendor = side === "vendor";
+  const url = `${PATHS[side]}${status ? `?status=${status}` : ""}`;
+  return useQuery({ queryKey: [...key(side), "list", vendor ? code : null, status ?? "ALL"], queryFn: () => apiRequest<VendorReturnView[]>(vendor ? path(url) : url), enabled: !vendor || ready });
 }
 
 export function useReturn(side: ReturnsSide, returnId: string | null) {

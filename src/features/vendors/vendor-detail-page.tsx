@@ -35,7 +35,6 @@ export function VendorDetailPage({ vendorId }: { vendorId: string }) {
   const locale = localeFor(vendor.countryCode);
   const stage = VENDOR_STAGE_DISPLAY[vendor.stage];
   const verification = VERIFICATION_STATUS_DISPLAY[vendor.verification.status];
-  const markets = [vendor.countryCode, ...vendor.destinations.filter((code) => code !== vendor.countryCode)];
 
   return (
     <div className="flex flex-col gap-7">
@@ -77,9 +76,9 @@ export function VendorDetailPage({ vendorId }: { vendorId: string }) {
           </dl>
         </Paper>
         <Paper className="px-6 py-5 text-small">
-          <Stamp>Markets</Stamp>
-          <p className="mt-3">{markets.map((code) => countryName(code)).join(", ")}</p>
-          <p className="mt-1 text-ink-faint">Home market first, then the countries they ship to.</p>
+          <Stamp>Countries</Stamp>
+          <p className="mt-3">{vendor.countries.map((code) => countryName(code)).join(", ")}</p>
+          <p className="mt-1 text-ink-faint">Home country first, then the other countries they store stock in.</p>
         </Paper>
       </div>
       <section className="flex flex-col gap-3">

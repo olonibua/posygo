@@ -10,6 +10,8 @@ import { PageSkeleton } from "@/components/ui/skeleton";
 import { apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 
+import { useCountryScope, useSelectedCountry } from "@/features/seller-countries/selected-country";
+
 import { InboundForm } from "./inbound-form";
 
 export const INBOUND_KEY = ["vendor", "inbound"] as const;
@@ -26,9 +28,11 @@ export function NewInboundPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const user = useCurrentUser();
+  const { country } = useSelectedCountry();
+  const { path } = useCountryScope();
 
   async function create(input: InboundInput) {
-    const created = await apiRequest<InboundDetailView>("/v1/vendor/inbound", { method: "POST", body: input });
+    const created = await apiRequest<InboundDetailView>(path("/v1/vendor/inbound"), { method: "POST", body: input });
     queryClient.setQueryData([...INBOUND_KEY, created.id], created);
     await queryClient.invalidateQueries({ queryKey: [...INBOUND_KEY, "list"] });
     router.push(`/inbound/${created.id}`);
@@ -36,7 +40,11 @@ export function NewInboundPage() {
 
   return (
     <div className="flex flex-col gap-7">
-      <PageHeader stamp="Inbound" title="Send stock in" lead="Tell the hub what's coming. It stays a draft until you submit it, so you can change anything first." />
+      <PageHeader
+        stamp="Inbound"
+        title={country ? `Send stock in to ${country.name}` : "Send stock in"}
+        lead="Tell us what's coming. It stays a draft until you submit it, so you can change anything first."
+      />
       {hasPermission(user.role, "vendor.stock.manage") ? <InboundForm onSave={create} /> : <OwnerOnly />}
     </div>
   );

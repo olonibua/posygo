@@ -17,7 +17,7 @@ const PEEK_TILES = [
 
 export function Hero() {
   return (
-    <div className="relative mx-2 overflow-hidden rounded-band bg-sky pt-12 sm:mx-5 sm:pt-[70px]">
+    <div className="relative mx-2 overflow-hidden rounded-band bg-sky pb-12 pt-12 sm:mx-5 sm:pt-[70px] md:pb-0">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 hidden bg-[url(/brand/confetti-scatter.svg)] bg-[length:1400px_auto] bg-center [mask-image:linear-gradient(to_right,black_0,transparent_16%,transparent_84%,black_100%)] lg:block"

@@ -23,7 +23,7 @@ export function SandboxCheckoutPage() {
   const topUp = topUps.data?.find((candidate) => candidate.id === topUpId);
 
   if (!topUp) {
-    return topUps.isLoading ? <PageSkeleton /> : <p className="text-ink-soft">This payment isn&apos;t available.</p>;
+    return topUps.isPending ? <PageSkeleton /> : <p className="text-ink-soft">This payment isn&apos;t available.</p>;
   }
   return (
     <div className="flex max-w-[560px] flex-col gap-7">

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, FormAlert, Input } from "@/components/ui/form-controls";
 import { errorMessage } from "@/features/receiving/api-errors";
+import { useCountryScope } from "@/features/seller-countries/selected-country";
 import { downloadCsv } from "@/lib/api/download";
 import { cn } from "@/lib/cn";
 
@@ -17,11 +18,13 @@ export function ExportButton({ kind, label, className }: { kind: ExportKind; lab
   const dated = kind !== "inventory";
   const [open, setOpen] = useState(false);
   const [range, setRange] = useState(() => ({ from: isoDay(new Date(Date.now() - 30 * DAY_MS)), to: isoDay(new Date()) }));
+  const { code, path } = useCountryScope();
+  const prefix = `${kind}-${(code ?? "").toLowerCase()}`;
   const download = useMutation({
     mutationFn: () =>
       dated
-        ? downloadCsv(`/v1/vendor/exports/${kind}.csv?from=${range.from}&to=${range.to}`, `${kind}-${range.from}-to-${range.to}.csv`)
-        : downloadCsv(`/v1/vendor/exports/${kind}.csv`, `${kind}-${isoDay(new Date())}.csv`),
+        ? downloadCsv(path(`/v1/vendor/exports/${kind}.csv?from=${range.from}&to=${range.to}`), `${prefix}-${range.from}-to-${range.to}.csv`)
+        : downloadCsv(path(`/v1/vendor/exports/${kind}.csv`), `${prefix}-${isoDay(new Date())}.csv`),
     onSuccess: () => setOpen(false),
   });
 

@@ -23,10 +23,11 @@ X-Api-Key: <your key>
 Content-Type: application/json
 
 {
+  "country": "GB",
   "externalReference": "SHOP-1001",
   "recipient": {
     "name": "Ada Obi", "line1": "1 High Street", "city": "Manchester",
-    "postalCode": "M1 1AA", "countryCode": "GB", "phone": "+44 7700 900123"
+    "postalCode": "M1 1AA", "phone": "+44 7700 900123"
   },
   "lines": [{ "productCode": "WIG-BW-16", "quantity": 1 }]
 }`;

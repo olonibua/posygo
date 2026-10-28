@@ -31,7 +31,7 @@ function Facts({ title, rows }: { title: string; rows: Array<[string, string]> }
   );
 }
 
-export function RecipientCard({ recipient, customsRequired }: { recipient: Recipient; customsRequired: boolean }) {
+export function RecipientCard({ recipient }: { recipient: Recipient }) {
   const address = [recipient.company, recipient.line1, recipient.line2, [recipient.city, recipient.region].filter(Boolean).join(", "), recipient.postalCode, countryName(recipient.countryCode)].filter(
     Boolean,
   );
@@ -47,9 +47,6 @@ export function RecipientCard({ recipient, customsRequired }: { recipient: Recip
         ))}
       </address>
       {recipient.phone || recipient.email ? <p className="mt-2 text-meta text-ink-faint">{[recipient.phone, recipient.email].filter(Boolean).join(" · ")}</p> : null}
-      {customsRequired ? (
-        <p className="mt-3 rounded-card bg-sky px-3 py-2 text-meta text-cocoa">Crossing a border: a customs declaration goes with the parcel, and the recipient pays any import duties.</p>
-      ) : null}
     </Paper>
   );
 }

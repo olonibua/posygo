@@ -124,7 +124,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
           <OrderTimeline events={data.events} locale={locale} />
         </div>
         <div className="flex flex-col gap-5">
-          <RecipientCard recipient={data.recipient} customsRequired={data.customsRequired} />
+          <RecipientCard recipient={data.recipient} />
           <ChargesCard order={data} locale={locale} />
           <ParcelCard order={data} locale={locale} />
         </div>

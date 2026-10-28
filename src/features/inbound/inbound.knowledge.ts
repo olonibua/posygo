@@ -5,8 +5,9 @@ import { describePage, type PageKnowledgeOf } from "@/features/assistant/knowled
 
 const SHIPMENT: Omit<PageKnowledgeOf<InboundInput>, "route"> = {
   title: "Send stock in",
-  purpose: "Tell the hub what stock you're sending, so every unit can be counted against your list when it arrives.",
+  purpose: "Tell us what stock you're sending to the country you've chosen at the top of the page, so every unit can be counted against your list when it arrives.",
   steps: [
+    "Check the country at the top of the page. The stock is kept there and can only be sent to customers in that country.",
     "Say how it's travelling: loose boxes by courier, or pallets.",
     "Pick the date you expect it to arrive, and add the carrier and tracking number if you have them.",
     "List every product and how many units of each are coming.",

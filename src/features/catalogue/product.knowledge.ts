@@ -8,7 +8,7 @@ const PRODUCT: Omit<PageKnowledgeOf<ProductInput>, "route"> = {
   purpose: "Describe a product once, so the hub can recognise it, store it in the right box size and pack it into orders.",
   steps: [
     "Give it a name and your own product code.",
-    "Add where it's made, what one unit is worth and, for shipping abroad, its tariff code.",
+    "Add where it's made, what one unit is worth and its tariff code, which customs may ask for when you send stock into a country.",
     "Enter its weight and, if you know them, its size.",
     "Pick the box size it's usually stored in.",
     "Add barcodes if it has them, and a photo so the hub can spot it.",
@@ -23,15 +23,15 @@ const PRODUCT: Omit<PageKnowledgeOf<ProductInput>, "route"> = {
       fix: productCodeFix,
     },
     variantLabel: { labels: ["Variant"], meaning: "What makes this version different from others with the same name, like a size or colour. Optional.", example: "16 inch, natural black" },
-    countryOfOrigin: { labels: ["Made in"], meaning: "The country where the product was made. Customs needs it when parcels cross borders." },
+    countryOfOrigin: { labels: ["Made in"], meaning: "The country where the product was made. Customs may ask for it when you send stock into a country." },
     declaredValueMinor: {
       labels: [/^Value per unit/],
-      meaning: "What one unit is worth. It's used for customs declarations and for insurance while it's at the hub.",
+      meaning: "What one unit is worth. It's used for customs when you send stock in, and for insurance while it's stored.",
       mistakes: ["Use the value of one unit, not the whole shipment."],
     },
     hsCode: {
       labels: ["Tariff code"],
-      meaning: "The 6 to 10 digit customs code for the type of product, also called an HS code. Needed to ship abroad. Optional otherwise.",
+      meaning: "The 6 to 10 digit customs code for the type of product, also called an HS code. Customs may ask for it when you send stock into a country. Optional.",
       example: "670420",
       mistakes: ["Digits only, without dots or spaces."],
       fix: tariffCodeFix,

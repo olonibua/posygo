@@ -79,7 +79,7 @@ export function CustomsFields({ values, set, errorFor, readOnly, currency }: Pro
           />
         )}
       </Field>
-      <Field label="Tariff code" hint="Optional. The 6–10 digit HS code, needed to ship abroad." error={errorFor("hsCode")}>
+      <Field label="Tariff code" hint="Optional. The 6–10 digit HS code, for customs when you send stock in." error={errorFor("hsCode")}>
         {({ id, describedBy, invalid }) => (
           <Input
             id={id}

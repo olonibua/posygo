@@ -86,7 +86,7 @@ test.describe("a customer return, from the order to back on sale", () => {
     await page.goto("/inventory");
     const stock = page.waitForEvent("download");
     await page.getByRole("button", { name: "Download CSV" }).click();
-    expect((await stock).suggestedFilename()).toMatch(/^inventory-\d{4}-\d{2}-\d{2}\.csv$/);
+    expect((await stock).suggestedFilename()).toMatch(/^inventory-([a-z]{2}-)?\d{4}-\d{2}-\d{2}\.csv$/);
     await page.goto("/orders");
     await page.getByRole("button", { name: "Download CSV" }).click();
     const orders = page.waitForEvent("download");

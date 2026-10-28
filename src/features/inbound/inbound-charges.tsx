@@ -1,6 +1,6 @@
 "use client";
 
-import type { InboundDetailView, InboundEstimateView } from "@/shared";
+import { type InboundDetailView, type InboundEstimateView, withCountry } from "@/shared";
 import { useQuery } from "@tanstack/react-query";
 
 import { ButtonLink } from "@/components/ui/button";
@@ -22,8 +22,8 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
 function useEstimate(inbound: InboundDetailView) {
   const body = { shippingMode: inbound.shippingMode, boxCounts: inbound.declaredBoxCounts };
   return useQuery({
-    queryKey: ["vendor", "inbound", inbound.id, "estimate", body],
-    queryFn: () => apiRequest<InboundEstimateView>("/v1/vendor/inbound/estimate", { method: "POST", body }),
+    queryKey: ["vendor", "inbound", inbound.id, "estimate", inbound.countryCode, body],
+    queryFn: () => apiRequest<InboundEstimateView>(withCountry("/v1/vendor/inbound/estimate", inbound.countryCode), { method: "POST", body }),
     enabled: inbound.status === "DRAFT",
     retry: false,
   });
@@ -31,7 +31,7 @@ function useEstimate(inbound: InboundDetailView) {
 
 export function InboundChargesCard({ inbound, locale }: { inbound: InboundDetailView; locale: string }) {
   const estimate = useEstimate(inbound);
-  const wallet = useVendorWallet();
+  const wallet = useVendorWallet(true, inbound.countryCode);
   const { charges } = inbound;
   const money = (minor: number) => formatMoney(minor, charges.currency, locale);
 

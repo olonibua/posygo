@@ -11,6 +11,9 @@ import { toneSurface } from "@/components/ui/tone";
 import { useAuth } from "@/lib/auth/auth-context";
 import { cn } from "@/lib/cn";
 
+import { CountrySwitcher } from "@/features/seller-countries/country-switcher";
+import { SelectedCountryProvider } from "@/features/seller-countries/selected-country";
+
 import { ActivityBell } from "./activity-bell";
 import { activeItem, type Console, visibleItems } from "./navigation";
 import { Sidebar } from "./sidebar";
@@ -22,14 +25,10 @@ export function AppShell({ console, user, children }: { console: Console; user: 
   const [drawer, setDrawer] = useState<DrawerState>("closed");
   const close = useCallback(() => setDrawer((state) => (state === "open" ? "closing" : state)), []);
   const [collapsed, toggleCollapsed] = useCollapsedSidebar();
+  const sells = user.vendorId !== null;
 
-  return (
-    <div
-      className={cn(
-        "min-h-screen lg:grid lg:transition-[grid-template-columns] lg:duration-300 lg:ease-[var(--ease-out)]",
-        collapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[264px_1fr]",
-      )}
-    >
+  const shell = (
+    <div className={cn("min-h-screen lg:grid lg:transition-[grid-template-columns] lg:duration-300 lg:ease-[var(--ease-out)]", collapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[264px_1fr]")}>
       <aside className="hidden min-w-0 overflow-hidden border-r border-line bg-ground lg:block">
         <div className="sticky top-0 h-screen">
           <Sidebar console={console} user={user} collapsed={collapsed} onToggleCollapse={toggleCollapsed} />
@@ -37,7 +36,7 @@ export function AppShell({ console, user, children }: { console: Console; user: 
       </aside>
       {drawer === "closed" ? null : <Drawer state={drawer} console={console} user={user} onClose={close} onClosed={() => setDrawer("closed")} />}
       <div className="flex min-w-0 flex-col">
-        <Topbar console={console} user={user} onOpenMenu={() => setDrawer("open")} />
+        <Topbar console={console} user={user} sells={sells} onOpenMenu={() => setDrawer("open")} />
         <main id="main" className="px-4 pb-36 pt-6 sm:px-9 sm:pb-40 sm:pt-[30px]">
           <div key={pathname} className="motion-rise">
             {children}
@@ -46,6 +45,8 @@ export function AppShell({ console, user, children }: { console: Console; user: 
       </div>
     </div>
   );
+
+  return sells ? <SelectedCountryProvider>{shell}</SelectedCountryProvider> : shell;
 }
 
 const COLLAPSED_KEY = "posygo.sidebar-collapsed";
@@ -106,7 +107,7 @@ function Drawer({ state, console, user, onClose, onClosed }: { state: DrawerStat
   );
 }
 
-function Topbar({ console, user, onOpenMenu }: { console: Console; user: SessionUser; onOpenMenu: () => void }) {
+function Topbar({ console, user, sells, onOpenMenu }: { console: Console; user: SessionUser; sells: boolean; onOpenMenu: () => void }) {
   const { signOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -152,7 +153,8 @@ function Topbar({ console, user, onOpenMenu }: { console: Console; user: Session
           ) : null}
         </nav>
       </div>
-      <div className="flex items-center gap-3.5">
+      <div className="flex min-w-0 items-center gap-2.5 sm:gap-3.5">
+        {sells ? <CountrySwitcher /> : null}
         <ActivityBell />
         <span className="grid h-11 w-11 place-items-center rounded-nav bg-lime font-semibold text-cocoa" aria-hidden>
           {initials}

@@ -1,6 +1,6 @@
 import { type APIRequestContext, expect, test } from "@playwright/test";
 
-const PRIVATE_SAMPLES = ["/login", "/overview", "/admin", "/account", "/verify-email"];
+const PRIVATE_SAMPLES = ["/login", "/overview", "/admin", "/verify-email"];
 
 interface PageFacts {
   status: number;

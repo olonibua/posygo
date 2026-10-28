@@ -1,18 +1,6 @@
-import type { InviteMemberInput, PreferredDestinationsInput, VerificationSubmission } from "@/shared";
+import type { InviteMemberInput, VerificationSubmission } from "@/shared";
 
 import { describePage } from "@/features/assistant/knowledge/types";
-
-export const MARKETS_KNOWLEDGE = describePage<PreferredDestinationsInput>({
-  route: "/settings/markets",
-  title: "Where you usually ship",
-  purpose: "Pick the destinations you send to most, so they're suggested first when you create an order.",
-  steps: ["Choose Add on each destination you ship to often.", "Choose it again to remove it.", "Save your preferences."],
-  fields: { countryCodes: { labels: [], meaning: "The destinations you've marked as preferred. You can still ship anywhere your market has opened; these just come first." } },
-  related: [
-    { href: "/orders/new", label: "Create an order" },
-    { href: "/overview", label: "Where you can ship" },
-  ],
-});
 
 export const TEAM_KNOWLEDGE = describePage<InviteMemberInput>({
   route: "/settings/team",

@@ -4,6 +4,7 @@ import { ShopForMePage } from "@/features/shopping/shop-for-me-page";
 import { JsonLd } from "@/components/seo/json-ld";
 import { BRAND } from "@/lib/brand";
 import { absoluteUrl, publicPage } from "@/lib/site";
+import { requireFeature } from "@/lib/features";
 
 export const metadata = publicPage({
   title: "Shop for me: we buy from shops abroad and send it to you",
@@ -12,6 +13,7 @@ export const metadata = publicPage({
 });
 
 export default async function Page() {
+  requireFeature("personalShopping");
   const countries = await fetchLiveCountries();
   return (
     <>

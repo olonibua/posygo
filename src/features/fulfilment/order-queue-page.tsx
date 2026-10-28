@@ -44,13 +44,13 @@ export function OrderQueuePage() {
     { key: "vendor", header: "Vendor", render: (order) => order.businessName },
     { key: "status", header: "Status", render: (order) => <OrderStatusPill status={order.status} /> },
     {
-      key: "destination",
+      key: "recipient",
       header: "Ship to",
       render: (order) => (
         <span>
           <span className="block">{order.recipientName}</span>
           <span className="text-meta text-ink-faint">
-            {order.recipientCity}, {countryName(order.destinationCountryCode)}
+            {order.recipientCity}, {countryName(order.countryCode)}
           </span>
         </span>
       ),

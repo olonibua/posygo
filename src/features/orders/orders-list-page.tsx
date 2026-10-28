@@ -47,7 +47,7 @@ export function OrdersListPage() {
         <span>
           <span className="block">{order.recipientName}</span>
           <span className="text-meta text-ink-faint">
-            {order.recipientCity}, {countryName(order.destinationCountryCode, locale)}
+            {order.recipientCity}, {countryName(order.countryCode, locale)}
           </span>
         </span>
       ),

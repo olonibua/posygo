@@ -29,6 +29,7 @@ import * as Returns from "@/features/returns/returns.knowledge";
 import * as WarehouseReturns from "@/features/returns/warehouse-returns.knowledge";
 import * as Review from "@/features/review/review.knowledge";
 import * as Security from "@/features/security/security.knowledge";
+import * as SellerCountries from "@/features/seller-countries/countries.knowledge";
 import * as ShoppingAdmin from "@/features/shopping/shopping-admin.knowledge";
 import * as Shopping from "@/features/shopping/shopping.knowledge";
 import * as Staff from "@/features/staff/staff.knowledge";
@@ -74,6 +75,7 @@ const SOURCES: ReadonlyArray<Record<string, unknown>> = [
   WarehouseReturns,
   Review,
   Security,
+  SellerCountries,
   ShoppingAdmin,
   Shopping,
   Staff,

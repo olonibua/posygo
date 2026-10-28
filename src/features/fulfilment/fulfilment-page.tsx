@@ -32,11 +32,11 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
   const { order, scan, resetScans, pack, act, decide, simulate, addPhotos } = useFulfilment(orderId);
   const [pending, setPending] = useState<Pending>(null);
   const data = order.data;
-  const presets = usePackaging(data?.originCountryCode ?? null);
+  const presets = usePackaging(data?.countryCode ?? null);
   if (!data) {
     return order.isError ? <p className="text-ink-soft">{"This order isn't available to you."}</p> : <PageSkeleton />;
   }
-  const locale = localeFor(data.originCountryCode);
+  const locale = localeFor(data.countryCode);
   const remaining = data.lines.reduce((total, line) => total + line.quantity - line.scannedQuantity, 0);
   const canDecide = hasPermission(user.role, "orders.cancel") && data.cancellation?.status === "PENDING";
   const showRates = data.actions.includes("FETCH_RATES") || data.actions.includes("SELECT_RATE");
@@ -47,7 +47,7 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
       <PageHeader
         stamp={`Order · ${data.businessName}`}
         title={data.reference}
-        lead={`${data.totalUnits} ${data.totalUnits === 1 ? "unit" : "units"} from ${data.warehouseName}.${data.customsRequired ? " Crossing a border: the customs declaration is sent with the label." : ""}`}
+        lead={`${data.totalUnits} ${data.totalUnits === 1 ? "unit" : "units"} from ${data.warehouseName}.`}
         action={
           <span className="flex flex-wrap items-center gap-2.5">
             <OrderStatusPill status={data.status} />
@@ -149,7 +149,7 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
           <OrderTimeline events={data.events} locale={locale} />
         </div>
         <div className="flex flex-col gap-5">
-          <RecipientCard recipient={data.recipient} customsRequired={data.customsRequired} />
+          <RecipientCard recipient={data.recipient} />
           <ParcelCard order={data} locale={locale} />
           <ChargesCard order={data} locale={locale} />
         </div>

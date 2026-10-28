@@ -1,7 +1,7 @@
 import type { SessionUser } from "@/shared";
 import { describe, expect, it } from "vitest";
 
-import { activeItem, ADMIN_CONSOLE, consoleFor, PARTNER_CONSOLE, visibleItems } from "./navigation";
+import { activeItem, ADMIN_CONSOLE, consoleFor, isLocked, PARTNER_CONSOLE, VENDOR_CONSOLE, visibleItems } from "./navigation";
 
 const partnerLead = (partnerStatus: SessionUser["partnerStatus"]): SessionUser =>
   ({
@@ -25,23 +25,12 @@ describe("partner console navigation", () => {
     const labels = (status: SessionUser["partnerStatus"]) => visibleItems(PARTNER_CONSOLE, partnerLead(status)).map((item) => item.label);
     expect(labels("APPLIED")).toEqual(["Partnership", "Team", "Earnings", "Security"]);
     expect(labels("SUSPENDED")).toEqual(["Partnership", "Stock counts", "Transfers", "Team", "Earnings", "Claims", "Security"]);
-    expect(labels("ACTIVE")).toEqual(["Partnership", "Receiving", "Orders", "Returns", "Shopping parcels", "Stock", "Stock counts", "Transfers", "Hub", "Team", "Earnings", "Claims", "Security"]);
+    expect(labels("ACTIVE")).toEqual(["Partnership", "Receiving", "Orders", "Returns", "Stock", "Stock counts", "Transfers", "Hub", "Team", "Earnings", "Claims", "Security"]);
   });
 
   it("shows partner staff no team or earnings pages", () => {
     const staff = { ...partnerLead("ACTIVE"), role: "PARTNER_STAFF" } as SessionUser;
-    expect(visibleItems(PARTNER_CONSOLE, staff).map((item) => item.label)).toEqual([
-      "Partnership",
-      "Receiving",
-      "Orders",
-      "Returns",
-      "Shopping parcels",
-      "Stock",
-      "Stock counts",
-      "Transfers",
-      "Hub",
-      "Security",
-    ]);
+    expect(visibleItems(PARTNER_CONSOLE, staff).map((item) => item.label)).toEqual(["Partnership", "Receiving", "Orders", "Returns", "Stock", "Stock counts", "Transfers", "Hub", "Security"]);
   });
 });
 
@@ -68,5 +57,44 @@ describe("vendor directory navigation", () => {
     const labels = visibleItems(ADMIN_CONSOLE, staff("WAREHOUSE_OPERATOR")).map((item) => item.label);
     expect(labels).not.toContain("Vendors");
     expect(labels).not.toContain("Products");
+  });
+});
+
+const vendorOwner = (vendorStatus: SessionUser["vendorStatus"]): SessionUser =>
+  ({
+    id: "u2",
+    email: "owner@shop.test",
+    role: "VENDOR_OWNER",
+    vendorId: "v1",
+    vendorStatus,
+    countryCode: "GB",
+    partnerId: null,
+    partnerStatus: null,
+    mfaState: "NOT_REQUIRED",
+    permissions: [],
+  }) as unknown as SessionUser;
+
+describe("vendor portal before the account is live", () => {
+  const lockedLabels = (status: SessionUser["vendorStatus"]) =>
+    visibleItems(VENDOR_CONSOLE, vendorOwner(status))
+      .filter((item) => isLocked(item, vendorOwner(status)))
+      .map((item) => item.label);
+
+  it("keeps everything but the overview, verification and security locked until the account is live", () => {
+    expect(lockedLabels("PENDING_VERIFICATION")).not.toContain("Overview");
+    expect(lockedLabels("PENDING_VERIFICATION")).not.toContain("Verification");
+    expect(lockedLabels("PENDING_VERIFICATION")).not.toContain("Security");
+    expect(lockedLabels("PENDING_VERIFICATION")).toEqual(expect.arrayContaining(["Products", "Inventory", "Inbound", "Orders", "Wallet"]));
+    expect(lockedLabels("ACTIVE")).toEqual([]);
+  });
+
+  it("never locks staff pages", () => {
+    const staff = { ...partnerLead("ACTIVE"), partnerId: null, role: "SUPER_ADMIN" } as SessionUser;
+    expect(visibleItems(ADMIN_CONSOLE, staff).some((item) => isLocked(item, staff))).toBe(false);
+  });
+
+  it("hides the switched-off shop and personal shopping pages", () => {
+    expect(VENDOR_CONSOLE.items.find((item) => item.label === "Storefront")?.feature).toBe("marketplace");
+    expect(visibleItems(VENDOR_CONSOLE, vendorOwner("ACTIVE")).map((item) => item.label)).not.toContain("Storefront");
   });
 });

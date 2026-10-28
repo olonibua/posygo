@@ -9,16 +9,25 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox, Field, FormAlert, Input, PasswordInput, Select } from "@/components/ui/form-controls";
+import { ChoiceChip } from "@/components/ui/choice-chip";
+import { Checkbox, Field, FormAlert, Input, PasswordInput } from "@/components/ui/form-controls";
 import { apiRequest } from "@/lib/api/client";
 import { applyServerErrors } from "@/lib/forms";
+
+import { countryFlag } from "@/features/seller-countries/country-flag";
 
 export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email: string; password: string }) => void }) {
   const [formError, setFormError] = useState<string | null>(null);
   const countries = useQuery({ queryKey: ["countries", "live"], queryFn: () => apiRequest<PublicCountry[]>("/v1/countries", { authenticated: false }) });
   const referred = useSearchParams().get("ref")?.slice(0, 40) ?? "";
-  const { register, handleSubmit, setError, formState } = useForm<SignupInput>({ resolver: zodResolver(signupSchema), defaultValues: { countryCode: "", referralCode: referred } });
-  const { errors, isSubmitting } = formState;
+  const { register, handleSubmit, setError, setValue, watch, formState } = useForm<SignupInput>({ resolver: zodResolver(signupSchema), defaultValues: { countryCodes: [], referralCode: referred } });
+  const { errors, isSubmitting, isSubmitted } = formState;
+  const chosen = watch("countryCodes");
+
+  function toggleCountry(code: string) {
+    const next = chosen.includes(code) ? chosen.filter((entry) => entry !== code) : [...chosen, code];
+    setValue("countryCodes", next, { shouldValidate: isSubmitted });
+  }
 
   async function onSubmit(values: SignupInput) {
     setFormError(null);
@@ -26,7 +35,7 @@ export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email
       await apiRequest("/v1/auth/signup", { method: "POST", body: values, authenticated: false });
       onSubmitted({ email: values.email, password: values.password });
     } catch (error) {
-      setFormError(applyServerErrors(error, setError, ["email", "password", "businessName", "countryCode"]));
+      setFormError(applyServerErrors(error, setError, ["email", "password", "businessName", "countryCodes"]));
     }
   }
 
@@ -36,20 +45,24 @@ export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email
       <Field label="Business name" error={errors.businessName?.message}>
         {({ id, describedBy, invalid }) => <Input id={id} autoComplete="organization" aria-describedby={describedBy} aria-invalid={invalid} {...register("businessName")} />}
       </Field>
-      <Field label="Where will your stock live?" hint="You can ship from here to any destination this market has enabled." error={errors.countryCode?.message}>
-        {({ id, describedBy, invalid }) => (
-          <Select id={id} aria-describedby={describedBy} aria-invalid={invalid} disabled={countries.isLoading} {...register("countryCode")}>
-            <option value="" disabled>
-              {countries.isLoading ? "Loading markets…" : countries.data?.length ? "Choose a market" : "No markets are open yet"}
-            </option>
-            {countries.data?.map((country) => (
-              <option key={country.code} value={country.code}>
-                {country.name} · {country.currency}
-              </option>
-            ))}
-          </Select>
-        )}
-      </Field>
+      <fieldset>
+        <legend className="mb-2 text-small font-medium">Where do you want to store stock?</legend>
+        <p className="mb-3 text-meta font-normal text-ink-faint">Pick every country you sell in. Your first pick is your home country.</p>
+        <div className="flex flex-wrap gap-2.5">
+          {countries.isLoading ? <span className="text-small text-ink-soft">Loading countries…</span> : null}
+          {countries.data?.length === 0 ? <span className="text-small text-ink-soft">No countries are open yet.</span> : null}
+          {countries.data?.map((country) => (
+            <ChoiceChip key={country.code} tone="lime" selected={chosen.includes(country.code)} onToggle={() => toggleCountry(country.code)}>
+              {countryFlag(country.code)} {country.name} · {country.currency}
+            </ChoiceChip>
+          ))}
+        </div>
+        {errors.countryCodes ? (
+          <p role="alert" className="motion-rise mt-1.5 text-meta text-danger">
+            {errors.countryCodes.message ?? errors.countryCodes.root?.message}
+          </p>
+        ) : null}
+      </fieldset>
       <Field label="Work email" error={errors.email?.message}>
         {({ id, describedBy, invalid }) => <Input id={id} type="email" autoComplete="email" aria-describedby={describedBy} aria-invalid={invalid} {...register("email")} />}
       </Field>

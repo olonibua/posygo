@@ -8,6 +8,7 @@ import { loadPublic } from "@/lib/api/public-server";
 import { PRIVATE_PAGE, publicPage } from "@/lib/site";
 import { storeGraph } from "@/lib/structured-data";
 import { type PublicStoreView, storefrontSlugSchema } from "@/shared";
+import { requireFeature } from "@/lib/features";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -32,6 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
+  requireFeature("marketplace");
   const { slug } = await params;
   const result = await loadStore(slug);
   if (result.kind === "missing") {

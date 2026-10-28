@@ -74,7 +74,7 @@ describe("what the helper says", () => {
 describe("matching questions to fields", () => {
   it("ignores punctuation in labels and questions", () => {
     const signup = knowledgeFor("/signup")!;
-    expect(understand("what does where will your stock live mean?", signup, false)).toEqual({ kind: "field", label: "Where will your stock live?" });
+    expect(understand("what does where do you want to store stock mean?", signup, false)).toEqual({ kind: "field", label: "Where do you want to store stock?" });
     expect(understand("Referral code??", signup, false)).toEqual({ kind: "field", label: "Referral code (optional)" });
   });
 });

@@ -45,13 +45,13 @@ export function SignupFlow() {
         <>
           One account.
           <br />
-          Partners in every country.
+          Stock in every country you sell in.
         </>
       }
       steps={SIGNUP_STEPS}
       currentStep={0}
     >
-      <AuthHeading title="Create your account" lead="Tell us who you are and where your stock will live. You can add more destinations later." />
+      <AuthHeading title="Create your account" lead="Tell us who you are and where you want to store stock. You can add more countries later." />
       <SignupForm onSubmitted={setCredentials} />
     </AuthShell>
   );

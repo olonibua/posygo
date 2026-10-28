@@ -4,13 +4,15 @@ import type { ApiKeyCreatedView, ApiKeyView, CreateOrdersInput, ImportResultView
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { VENDOR_WALLET_KEY } from "@/features/finance/use-vendor-wallet";
+import { useCountryScope } from "@/features/seller-countries/selected-country";
 import { apiRequest } from "@/lib/api/client";
 
 export const VENDOR_ORDERS_KEY = ["vendor", "orders"] as const;
 
 export function useVendorOrders(search: string) {
+  const { code, ready, path } = useCountryScope();
   const query = search ? `?q=${encodeURIComponent(search)}` : "";
-  return useQuery({ queryKey: [...VENDOR_ORDERS_KEY, "list", search], queryFn: () => apiRequest<OrderSummaryView[]>(`/v1/vendor/orders${query}`) });
+  return useQuery({ queryKey: [...VENDOR_ORDERS_KEY, "list", code, search], queryFn: () => apiRequest<OrderSummaryView[]>(path(`/v1/vendor/orders${query}`)), enabled: ready });
 }
 
 export function useVendorOrder(orderId: string) {
@@ -30,8 +32,9 @@ export function useVendorOrder(orderId: string) {
 
 export function usePlaceOrders() {
   const queryClient = useQueryClient();
+  const { path } = useCountryScope();
   return useMutation({
-    mutationFn: (input: CreateOrdersInput) => apiRequest<OrderSummaryView[]>("/v1/vendor/orders", { method: "POST", body: input }),
+    mutationFn: (input: CreateOrdersInput) => apiRequest<OrderSummaryView[]>(path("/v1/vendor/orders"), { method: "POST", body: input }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: VENDOR_ORDERS_KEY });
       void queryClient.invalidateQueries({ queryKey: VENDOR_WALLET_KEY });
@@ -40,18 +43,20 @@ export function usePlaceOrders() {
 }
 
 export function useOrderEstimate(units: number) {
+  const { code, ready, path } = useCountryScope();
   return useQuery({
-    queryKey: [...VENDOR_ORDERS_KEY, "estimate", units],
-    queryFn: () => apiRequest<OrderEstimateView>("/v1/vendor/orders/estimate", { method: "POST", body: { units } }),
-    enabled: units > 0,
+    queryKey: [...VENDOR_ORDERS_KEY, "estimate", code, units],
+    queryFn: () => apiRequest<OrderEstimateView>(path("/v1/vendor/orders/estimate"), { method: "POST", body: { units } }),
+    enabled: ready && units > 0,
   });
 }
 
 export function useOrderImports() {
   const queryClient = useQueryClient();
-  const history = useQuery({ queryKey: [...VENDOR_ORDERS_KEY, "imports"], queryFn: () => apiRequest<ImportResultView[]>("/v1/vendor/orders/imports") });
+  const { code, ready, path } = useCountryScope();
+  const history = useQuery({ queryKey: [...VENDOR_ORDERS_KEY, "imports", code], queryFn: () => apiRequest<ImportResultView[]>(path("/v1/vendor/orders/imports")), enabled: ready });
   const run = useMutation({
-    mutationFn: (input: { filename: string; csv: string }) => apiRequest<ImportResultView>("/v1/vendor/orders/imports", { method: "POST", body: input }),
+    mutationFn: (input: { filename: string; csv: string }) => apiRequest<ImportResultView>(path("/v1/vendor/orders/imports"), { method: "POST", body: input }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: VENDOR_ORDERS_KEY });
       void queryClient.invalidateQueries({ queryKey: VENDOR_WALLET_KEY });

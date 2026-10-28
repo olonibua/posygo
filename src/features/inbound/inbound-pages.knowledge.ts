@@ -5,8 +5,9 @@ import { describePage } from "@/features/assistant/knowledge/types";
 export const SHIPMENTS_KNOWLEDGE = describePage<Record<"group", unknown>>({
   route: "/inbound",
   title: "Stock shipments",
-  purpose: "Every stock shipment you've told a hub about, from draft to counted.",
+  purpose: "Every stock shipment you've told us about in the country you've chosen at the top of the page, from draft to counted.",
   steps: [
+    "Use the country menu at the top of the page to see shipments to another country.",
     "Choose a tab to see shipments on the way, drafts, or finished ones.",
     "Open a shipment to check its products, boxes, charges and messages.",
     "Start a new shipment when you're ready to send more stock.",

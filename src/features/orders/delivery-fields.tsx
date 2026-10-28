@@ -1,10 +1,12 @@
 "use client";
 
-import type { DestinationView, ProductView } from "@/shared";
+import type { ProductView, VendorCountryView } from "@/shared";
 
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/form-controls";
 import { Paper, Stamp } from "@/components/ui/surfaces";
+
+import { countryFlag } from "@/features/seller-countries/country-flag";
 
 export interface LineDraft {
   key: string;
@@ -15,7 +17,6 @@ export interface LineDraft {
 export interface DeliveryDraft {
   key: string;
   externalReference: string;
-  countryCode: string;
   name: string;
   company: string;
   line1: string;
@@ -31,17 +32,17 @@ export interface DeliveryDraft {
 interface DeliveryFieldsProps {
   index: number;
   delivery: DeliveryDraft;
-  destinations: DestinationView[];
+  country: VendorCountryView;
   products: ProductView[];
+  available: ReadonlyMap<string, number>;
   errorFor: (field: string) => string | undefined;
   onChange: (next: DeliveryDraft) => void;
   onRemove?: () => void;
   newKey: () => string;
 }
 
-export function DeliveryFields({ index, delivery, destinations, products, errorFor, onChange, onRemove, newKey }: DeliveryFieldsProps) {
-  const destination = destinations.find((entry) => entry.code === delivery.countryCode);
-  const rules = destination?.address;
+export function DeliveryFields({ index, delivery, country, products, available, errorFor, onChange, onRemove, newKey }: DeliveryFieldsProps) {
+  const rules = country.address;
   const set = (patch: Partial<DeliveryDraft>) => onChange({ ...delivery, ...patch });
   const setLine = (key: string, patch: Partial<LineDraft>) => set({ lines: delivery.lines.map((line) => (line.key === key ? { ...line, ...patch } : line)) });
   const prefix = `deliveries.${index}`;
@@ -65,7 +66,9 @@ export function DeliveryFields({ index, delivery, destinations, products, errorF
   return (
     <Paper className="flex flex-col gap-5 px-6 py-6">
       <div className="flex items-center justify-between gap-3">
-        <Stamp>Delivery {index + 1}</Stamp>
+        <Stamp>
+          Delivery {index + 1} · {countryFlag(country.code)} {country.name}
+        </Stamp>
         {onRemove ? (
           <Button variant="ghost" onClick={onRemove}>
             Remove
@@ -73,28 +76,13 @@ export function DeliveryFields({ index, delivery, destinations, products, errorF
         ) : null}
       </div>
       <div className="grid gap-4 md:grid-cols-2">
-        <Field
-          label="Ship to"
-          error={errorFor(`${prefix}.recipient.countryCode`)}
-          hint={destination?.customsRequired ? "Crosses a border: needs HS codes and a phone number. The recipient pays import duties." : undefined}
-        >
-          {({ id, describedBy, invalid }) => (
-            <Select id={id} aria-describedby={describedBy} aria-invalid={invalid} value={delivery.countryCode} onChange={(event) => set({ countryCode: event.target.value, region: "" })}>
-              {destinations.map((entry) => (
-                <option key={entry.code} value={entry.code}>
-                  {entry.name}
-                </option>
-              ))}
-            </Select>
-          )}
-        </Field>
         {text("externalReference", "Your reference (optional)", { error: errorFor(`${prefix}.externalReference`), hint: "Your shop's order number, so you can find it later.", maxLength: 64 })}
         {text("name", "Recipient name", { autoComplete: "name" })}
         {text("company", "Company (optional)", { autoComplete: "organization" })}
         {text("line1", "Address", { autoComplete: "address-line1" })}
         {text("line2", "Address line 2 (optional)", { autoComplete: "address-line2" })}
         {text("city", "Town or city", { autoComplete: "address-level2", maxLength: 60 })}
-        {rules && rules.regionCodes.length > 0 ? (
+        {rules.regionCodes.length > 0 ? (
           <Field label={rules.regionLabel} error={errorFor(`${prefix}.recipient.region`)}>
             {({ id, describedBy, invalid }) => (
               <Select id={id} aria-describedby={describedBy} aria-invalid={invalid} value={delivery.region} onChange={(event) => set({ region: event.target.value })}>
@@ -108,10 +96,10 @@ export function DeliveryFields({ index, delivery, destinations, products, errorF
             )}
           </Field>
         ) : (
-          text("region", `${rules?.regionLabel ?? "Region"}${rules?.regionRequired ? "" : " (optional)"}`, { autoComplete: "address-level1", maxLength: 40 })
+          text("region", `${rules.regionLabel}${rules.regionRequired ? "" : " (optional)"}`, { autoComplete: "address-level1", maxLength: 40 })
         )}
-        {text("postalCode", rules?.postalCodeLabel ?? "Postcode", { autoComplete: "postal-code", maxLength: 16 })}
-        {text("phone", destination?.customsRequired ? "Phone" : "Phone (optional)", { autoComplete: "tel", type: "tel", maxLength: 20 })}
+        {text("postalCode", rules.postalCodeLabel, { autoComplete: "postal-code", maxLength: 16 })}
+        {text("phone", "Phone (optional)", { autoComplete: "tel", type: "tel", maxLength: 20 })}
         {text("email", "Email (optional)", { autoComplete: "email", type: "email", maxLength: 254 })}
       </div>
       <div className="flex flex-col gap-3">
@@ -127,11 +115,14 @@ export function DeliveryFields({ index, delivery, destinations, products, errorF
               {({ id }) => (
                 <Select id={id} value={line.productId} onChange={(event) => setLine(line.key, { productId: event.target.value })}>
                   <option value="">Choose a product</option>
-                  {products.map((product) => (
-                    <option key={product.id} value={product.id} disabled={product.stock.available === 0}>
-                      {product.name} · {product.code} · {product.stock.available} available
-                    </option>
-                  ))}
+                  {products.map((product) => {
+                    const units = available.get(product.id) ?? 0;
+                    return (
+                      <option key={product.id} value={product.id} disabled={units === 0}>
+                        {product.name} · {product.code} · {units} available
+                      </option>
+                    );
+                  })}
                 </Select>
               )}
             </Field>

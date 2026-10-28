@@ -22,13 +22,13 @@ export function FeatureSection() {
         />
         <FeatureCard
           confetti
-          title="Ship where your customers are"
-          body="Every order says where it's going. Sell at home, or send it to any destination your market has opened."
+          title="Sent from the same country"
+          body="Your stock waits in every country you sell in. Each order goes out from stock in that country, so it arrives fast."
           footer={
             <div className="flex justify-center">
               <NotebookNote className="w-full max-w-[330px]">
                 <Stamp className="text-cocoa">Order 1042</Stamp>
-                <p className="mt-2.5 text-[30px] font-medium leading-[31px] tracking-[-1px]">Manchester → New York</p>
+                <p className="mt-2.5 text-[30px] font-medium leading-[31px] tracking-[-1px]">Leeds → Manchester</p>
               </NotebookNote>
             </div>
           }
@@ -60,14 +60,14 @@ export function AudienceSection() {
         <PlanCard
           tone="lime"
           title="Growing brands"
-          line="Reach customers across borders."
+          line="Sell in more countries."
           headline="Every"
-          headlineNote="destination you open"
+          headlineNote="country you add"
           sticker="/brand/badge-scallop-sky.svg"
           action={<ButtonLink href="/signup">Start selling</ButtonLink>}
           points={[
-            { text: "Choose the countries you ship to", dot: "orange" },
-            { text: "Customs paperwork prepared for each order", dot: "sky" },
+            { text: "Stock in every country you sell in", dot: "orange" },
+            { text: "A wallet in each country's currency", dot: "sky" },
             { text: "Invite your team to help", dot: "magenta" },
           ]}
         />

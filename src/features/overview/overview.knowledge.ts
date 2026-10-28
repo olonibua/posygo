@@ -1,22 +1,20 @@
 import { describePage } from "@/features/assistant/knowledge/types";
 
-export const OVERVIEW_KNOWLEDGE = describePage<Record<"destinations", unknown>>({
+export const OVERVIEW_KNOWLEDGE = describePage({
   route: "/overview",
   title: "Overview",
-  purpose: "A quick look at your business: stock on the way, units in storage, your wallet balance and where you can ship.",
+  purpose: "A quick look at your business in the country you've chosen at the top of the page: stock on the way, units in storage, orders today and your wallet balance.",
   steps: [
-    "Check the tiles for shipments on the way, units in storage, open destinations and your wallet balance.",
+    "Use the country menu at the top of the page to choose a country, or All countries to see them side by side.",
+    "Check the tiles for shipments on the way, units in storage, orders today and the wallet balance in that country.",
     "If there's a next step card, follow it to finish verifying your business, accept an agreement or pay the activation fee.",
-    "Start a new stock shipment once your account is live.",
-    "Look through the list of places you can ship to, filtered by domestic or international.",
+    "Under Your countries, each card shows that country's wallet, stock and orders today in its own currency. Choose a card to switch to it.",
   ],
-  fields: {
-    destinations: { labels: ["Filter destinations"], meaning: "Narrows the list of places you can ship to. Domestic is your own country; international destinations need a customs declaration." },
-  },
+  fields: {},
   related: [
     { href: "/inbound/new", label: "Send stock in" },
     { href: "/verification", label: "Verify your business" },
     { href: "/wallet", label: "Wallet" },
-    { href: "/settings/markets", label: "Where you usually ship" },
+    { href: "/settings/markets", label: "Where you store stock" },
   ],
 });

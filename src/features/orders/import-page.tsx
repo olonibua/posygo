@@ -10,13 +10,14 @@ import { EmptyState } from "@/components/ui/navigation-controls";
 import { PageHeader } from "@/components/ui/page-header";
 import { NotebookNote, Paper, Stamp } from "@/components/ui/surfaces";
 import { formError, fieldError } from "@/features/receiving/api-errors";
+import { useSelectedCountry } from "@/features/seller-countries/selected-country";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatDateTime, localeFor } from "@/lib/format";
 
 import { useOrderImports } from "./use-vendor-orders";
 
 const EXAMPLE_ROWS = [
-  ["SHOP-1001", "Ada Obi", "", "+44 7700 900123", "ada@example.com", "1 High Street", "", "Manchester", "", "M1 1AA", "GB", "WIG-BW-16", "1"],
+  ["SHOP-1001", "Ada Obi", "", "+44 7700 900123", "ada@example.com", "1 High Street", "", "Manchester", "", "M1 1AA", "", "WIG-BW-16", "1"],
   ["SHOP-1001", "", "", "", "", "", "", "", "", "", "", "WIG-CAP", "2"],
 ];
 
@@ -30,6 +31,7 @@ type ResultRow = ImportResultView["results"][number];
 export function ImportPage() {
   const user = useCurrentUser();
   const locale = localeFor(user.countryCode);
+  const { country } = useSelectedCountry();
   const { history, run } = useOrderImports();
   const [file, setFile] = useState<{ name: string; text: string } | null>(null);
   const [problem, setProblem] = useState<string | null>(null);
@@ -62,7 +64,7 @@ export function ImportPage() {
     <div className="flex flex-col gap-7">
       <PageHeader
         stamp="Orders"
-        title="Import a spreadsheet"
+        title={country ? `Import orders in ${country.name}` : "Import a spreadsheet"}
         lead="Upload a CSV with one row per product. Rows that share an order reference become one order; the address only needs to be on the first row."
       />
       <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
@@ -90,7 +92,9 @@ export function ImportPage() {
           <ul className="mt-2 flex list-disc flex-col gap-1.5 pl-5 text-small">
             <li>Each order takes its fulfilment fee from your wallet as it&rsquo;s created, so top up first.</li>
             <li>Use your product codes exactly as they appear in your catalogue.</li>
-            <li>Country is the two-letter code, for example GB or US.</li>
+            <li>
+              Every order is for {country ? country.name : "the country you've chosen"}. Leave the country column blank, or use {country?.code ?? "its code"}.
+            </li>
             <li>Orders that can&rsquo;t be created are listed with the reason; the rest go through.</li>
           </ul>
         </NotebookNote>

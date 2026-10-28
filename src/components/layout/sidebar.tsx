@@ -11,7 +11,7 @@ import { toneSurface } from "@/components/ui/tone";
 import { BRAND } from "@/lib/brand";
 import { cn } from "@/lib/cn";
 
-import { activeItem, type Console, type NavItem, visibleItems } from "./navigation";
+import { activeItem, type Console, isLocked, type NavItem, visibleItems } from "./navigation";
 
 const ITEM = "motion-press relative z-[1] flex items-center gap-3 rounded-nav px-2.5 py-[7px] text-[15px] no-underline";
 
@@ -73,7 +73,7 @@ export function Sidebar({ console, user, onNavigate, collapsed = false, onToggle
             {items
               .filter((item) => item.group === group)
               .map((item) => (
-                <SidebarItem key={item.label} item={item} active={item === current} collapsed={collapsed} onNavigate={onNavigate} />
+                <SidebarItem key={item.label} item={item} active={item === current} locked={isLocked(item, user)} collapsed={collapsed} onNavigate={onNavigate} />
               ))}
           </div>
         ))}
@@ -103,8 +103,28 @@ function ToneIcon({ item, active }: { item: NavItem; active: boolean }) {
   );
 }
 
-function SidebarItem({ item, active, collapsed, onNavigate }: { item: NavItem; active: boolean; collapsed: boolean; onNavigate?: () => void }) {
+const LOCKED_NOTE = "Opens once your account is live";
+
+interface SidebarItemProps {
+  item: NavItem;
+  active: boolean;
+  locked: boolean;
+  collapsed: boolean;
+  onNavigate?: () => void;
+}
+
+function SidebarItem({ item, active, locked, collapsed, onNavigate }: SidebarItemProps) {
   const label = <span className={cn(FADE, collapsed && "opacity-0")}>{item.label}</span>;
+  if (locked) {
+    return (
+      <span className={cn(ITEM, "cursor-not-allowed text-ink-faint")} aria-disabled title={LOCKED_NOTE}>
+        <ToneIcon item={item} active={false} />
+        {label}
+        <span className="sr-only">, {LOCKED_NOTE.toLowerCase()}</span>
+        <Icon name="lock" className={cn("ml-auto h-3.5 w-3.5 shrink-0", FADE, collapsed && "opacity-0")} />
+      </span>
+    );
+  }
   if (!item.href) {
     return (
       <span className={cn(ITEM, "cursor-default text-ink-faint")} aria-disabled title={collapsed ? item.label : undefined}>

@@ -3,6 +3,7 @@
 import type { ClaimStatus, ClaimView, CustodyAlertView, HubSignalView, TransferStatus, TransferView, TrustView } from "@/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { useCountryScope } from "@/features/seller-countries/selected-country";
 import { apiRequest } from "@/lib/api/client";
 import { toast } from "@/lib/toast/toast-store";
 
@@ -14,7 +15,10 @@ export type HubRoute = "partner" | "warehouse";
 const CLAIM_PATHS: Record<ClaimAudience, string> = { admin: "/v1/admin/claims", vendor: "/v1/vendor/claims", partner: "/v1/partner/claims" };
 
 export function useClaims(audience: ClaimAudience, status?: ClaimStatus) {
-  return useQuery({ queryKey: [...KEY, "claims", audience, status ?? "ALL"], queryFn: () => apiRequest<ClaimView[]>(`${CLAIM_PATHS[audience]}${status ? `?status=${status}` : ""}`) });
+  const { code, ready, path } = useCountryScope();
+  const vendor = audience === "vendor";
+  const url = `${CLAIM_PATHS[audience]}${status ? `?status=${status}` : ""}`;
+  return useQuery({ queryKey: [...KEY, "claims", audience, vendor ? code : null, status ?? "ALL"], queryFn: () => apiRequest<ClaimView[]>(vendor ? path(url) : url), enabled: !vendor || ready });
 }
 
 export function useClaim(claimId: string | null) {
@@ -38,7 +42,8 @@ export function useTrust(partnerId?: string) {
 }
 
 export function useHubSignals() {
-  return useQuery({ queryKey: [...KEY, "hubs"], queryFn: () => apiRequest<HubSignalView[]>("/v1/vendor/hubs") });
+  const { code, ready, path } = useCountryScope();
+  return useQuery({ queryKey: [...KEY, "hubs", code], queryFn: () => apiRequest<HubSignalView[]>(path("/v1/vendor/hubs")), enabled: ready });
 }
 
 export function useCustodyMutation<Input, Output>(request: (input: Input) => { path: string; body?: unknown }, announce: string | ((input: Input) => string)) {

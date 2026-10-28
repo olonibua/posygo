@@ -5,8 +5,10 @@ import { describePage } from "@/features/assistant/knowledge/types";
 export const WALLET_KNOWLEDGE = describePage<StartTopUpInput & WalletSettingsInput>({
   route: "/wallet",
   title: "Wallet",
-  purpose: "Your prepaid balance. Fees for stocking, storage, packing and shipping are taken from it as the work is done, and every charge is listed with what it was for.",
+  purpose:
+    "Your prepaid balance in the country you've chosen at the top of the page. Each country has its own wallet in its own currency. Fees for stocking, storage, packing and shipping in that country are taken from it as the work is done, and every charge is listed with what it was for.",
   steps: [
+    "Use the country menu at the top of the page to see another country's wallet.",
     "Add funds by card.",
     "Watch charges appear as the hub works on your stock and orders.",
     "Set a low balance alert so you're emailed before you run out.",

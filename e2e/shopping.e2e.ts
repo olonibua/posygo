@@ -5,6 +5,8 @@ import { expect, type Page, test } from "@playwright/test";
 import { CAST } from "./support/cast";
 import { apiStatus, buyerLinkToken, expectNoHorizontalScroll, resetCast, shoppingConfirmToken, signIn, watchConsole } from "./support/session";
 
+import { FEATURES } from "@/lib/features";
+
 const PHOTO = "e2e/results/shopping-photo.png";
 const BUYER = `shopper-${Date.now().toString(36)}@e2e.gfn.local`;
 
@@ -18,6 +20,7 @@ async function signInBuyer(page: Page): Promise<void> {
 test.describe.configure({ mode: "serial" });
 
 test.describe("personal shopping, from a link to a parcel on its way", () => {
+  test.skip(!FEATURES.personalShopping, "Switched off on this site.");
   let reference = "";
 
   test.beforeAll(() => {

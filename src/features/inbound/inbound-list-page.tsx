@@ -9,6 +9,7 @@ import { type Column, DataTable } from "@/components/ui/data-table";
 import { EmptyState, FilterTabs, OpenLink } from "@/components/ui/navigation-controls";
 import { PageHeader } from "@/components/ui/page-header";
 import { OPEN_STATUS_GROUPS } from "@/features/stock/display";
+import { useCountryScope } from "@/features/seller-countries/selected-country";
 import { InboundStatusPill } from "@/features/stock/inbound-parts";
 import { apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
@@ -32,7 +33,8 @@ const COLUMNS: readonly Column<InboundSummaryView>[] = [
 export function InboundListPage() {
   const user = useCurrentUser();
   const [group, setGroup] = useState<Group>("open");
-  const inbound = useQuery({ queryKey: [...INBOUND_KEY, "list"], queryFn: () => apiRequest<InboundSummaryView[]>("/v1/vendor/inbound") });
+  const { code, ready, path } = useCountryScope();
+  const inbound = useQuery({ queryKey: [...INBOUND_KEY, "list", code], queryFn: () => apiRequest<InboundSummaryView[]>(path("/v1/vendor/inbound")), enabled: ready });
   const all = inbound.data ?? [];
   const inGroup = (target: Group) => all.filter((row) => (OPEN_STATUS_GROUPS[target] as readonly string[]).includes(row.status));
 

@@ -7,7 +7,7 @@ import { CAST } from "./support/cast";
 import { signIn, watchConsole } from "./support/session";
 
 const HELPER = /^Open Posy/;
-const PUBLIC_PAGES = ["/signup", "/login", "/forgot-password", "/shop-for-me", "/track", "/partners"];
+const PUBLIC_PAGES = ["/signup", "/login", "/forgot-password", "/track", "/partners"];
 const SELLER_PAGES = [
   "/overview",
   "/inbound",
@@ -110,9 +110,9 @@ test.describe("the helper", () => {
     await expect(helper.getByText("Hi, I'm Posy")).toBeVisible();
     await helper.getByRole("button", { name: 'What\'s "Work email"?' }).click();
     await expect(helper.getByText("The email you'll sign in with")).toBeVisible();
-    await helper.getByLabel("Message Posy").fill("what does where will your stock live mean?");
+    await helper.getByLabel("Message Posy").fill("what does where do you want to store stock mean?");
     await helper.getByLabel("Message Posy").press("Enter");
-    await expect(helper.getByText("The country where we'll store your stock")).toBeVisible();
+    await expect(helper.getByText("The countries where we'll keep your stock")).toBeVisible();
     await helper.getByLabel("Message Posy").fill("do you deliver to the moon?");
     await helper.getByLabel("Message Posy").press("Enter");
     await expect(helper.getByText("I'd rather not guess")).toBeVisible();

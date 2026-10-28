@@ -6,9 +6,10 @@ import { describePage } from "@/features/assistant/knowledge/types";
 export const NEW_ORDER_KNOWLEDGE = describePage<DeliveryInput & Recipient>({
   route: "/orders/new",
   title: "Create an order",
-  purpose: "Send one or more of your products to a customer. The hub picks, packs and photographs the parcel, then hands it to a carrier with tracking.",
+  purpose:
+    "Send one or more of your products to a customer in the country you've chosen at the top of the page. It's picked, packed and photographed from your stock in that country, then handed to a carrier with tracking.",
   steps: [
-    "Choose where the parcel is going.",
+    "Check the country at the top of the page. The order is sent from your stock there, to an address in the same country.",
     "Add the customer's name and address exactly as the carrier needs it.",
     "Add each product and how many units.",
     "Create the order. Packing and shipping are taken from your wallet when the order is accepted.",
@@ -21,7 +22,7 @@ export const NEW_ORDER_KNOWLEDGE = describePage<DeliveryInput & Recipient>({
       mistakes: ["Each order needs its own reference.", "Up to 64 letters, numbers or . _ : # / -"],
       fix: orderReferenceFix,
     },
-    recipient: { labels: ["Ship to"], meaning: "The country the parcel is going to. Only destinations your market ships to are listed." },
+    recipient: { labels: [], meaning: "Who the parcel goes to. The address has to be in the country you've chosen at the top of the page." },
     name: { labels: ["Recipient name"], meaning: "The full name of the person receiving the parcel." },
     company: { labels: ["Company (optional)"], meaning: "A company name, if the parcel is going to a business address." },
     line1: { labels: ["Address"], meaning: "The first line of the delivery address: house number and street.", mistakes: ["Put flat or unit numbers in the second line."] },
@@ -31,15 +32,15 @@ export const NEW_ORDER_KNOWLEDGE = describePage<DeliveryInput & Recipient>({
     postalCode: {
       labels: [/^(Postcode|ZIP code|Postal code)/],
       meaning: "The postcode or ZIP code of the delivery address. Carriers use it to route the parcel.",
-      mistakes: ["It has to match the format for the destination country."],
+      mistakes: ["It has to match the format for the country the order is in."],
     },
-    countryCode: { labels: [], meaning: 'The destination country, set by "Ship to".' },
-    phone: { labels: [/^Phone/], meaning: "A phone number the carrier can call about delivery. Required when the parcel goes through customs." },
+    countryCode: { labels: [], meaning: "Set for you: the country you've chosen at the top of the page. Orders only go to addresses in that country." },
+    phone: { labels: [/^Phone/], meaning: "A phone number the carrier can call about delivery. Optional." },
     email: { labels: ["Email (optional)"], meaning: "The customer's email, so the carrier can send delivery updates." },
     lines: {
       labels: [/^Product \d+$/, "Units"],
-      meaning: "Each product to send and how many units. Only stock that's in the hub can be ordered.",
-      mistakes: ["Each product can only appear once.", "If there isn't enough stock in one hub, the order can't be accepted."],
+      meaning: "Each product to send and how many units. Only stock you have in this country can be ordered.",
+      mistakes: ["Each product can only appear once.", "If there isn't enough stock in this country, the order can't be accepted."],
     },
   },
   related: [

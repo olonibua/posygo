@@ -3,8 +3,9 @@ import { describePage } from "@/features/assistant/knowledge/types";
 export const CLAIMS_KNOWLEDGE = describePage({
   route: "/claims",
   title: "Claims",
-  purpose: "Problems with your stock while we or a partner hub hold it, and what we decided about each one.",
+  purpose: "Problems with your stock in the country you've chosen at the top of the page, and what we decided about each one.",
   steps: [
+    "Use the country menu at the top of the page to see claims in another country.",
     "To report a problem, open the order or the stock it's about and choose Report a problem.",
     "Follow each claim here as we look into it.",
     "Read the assessment and decision notes to see who was responsible.",

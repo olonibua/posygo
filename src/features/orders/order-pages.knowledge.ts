@@ -9,8 +9,9 @@ type CancelInput = Extract<VendorOrderActionInput, { action: "CANCEL" }>;
 export const ORDERS_KNOWLEDGE = describePage<Record<"group" | "search" | "from" | "to", unknown>>({
   route: "/orders",
   title: "Orders",
-  purpose: "Every order shipped from your stock at the hub, from waiting to be packed through to delivered.",
+  purpose: "Every order in the country you've chosen at the top of the page, from waiting to be packed through to delivered.",
   steps: [
+    "Use the country menu at the top of the page to see another country's orders.",
     "Check the tiles for orders to pack, being shipped, on the way, and any that need funds.",
     "Choose a tab, or search, to find an order.",
     "Open an order to see its timeline, parcel and tracking.",
@@ -69,8 +70,9 @@ export const ORDER_KNOWLEDGE = describePage<ReportClaimInput & CancelInput>({
 export const IMPORT_ORDERS_KNOWLEDGE = describePage<Record<"file", unknown>>({
   route: "/orders/import",
   title: "Import orders",
-  purpose: "Create many orders at once from a spreadsheet saved as a CSV file.",
+  purpose: "Create many orders at once from a spreadsheet saved as a CSV file. They're created in the country you've chosen at the top of the page.",
   steps: [
+    "Check the country at the top of the page. Every order in the file is sent from your stock there.",
     "Download the template and fill in one row per product.",
     "Give rows for the same order the same order reference. The address only needs to be on the first row.",
     "Top up your wallet first, as each order takes its fulfilment fee when it's created.",
@@ -80,11 +82,13 @@ export const IMPORT_ORDERS_KNOWLEDGE = describePage<Record<"file", unknown>>({
   fields: {
     file: {
       labels: ["Choose a CSV file", /^Choose a CSV file/, /Up to \d+ rows and \d+ orders per file/],
-      meaning: "Your orders as a CSV file, with the same column headings as the template. Country is the two-letter code, like GB or US, and product codes must match your catalogue.",
+      meaning:
+        "Your orders as a CSV file, with the same column headings as the template. The country column can be left blank, or left out, and the country you've chosen is used. If you fill it in, it must be that country's two-letter code, like GB. Product codes must match your catalogue.",
       example: "SHOP-1001,Ada Obi,,+44 7700 900123,ada@example.com,1 High Street,,Manchester,,M1 1AA,GB,WIG-BW-16,1",
       mistakes: [
         "Keep the file under 250 KB, with up to 1000 rows and 300 orders. You can import up to 2000 orders a day.",
-        "The heading row must match the template exactly, with no missing or extra columns.",
+        "The heading row must match the template, with no extra columns. Only the country column can be left out.",
+        "Addresses must be in the country you've chosen.",
         "Each row needs a product code and a quantity from 1 to 1000.",
         "Order references can use up to 64 letters, numbers or . _ : # / -",
         "Later rows of the same order must leave the address blank or repeat it exactly.",
@@ -107,7 +111,7 @@ export const INTEGRATIONS_KNOWLEDGE = describePage<z.infer<typeof createApiKeySc
   steps: [
     "Give the new key a name that says where it's used, and create it.",
     "Copy the key straight away. It's only shown once.",
-    "Put the key on your shop's server and send orders as shown in the example.",
+    "Put the key on your shop's server and send orders as shown in the example. Each order names the country it's for, and the address must be in that country.",
     "Revoke a key you no longer use. Anything using it stops working immediately.",
   ],
   fields: {

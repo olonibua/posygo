@@ -8,6 +8,7 @@ import { fetchPublic } from "@/lib/api/public-server";
 import { publicPage } from "@/lib/site";
 import { marketplaceGraph } from "@/lib/structured-data";
 import type { PublicProductView } from "@/shared";
+import { requireFeature } from "@/lib/features";
 
 export const metadata = publicPage({
   title: "Marketplace: shop independent sellers",
@@ -16,6 +17,7 @@ export const metadata = publicPage({
 });
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ country?: string }> }) {
+  requireFeature("marketplace");
   const [countries, { country: requested }] = await Promise.all([fetchLiveCountries(), searchParams]);
   const country = countries.find((entry) => entry.code === requested?.toUpperCase()) ?? countries[0];
   const products = country ? ((await fetchPublic<PublicProductView[]>(`/v1/public/marketplace/${country.code}`, { live: true })) ?? undefined) : undefined;

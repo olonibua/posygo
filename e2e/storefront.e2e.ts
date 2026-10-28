@@ -3,6 +3,8 @@ import { expect, test } from "@playwright/test";
 import { CAST } from "./support/cast";
 import { apiStatus, buyerLinkToken, deliverStoreOrder, expectNoHorizontalScroll, resetCast, signIn, watchConsole } from "./support/session";
 
+import { FEATURES } from "@/lib/features";
+
 const SLUG = "e2e-shop";
 const PRODUCT = "Test lace wig";
 const BUYER = "buyer@e2e.gfn.local";
@@ -15,6 +17,7 @@ const QUOTE = {
 test.describe.configure({ mode: "serial" });
 
 test.describe("a vendor store, from opening to a paid order", () => {
+  test.skip(!FEATURES.marketplace, "Switched off on this site.");
   let reference = "";
 
   test.beforeAll(() => resetCast());

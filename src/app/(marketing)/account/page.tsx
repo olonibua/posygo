@@ -3,10 +3,12 @@ import { Suspense } from "react";
 
 import { MarketingFooter, MarketingHeader } from "@/components/layout/marketing-chrome";
 import { BuyerAccountPage } from "@/features/storefront/buyer/buyer-account-page";
+import { requireFeature } from "@/lib/features";
 
 export const metadata: Metadata = { title: "Your orders", robots: { index: false } };
 
 export default function Page() {
+  requireFeature("marketplace");
   return (
     <>
       <MarketingHeader />

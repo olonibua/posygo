@@ -5,8 +5,9 @@ import { describePage } from "@/features/assistant/knowledge/types";
 export const RETURNS_KNOWLEDGE = describePage<VendorReturnTrackingInput & InstructVendorReturnInput & Record<"show", unknown>>({
   route: "/returns",
   title: "Returns",
-  purpose: "Items your customers send back to the hub that shipped them. The hub counts and photographs them, and you decide what happens next.",
+  purpose: "Items your customers send back in the country you've chosen at the top of the page. They're counted and photographed, and you decide what happens next.",
   steps: [
+    "Use the country menu at the top of the page to see returns in another country.",
     "To start a return, open the order and choose Start a return.",
     "While a return is on its way back, give your customer the address shown and ask them to write the return reference on the parcel.",
     "Add the carrier and tracking number when you have them.",
