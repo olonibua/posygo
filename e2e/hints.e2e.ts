@@ -15,6 +15,20 @@ test("a seller sees each tip once, when they reach it, and can open it again", a
   await page.goto("/inbound/new");
   const hub = page.getByRole("dialog", { name: "What's a hub?" });
   await expect(hub).toBeVisible();
+  await page.getByRole("button", { name: "What's a hub?" }).click();
+  await expect(hub).toHaveCount(0);
+  await page.getByRole("button", { name: "What's a hub?" }).click();
+  await expect(hub).toBeVisible();
+  await page.getByLabel("Tracking number").pressSequentially("AB123456789GB");
+  await expect(page.getByLabel("Tracking number")).toHaveValue("AB123456789GB");
+  await page.getByLabel("Carrier").click();
+  await expect(hub).toHaveCount(0);
+  await page.getByLabel("Carrier").pressSequentially("Royal Mail");
+  await expect(page.getByLabel("Carrier")).toHaveValue("Royal Mail");
+  await page.reload();
+  await expect(hub).toHaveCount(0);
+  await page.getByRole("button", { name: "What's a hub?" }).click();
+  await expect(hub).toBeVisible();
   await expect(page.getByRole("radio", { name: /Leeds/ })).toBeVisible();
   await expect(page.getByRole("radio", { name: /Manchester/ })).toBeVisible();
   await page.keyboard.press("Escape");
@@ -25,6 +39,12 @@ test("a seller sees each tip once, when they reach it, and can open it again", a
   await expect(hub).toHaveCount(0);
   await page.getByRole("button", { name: "What's a hub?" }).click();
   await expect(hub).toBeVisible();
+  await page.mouse.click(10, 500);
+  await expect(hub).toHaveCount(0);
+  await page.getByRole("button", { name: "What's a hub?" }).click();
+  await expect(hub).toBeVisible();
+  await page.getByRole("button", { name: "What's a hub?" }).click();
+  await expect(hub).toHaveCount(0);
 
   await page.goto("/overview");
   await expect(start).toHaveCount(0);

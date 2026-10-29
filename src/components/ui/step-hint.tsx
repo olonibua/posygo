@@ -87,20 +87,32 @@ function usePlacement(anchor: RefObject<HTMLDivElement | null>) {
 }
 
 function HintCard({ anchor, title, text, onDone }: { anchor: RefObject<HTMLDivElement | null>; title: string; text: string; onDone: () => void }) {
-  const button = useRef<HTMLButtonElement>(null);
+  const card = useRef<HTMLDivElement>(null);
+  const done = useRef(onDone);
   const place = usePlacement(anchor);
+  done.current = onDone;
   useEffect(() => {
-    button.current?.focus({ preventScroll: true });
-    const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && onDone();
+    const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && done.current();
+    const closeOnTapOutside = (event: PointerEvent) => {
+      const target = event.target as Element | null;
+      if (!card.current?.contains(target) && !target?.closest("[data-hint-trigger]")) {
+        done.current();
+      }
+    };
     window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [onDone]);
+    document.addEventListener("pointerdown", closeOnTapOutside);
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("pointerdown", closeOnTapOutside);
+    };
+  }, []);
 
   if (!place) {
     return null;
   }
   return createPortal(
     <div
+      ref={card}
       role="dialog"
       aria-label={title}
       style={{ top: place.top, right: place.right }}
@@ -113,7 +125,7 @@ function HintCard({ anchor, title, text, onDone }: { anchor: RefObject<HTMLDivEl
       </div>
       <p className="mt-2 text-[14px] leading-[21px] text-on-ink-soft">{text}</p>
       <div className="mt-4 flex justify-end">
-        <button ref={button} type="button" onClick={onDone} className="rounded-control bg-yellow px-4 py-2 text-[13px] font-semibold text-cocoa transition-transform duration-200 hover:-translate-y-px">
+        <button type="button" onClick={onDone} className="rounded-control bg-yellow px-4 py-2 text-[13px] font-semibold text-cocoa transition-transform duration-200 hover:-translate-y-px">
           Got it
         </button>
       </div>
@@ -123,10 +135,13 @@ function HintCard({ anchor, title, text, onDone }: { anchor: RefObject<HTMLDivEl
 }
 
 export function HintButton({ id, label }: { id: string; label: string }) {
+  const open = useOpenHint() === id;
   return (
     <button
       type="button"
-      onClick={() => hintStore.show(id)}
+      data-hint-trigger
+      aria-expanded={open}
+      onClick={() => (open ? hintStore.dismiss(id) : hintStore.show(id))}
       aria-label={label}
       className="inline-grid h-6 w-6 shrink-0 place-items-center rounded-full bg-paper-sunk text-[12px] font-bold text-ink-soft transition-colors duration-200 hover:bg-ink hover:text-on-ink"
     >
