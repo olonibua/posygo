@@ -16,8 +16,8 @@ export interface NoticedError {
 const ASK_TEAM: HelperAction = { kind: "ask-team", label: "Ask our team" };
 const NETWORK = "network_error";
 
-export function greeting(page: PageKnowledge | undefined): ChatMessage {
-  const intro = `Hi, I'm ${ASSISTANT.name}. Ask me anything about this page.`;
+export function greeting(page: PageKnowledge | undefined, name: string | null = null): ChatMessage {
+  const intro = `Hi${name ? ` ${name}` : ""}, I'm ${ASSISTANT.name}. Ask me anything about this page.`;
   return helperSays(intro, page ? [{ kind: "explain-page", label: "Explain this page" }, ASK_TEAM] : [ASK_TEAM]);
 }
 

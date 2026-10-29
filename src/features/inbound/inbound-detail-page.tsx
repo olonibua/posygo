@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { Button, ButtonLink } from "@/components/ui/button";
 import { FormAlert } from "@/components/ui/form-controls";
+import { StepHint } from "@/components/ui/step-hint";
 import { PageHeader } from "@/components/ui/page-header";
 import { NotebookNote, Stamp } from "@/components/ui/surfaces";
 import { PageSkeleton } from "@/components/ui/skeleton";
@@ -28,6 +29,12 @@ const VENDOR_ACTIONS: readonly string[] = ["SUBMIT", "PAY_HOLD", "CANCEL"];
 const CONFIRMATIONS: Partial<Record<VendorAction, string>> = {
   CANCEL: "Cancel this shipment? The hub won't expect it any more. Any onboarding charge is returned to your wallet.",
   PAY_HOLD: "Pay the hold charge from your wallet? The hub will carry on with the shipment.",
+};
+
+const SUBMIT_HINT = {
+  id: "inbound-submit",
+  title: "Before you submit",
+  text: "Check the products and box counts. When you submit, the receiving charge is taken from your wallet, the hub starts expecting your boxes and the shipment can't be changed.",
 };
 
 export function InboundDetailPage({ inboundId }: { inboundId: string }) {
@@ -76,7 +83,7 @@ export function InboundDetailPage({ inboundId }: { inboundId: string }) {
         title={data.status === "DRAFT" ? "Draft shipment" : "Shipment"}
         lead={`${data.totalUnits} units in ${data.totalBoxes} boxes, going to ${data.warehouseName}.`}
         action={
-          <div className="flex flex-wrap items-center gap-2.5">
+          <StepHint {...SUBMIT_HINT} className="flex flex-wrap items-center gap-2.5" enabled={data.status === "DRAFT" && canManage}>
             <InboundStatusPill status={data.status} />
             {data.status === "DRAFT" && canManage ? (
               <ButtonLink href={`/inbound/${data.id}/edit`} variant="ghost">
@@ -88,15 +95,10 @@ export function InboundDetailPage({ inboundId }: { inboundId: string }) {
                 {INBOUND_ACTION_LABELS[action]}
               </Button>
             ))}
-          </div>
+          </StepHint>
         }
       />
       <FormAlert message={errorMessage(act.error) ?? errorMessage(openPhoto.error)} />
-      {data.status === "DRAFT" && canManage ? (
-        <NotebookNote tone="sky" tilt="none" className="max-w-[640px]">
-          Check the products and box counts, then submit. Once submitted, the onboarding charge is taken from your wallet, the hub starts expecting it and the declaration is locked.
-        </NotebookNote>
-      ) : null}
       {data.statusReason ? (
         <NotebookNote tone="pink" tilt="none" className="max-w-[640px]">
           <Stamp className="text-cocoa">Note from the hub</Stamp>

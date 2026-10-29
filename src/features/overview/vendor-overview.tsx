@@ -17,7 +17,22 @@ import { formatMoney, greetingFor, localeFor } from "@/lib/format";
 import { countryFlag } from "@/features/seller-countries/country-flag";
 import { useCountryScope, useSelectedCountry, VENDOR_COUNTRIES_KEY } from "@/features/seller-countries/selected-country";
 
+import { StepHint } from "@/components/ui/step-hint";
+
 import { NextStepCard } from "./next-step-card";
+
+const OVERVIEW_HINTS = {
+  firstShipment: {
+    id: "overview-first-shipment",
+    title: "Start here",
+    text: "Send us your stock: choose a hub, list the products and boxes, then post them. Once the hub checks them in, you can take orders.",
+  },
+  wallet: {
+    id: "overview-wallet",
+    title: "Your wallet",
+    text: "Receiving, storage and delivery fees are paid from your wallet, in this country's currency. Keep it topped up so your orders keep moving.",
+  },
+};
 
 export function VendorOverview() {
   const user = useCurrentUser();
@@ -41,9 +56,11 @@ export function VendorOverview() {
         lead={lead}
         action={
           canSendStock ? (
-            <ButtonLink href="/inbound/new" variant="yellow" size="lg">
-              New inbound shipment →
-            </ButtonLink>
+            <StepHint {...OVERVIEW_HINTS.firstShipment}>
+              <ButtonLink href="/inbound/new" variant="yellow" size="lg">
+                New inbound shipment →
+              </ButtonLink>
+            </StepHint>
           ) : (
             <Button variant="yellow" size="lg" disabled>
               New inbound shipment →
@@ -56,7 +73,9 @@ export function VendorOverview() {
           <StatTile tone="sky" label="Awaiting receipt" value={awaiting} note={awaiting === 0 ? "No shipments on the way" : "Shipments on the way or at the dock"} dots={["yellow", "pink"]} />
           <StatTile tone="lime" label="Units in storage" value={figure(current?.unitsInStorage, locale)} note="Counted on arrival" dots={["orange"]} />
           <StatTile tone="yellow" label="Orders today" value={figure(current?.ordersToday, locale)} note={`In ${country.name}`} dots={["teal", "orange"]} />
-          <StatTile tone="pink" label="Wallet balance" value={money(current?.balanceMinor, country.currency, locale)} note={`Held in ${country.currency}`} dots={["lime"]} />
+          <StepHint {...OVERVIEW_HINTS.wallet} enabled={user.vendorStatus === "ACTIVE"} className="flex">
+            <StatTile tone="pink" label="Wallet balance" value={money(current?.balanceMinor, country.currency, locale)} note={`Held in ${country.currency}`} dots={["lime"]} />
+          </StepHint>
         </StatTileGrid>
       )}
 

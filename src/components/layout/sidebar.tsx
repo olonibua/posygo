@@ -3,7 +3,7 @@
 import type { SessionUser } from "@/shared";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useLayoutEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import { NotebookNote } from "@/components/ui/surfaces";
@@ -11,6 +11,7 @@ import { toneOnGroupHover, toneSurface } from "@/components/ui/tone";
 import { BRAND } from "@/lib/brand";
 import { cn } from "@/lib/cn";
 
+import { motionFor } from "./nav-motion";
 import { activeItem, type Console, isLocked, type NavItem, visibleItems } from "./navigation";
 
 const ITEM = "motion-press relative z-[1] flex items-center gap-3 rounded-nav px-2.5 py-[7px] text-[15px] no-underline transition-[background-color,color] duration-200 ease-[var(--ease-out)]";
@@ -24,12 +25,25 @@ interface SidebarProps {
 }
 
 const FADE = "whitespace-nowrap transition-opacity duration-200";
+const ENTRANCE_MS = 2600;
+const STAGGER_MS = 60;
+
+function useEntrance(): boolean {
+  const [entering, setEntering] = useState(true);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setEntering(false), ENTRANCE_MS);
+    return () => window.clearTimeout(timer);
+  }, []);
+  return entering;
+}
 
 export function Sidebar({ console, user, onNavigate, collapsed = false, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname();
   const items = visibleItems(console, user);
   const current = activeItem(items, pathname);
   const groups = [...new Set(items.map((item) => item.group))];
+  const order = new Map(items.map((item, index) => [item, index]));
+  const entering = useEntrance();
   const nav = useRef<HTMLElement>(null);
   const [pill, setPill] = useState<{ top: number; height: number } | null>(null);
 
@@ -57,7 +71,7 @@ export function Sidebar({ console, user, onNavigate, collapsed = false, onToggle
           </button>
         ) : null}
       </div>
-      <nav ref={nav} aria-label={console.label} className="relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3.5 py-3">
+      <nav ref={nav} aria-label={console.label} className={cn("relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3.5 py-3", entering && "nav-icon-entering")}>
         {pill ? (
           <span
             aria-hidden
@@ -73,7 +87,7 @@ export function Sidebar({ console, user, onNavigate, collapsed = false, onToggle
             {items
               .filter((item) => item.group === group)
               .map((item) => (
-                <SidebarItem key={item.label} item={item} active={item === current} locked={isLocked(item, user)} collapsed={collapsed} onNavigate={onNavigate} />
+                <SidebarItem key={item.label} item={item} index={order.get(item) ?? 0} active={item === current} locked={isLocked(item, user)} collapsed={collapsed} onNavigate={onNavigate} />
               ))}
           </div>
         ))}
@@ -89,11 +103,15 @@ export function Sidebar({ console, user, onNavigate, collapsed = false, onToggle
   );
 }
 
-function ToneIcon({ item, active }: { item: NavItem; active: boolean }) {
+function ToneIcon({ item, active, index }: { item: NavItem; active: boolean; index: number }) {
   return (
     <span
       aria-hidden
+      data-motion={motionFor(item.icon)}
+      data-active={active || undefined}
+      style={{ "--nav-delay": `${index * STAGGER_MS}ms` } as CSSProperties}
       className={cn(
+        "nav-icon",
         "grid h-8 w-8 shrink-0 place-items-center rounded-[9px] transition-[background-color,scale] duration-300 ease-[var(--ease-spring)]",
         active ? cn(toneSurface[item.tone], "scale-105") : cn("bg-transparent group-hover:scale-105", toneOnGroupHover[item.tone]),
       )}
@@ -107,18 +125,19 @@ const LOCKED_NOTE = "Opens once your account is live";
 
 interface SidebarItemProps {
   item: NavItem;
+  index: number;
   active: boolean;
   locked: boolean;
   collapsed: boolean;
   onNavigate?: () => void;
 }
 
-function SidebarItem({ item, active, locked, collapsed, onNavigate }: SidebarItemProps) {
+function SidebarItem({ item, index, active, locked, collapsed, onNavigate }: SidebarItemProps) {
   const label = <span className={cn(FADE, collapsed && "opacity-0")}>{item.label}</span>;
   if (locked) {
     return (
       <span className={cn(ITEM, "cursor-not-allowed text-ink-faint")} aria-disabled title={LOCKED_NOTE}>
-        <ToneIcon item={item} active={false} />
+        <ToneIcon item={item} active={false} index={index} />
         {label}
         <span className="sr-only">, {LOCKED_NOTE.toLowerCase()}</span>
         <Icon name="lock" className={cn("ml-auto h-3.5 w-3.5 shrink-0", FADE, collapsed && "opacity-0")} />
@@ -128,7 +147,7 @@ function SidebarItem({ item, active, locked, collapsed, onNavigate }: SidebarIte
   if (!item.href) {
     return (
       <span className={cn(ITEM, "cursor-default text-ink-faint")} aria-disabled title={collapsed ? item.label : undefined}>
-        <ToneIcon item={item} active={false} />
+        <ToneIcon item={item} active={false} index={index} />
         {label}
         <span className={cn("ml-auto rounded-chip bg-paper px-2 py-0.5 text-label uppercase", FADE, collapsed && "opacity-0")}>Soon</span>
       </span>
@@ -142,7 +161,7 @@ function SidebarItem({ item, active, locked, collapsed, onNavigate }: SidebarIte
       aria-current={active ? "page" : undefined}
       className={cn(ITEM, "group", active ? "font-medium text-ink" : "text-ink-soft hover:bg-paper-sunk hover:text-ink")}
     >
-      <ToneIcon item={item} active={active} />
+      <ToneIcon item={item} active={active} index={index} />
       {label}
       <span
         aria-hidden

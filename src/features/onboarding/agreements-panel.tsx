@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/ui/chip";
 import { FormAlert } from "@/components/ui/form-controls";
+import { StepHint } from "@/components/ui/step-hint";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { AgreementBody } from "@/features/agreements/agreement-body";
 import { AgreementSigning } from "@/features/agreements/agreement-signing";
@@ -18,6 +19,12 @@ import { countryName } from "./display";
 
 const SIGNED_KINDS: readonly LegalDocumentKind[] = ["VENDOR_AGREEMENT"];
 const AGREEMENTS_KEY = ["vendor", "agreements"] as const;
+
+const AGREEMENTS_HINT = {
+  id: "verification-agreements",
+  title: "Signing your agreements",
+  text: "Sign the vendor agreement with your finger, mouse or typed name, then read and accept the terms and the privacy policy. When all three are done, you pay a one-off activation fee and your account opens.",
+};
 
 export function AgreementsPanel() {
   const user = useCurrentUser();
@@ -40,9 +47,11 @@ export function AgreementsPanel() {
 
   return (
     <section aria-labelledby="agreements-heading" className="flex flex-col gap-3">
-      <h2 id="agreements-heading" className="text-h3">
-        Agreements
-      </h2>
+      <StepHint {...AGREEMENTS_HINT} enabled={canAccept && agreements.data.some((entry) => !entry.acceptedAt)} className="self-start">
+        <h2 id="agreements-heading" className="text-h3">
+          Agreements
+        </h2>
+      </StepHint>
       <FormAlert message={!signing && accept.error instanceof ApiError ? accept.error.message : null} />
       {agreements.data.map(({ document, acceptedAt }) => {
         const signed = SIGNED_KINDS.includes(document.kind);

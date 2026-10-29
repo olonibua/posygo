@@ -7,6 +7,7 @@ import { askForAnswer, fetchAnswerStatus } from "./answers-client";
 import { type ChatMessage, helperSays, personSays } from "./conversation/messages";
 import { errorReply, fieldReply, type NoticedError, pageReply, understand, unsureReply } from "./conversation/replies";
 import type { PageKnowledge } from "./knowledge/types";
+import { readScreen } from "./signals/screen";
 import { trail } from "./signals/trail";
 import { askTeam } from "./support-client";
 
@@ -72,29 +73,36 @@ export function useQuestions(context: QuestionContext) {
   );
 
   const answerOpenQuestion = useCallback(
-    async (question: string) => {
+    async (question: string, fallback: ChatMessage = unsureReply(), fields: readonly string[] = []) => {
       lastQuestion.current = question;
       if (!status.data?.answers) {
-        speak(unsureReply());
+        speak(fallback);
         return;
       }
       setBusy(true);
       setMood("think");
       try {
-        const reply = await askForAnswer(pathname, question, messages, signedIn);
+        const reply = await askForAnswer(pathname, question, messages, signedIn, readScreen());
         if (reply.answer) {
           lastQuestion.current = null;
-          speak(helperSays(reply.answer, [{ kind: "ask-team", label: "Still need a person?" }]));
+          speak(withFixes(helperSays(reply.answer, [{ kind: "ask-team", label: "Still need a person?" }]), fields));
         } else {
-          speak(unsureReply());
+          speak(fallback);
         }
       } catch {
-        speak(unsureReply());
+        speak(fallback);
       } finally {
         setBusy(false);
       }
     },
-    [messages, pathname, setBusy, setMood, signedIn, speak, status.data?.answers],
+    [messages, pathname, setBusy, setMood, signedIn, speak, status.data?.answers, withFixes],
+  );
+
+  const explain = useCallback(
+    (question: string, fallback: ChatMessage, fields: readonly string[] = []) => {
+      void answerOpenQuestion(question, withFixes(fallback, fields), fields);
+    },
+    [answerOpenQuestion, withFixes],
   );
 
   const ask = useCallback(
@@ -119,9 +127,9 @@ export function useQuestions(context: QuestionContext) {
       }
       const intent = understand(said, page, lastError.current !== null);
       if (intent.kind === "field") {
-        speak(withFixes(fieldReply(intent.label, page), [intent.label]));
+        explain(said, fieldReply(intent.label, page), [intent.label]);
       } else if (intent.kind === "page" && page) {
-        speak(pageReply(page));
+        explain(said, pageReply(page));
       } else if (intent.kind === "error" && lastError.current) {
         speak(withFixes(errorReply(lastError.current, referenceFor(lastError.current)), lastError.current.rejectedFields));
       } else if (intent.kind === "team") {
@@ -130,8 +138,8 @@ export function useQuestions(context: QuestionContext) {
         void answerOpenQuestion(said);
       }
     },
-    [answerOpenQuestion, hear, lastError, page, referenceFor, speak, startQuestion, submitQuestion, withFixes],
+    [answerOpenQuestion, explain, hear, lastError, page, referenceFor, speak, startQuestion, submitQuestion, withFixes],
   );
 
-  return { ask, askTeam: () => startQuestion(lastQuestion.current) };
+  return { ask, explain, askTeam: () => startQuestion(lastQuestion.current) };
 }

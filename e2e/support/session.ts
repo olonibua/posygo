@@ -22,6 +22,10 @@ export function resetCast(limitsOnly = false): void {
   execFileSync("npm", ["run", "-s", limitsOnly ? "seed:e2e:limits" : "seed:e2e"], { cwd: resolve(API_DIR), stdio: "pipe" });
 }
 
+export function awaitActivation(): void {
+  execFileSync("npm", ["run", "-s", "seed:e2e:awaiting-activation"], { cwd: resolve(API_DIR), stdio: "pipe" });
+}
+
 export function buyerLinkToken(email: string): string {
   return execFileSync("npm", ["run", "-s", "seed:e2e:buyer-link", "--", email], { cwd: resolve(API_DIR), encoding: "utf8" })
     .trim()
@@ -40,9 +44,12 @@ export function deliverStoreOrder(reference: string): void {
   execFileSync("npm", ["run", "-s", "seed:e2e:deliver", "--", reference], { cwd: resolve(API_DIR), stdio: "pipe" });
 }
 
-export async function signIn(page: Page, member: Member): Promise<string> {
+export async function signIn(page: Page, member: Member, { hints = false }: { hints?: boolean } = {}): Promise<string> {
   resetCast(true);
   await page.context().clearCookies();
+  if (!hints) {
+    await page.addInitScript(() => window.localStorage.setItem("posygo.hints-seen", JSON.stringify(["*"])));
+  }
   const tokens: string[] = [];
   const capture = async (response: Response) => {
     if (AUTH_PATHS.has(new URL(response.url()).pathname) && response.ok()) {

@@ -25,7 +25,7 @@ type VerificationPageInput = Omit<VerificationSubmission, "idType" | "idExpiry">
 export const VERIFICATION_KNOWLEDGE = describePage<VerificationPageInput>({
   route: "/verification",
   title: "Verify your business",
-  purpose: "We check every business against its market's rules before stock can be sent to a warehouse. Once you're verified and accept the vendor agreement, your account is ready to go live.",
+  purpose: "We check every business against its market's rules before stock can be sent to a warehouse. Once you're verified, have signed the vendor agreement, accepted the terms and privacy policy, and paid the activation fee, your account goes live.",
   steps: [
     "Fill in your business details and registered address.",
     "Add the person we speak to.",
@@ -33,7 +33,8 @@ export const VERIFICATION_KNOWLEDGE = describePage<VerificationPageInput>({
     "Upload a business document.",
     "Tell us what you'll store and roughly how much, then check everything and submit for review.",
     "Once approved, open the Fulfilment Services Agreement with Review and sign, tap Sign here, then draw your signature or type your name. You can download a signed copy with its certificate afterwards.",
-    "If you then see Activate your account, pay the one-off activation fee there. Your account goes live as soon as it's paid. The activation fee isn't refundable.",
+    "Read and accept the Terms of Service and the Privacy Policy.",
+    "When everything is signed, Activate your account opens. Pay the one-off activation fee there. Your account goes live as soon as it's paid, and we email you your account details. The activation fee isn't refundable.",
   ],
   fields: {
     businessType: { labels: ["Business type"], meaning: "How your business is set up, for example a sole trader or a limited company. The choices depend on your market." },

@@ -15,7 +15,7 @@ const SHIPMENT: Omit<PageKnowledgeOf<InboundInput>, "route"> = {
     "Save the draft, check the charge, then submit. The stocking fee and first month of storage are taken from your wallet when you submit.",
   ],
   fields: {
-    warehouseId: { labels: [], meaning: "The hub your stock goes to. We pick it for your market, and you'll see its address after you submit." },
+    warehouseId: { labels: [], meaning: "The hub that stores this stock and sends your orders. Hubs are named by city, with the area added when a city has more than one. Pick the one closest to most of your customers. You can send stock to more than one hub." },
     shippingMode: { labels: ["How is it travelling?"], meaning: "Loose boxes are parcels sent by courier. Pallets are freight on one or more pallets. It changes which box sizes you can declare." },
     expectedArrivalDate: {
       labels: ["Expected arrival"],

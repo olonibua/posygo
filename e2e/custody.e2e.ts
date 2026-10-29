@@ -31,7 +31,7 @@ test.describe("lost stock, from transfer to wallet credit", () => {
     opsToken = await signIn(page, CAST.countryOps);
     await page.getByRole("link", { name: "Transfers", exact: true }).click();
     await page.getByLabel("From").selectOption({ label: "Leeds test hub (HUB-E2E001) · partner hub" });
-    await page.getByLabel("To").selectOption({ label: "Manchester (development) (GB-DEV-1)" });
+    await page.getByLabel("To").selectOption({ label: "Manchester test hub (E2E-MAN-1)" });
     await page.getByLabel("Why").fill("Bringing stock back to our warehouse for a stock check.");
     await page.getByRole("button", { name: "Request transfer" }).click();
     await expect(page.getByText("Transfer requested. The sending hub has been emailed.")).toBeVisible();

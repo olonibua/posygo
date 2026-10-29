@@ -11,6 +11,7 @@ import { toneSurface } from "@/components/ui/tone";
 import { useAuth } from "@/lib/auth/auth-context";
 import { cn } from "@/lib/cn";
 
+import { ActivationGate } from "@/features/onboarding/activation/activation-gate";
 import { CountrySwitcher } from "@/features/seller-countries/country-switcher";
 import { SelectedCountryProvider } from "@/features/seller-countries/selected-country";
 
@@ -43,6 +44,7 @@ export function AppShell({ console, user, children }: { console: Console; user: 
           </div>
         </main>
       </div>
+      {sells && user.vendorStatus !== "ACTIVE" ? <ActivationGate /> : null}
     </div>
   );
 

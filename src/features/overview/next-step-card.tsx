@@ -28,7 +28,7 @@ const COPY: Record<VerificationStatus, StepCopy> = {
   IN_PROGRESS: { title: "Finish verifying your business", body: "Your answers are saved. Pick up where you left off.", action: "Continue verification" },
   RESUBMISSION_REQUIRED: { title: "Your verification needs changes", body: "Our reviewer left a note explaining what to update.", action: "See what's needed" },
   SUBMITTED: { title: "We're reviewing your business", body: "Most reviews finish within one working day. We'll email you the result.", action: "View status" },
-  APPROVED: { title: "Accept the vendor agreement", body: "You're verified. Accept the agreement to finish setting up your account.", action: "Review agreement" },
+  APPROVED: { title: "Sign your agreements", body: "You're verified. Sign the vendor agreement and accept the terms to finish setting up your account.", action: "Review agreements" },
   REJECTED: { title: "We couldn't verify your business", body: "Check the email we sent for the reason.", action: "View details" },
 };
 
@@ -81,7 +81,7 @@ export function NextStepCard({ vendorActive }: { vendorActive: boolean }) {
       const fee = formatMoney(due.feeMinor, due.currency, localeFor(user.countryCode));
       return {
         ...ACTIVATION_DUE,
-        body: `You're verified and the agreement is accepted. Pay the one-off activation fee of ${fee} and your account goes live.`,
+        body: `You're verified and your agreements are signed. Pay the one-off activation fee of ${fee} to open your account.`,
         payment: <ActivationPayButton fee={fee} />,
       };
     }

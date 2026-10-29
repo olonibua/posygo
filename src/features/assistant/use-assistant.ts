@@ -32,6 +32,7 @@ export function useAssistant() {
   const page = knowledgeFor(pathname);
   const { state } = useAuth();
   const signedIn = state.status === "authenticated";
+  const name = state.user?.businessName ?? null;
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [nudge, setNudge] = useState<Nudge | null>(null);
@@ -142,8 +143,8 @@ export function useAssistant() {
   const openPanel = useCallback(() => {
     setOpen(true);
     setNudge(null);
-    setMessages((current) => (current.length > 0 ? current : [greeting(page)]));
-  }, [page]);
+    setMessages((current) => (current.length > 0 ? current : [greeting(page, name)]));
+  }, [page, name]);
 
   const acceptNudge = useCallback(() => {
     const current = nudge;
@@ -158,9 +159,9 @@ export function useAssistant() {
   const act = useCallback(
     (action: HelperAction) => {
       if (action.kind === "explain-page" && page) {
-        speak(pageReply(page));
+        questions.explain("Explain this page for me, and tell me what I should do next.", pageReply(page));
       } else if (action.kind === "explain-field") {
-        speak(withFixes(fieldReply(action.field, page), [action.field]));
+        questions.explain(`Explain the "${action.field}" field for me, and check what I've put in it.`, fieldReply(action.field, page), [action.field]);
       } else if (action.kind === "voice") {
         voice.choose(action.on);
         speak(helperSays(action.on ? "Great, I'll talk you through things. You can turn my voice off at the top." : "Typing it is. You can turn my voice on at the top any time."));
@@ -186,7 +187,7 @@ export function useAssistant() {
         );
       }
     },
-    [guidance, page, questions, report, speak, voice, withFixes],
+    [guidance, page, questions, report, speak, voice],
   );
 
   const calm = () => {
