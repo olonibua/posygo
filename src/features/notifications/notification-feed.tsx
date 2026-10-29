@@ -43,12 +43,12 @@ export function NotificationFeed({ items, unread, onNavigate }: { items: Notific
           </button>
         ) : null}
       </div>
-      <ul className="stagger max-h-[300px] overflow-y-auto py-1">
+      <ul className="stagger max-h-[min(300px,calc(100dvh-220px))] overflow-y-auto py-1">
         {items.map((item) => (
           <li key={item.id} className="motion-rise">
             <button type="button" onClick={() => open(item)} className="flex w-full gap-3 px-4 py-2.5 text-left hover:bg-cream">
               <span aria-hidden className={cn("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", item.read ? "bg-line-strong" : "bg-orange")} />
-              <span className="min-w-0">
+              <span className="min-w-0 break-words">
                 <span className={cn("block text-small", item.read ? "text-ink-soft" : "font-medium")}>{item.title}</span>
                 <span className="line-clamp-2 text-meta font-normal text-ink-faint">{item.body}</span>
                 <span className="text-meta font-normal text-ink-faint">{timeAgo(item.createdAt)}</span>

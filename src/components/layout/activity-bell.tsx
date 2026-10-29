@@ -60,7 +60,7 @@ export function ActivityBell() {
         <div
           role="dialog"
           aria-label="Recent activity"
-          className="absolute right-0 top-[52px] z-40 w-[340px] max-w-[calc(100vw-32px)] origin-top-right rounded-card border border-line bg-paper shadow-frame [animation:popover-in_var(--dur)_var(--ease-out)_both]"
+          className="fixed inset-x-4 top-[72px] z-40 flex max-h-[calc(100dvh-88px)] flex-col overflow-hidden rounded-card border border-line bg-paper shadow-frame [animation:popover-in_var(--dur)_var(--ease-out)_both] sm:absolute sm:inset-x-auto sm:right-0 sm:top-[52px] sm:w-[360px] sm:origin-top-right"
         >
           {messages.length > 0 ? <NotificationFeed items={messages} unread={feed.data?.unread ?? 0} onNavigate={() => setOpen(false)} /> : null}
           {history.length > 0 ? <p className="border-y border-line px-4 py-3 text-label uppercase text-ink-faint">This session</p> : null}
@@ -71,7 +71,7 @@ export function ActivityBell() {
               <p className="text-meta font-normal text-ink-faint">Messages about your account and what you do here show up in this list.</p>
             </div>
           ) : history.length === 0 ? null : (
-            <ul className="stagger max-h-[240px] overflow-y-auto py-1">
+            <ul className="stagger max-h-[240px] min-h-0 overflow-y-auto py-1">
               {history.map((item) => (
                 <li key={item.id} className="motion-rise flex gap-3 px-4 py-2.5">
                   <span aria-hidden className={cn("mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full", DOT[item.tone])} />

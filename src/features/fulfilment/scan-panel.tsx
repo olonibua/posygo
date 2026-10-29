@@ -1,6 +1,6 @@
 "use client";
 
-import type { ScanResultView } from "@/shared";
+import type { OrderLineView, ScanResultView } from "@/shared";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -9,23 +9,34 @@ import { Paper, Stamp } from "@/components/ui/surfaces";
 import { fieldError, errorMessage } from "@/features/receiving/api-errors";
 import { cn } from "@/lib/cn";
 
+import { CameraScanner } from "./camera-scanner";
+
 interface ScanPanelProps {
+  lines: readonly OrderLineView[];
   remaining: number;
   busy: boolean;
   error: unknown;
   last: ScanResultView | undefined;
   onScan: (code: string) => void;
+  onConfirm: (lineId: string) => void;
   onReset: () => void;
 }
 
-export function ScanPanel({ remaining, busy, error, last, onScan, onReset }: ScanPanelProps) {
+function resultText(last: ScanResultView | undefined): string | null {
+  return last ? `${last.productName}: ${last.scannedQuantity} of ${last.quantity}${last.complete ? " — done" : ""}` : null;
+}
+
+export function ScanPanel({ lines, remaining, busy, error, last, onScan, onConfirm, onReset }: ScanPanelProps) {
   const [code, setCode] = useState("");
+  const [camera, setCamera] = useState(false);
   const input = useRef<HTMLInputElement>(null);
+  const unlabelled = lines.filter((line) => line.barcodes.length === 0 && line.scannedQuantity < line.quantity);
+
   useEffect(() => {
-    if (!busy) {
-      input.current?.focus();
+    if (!busy && !camera) {
+      input.current?.focus({ preventScroll: true });
     }
-  }, [busy]);
+  }, [busy, camera]);
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -36,7 +47,7 @@ export function ScanPanel({ remaining, busy, error, last, onScan, onReset }: Sca
     }
   }
 
-  const problem = fieldError(error, "code") ?? (error ? errorMessage(error) : null);
+  const problem = fieldError(error, "code") ?? fieldError(error, "lineId") ?? (error ? errorMessage(error) : null);
   return (
     <Paper className="px-6 py-6">
       <div className="flex items-center justify-between gap-3">
@@ -45,29 +56,59 @@ export function ScanPanel({ remaining, busy, error, last, onScan, onReset }: Sca
           Start again
         </Button>
       </div>
+      <p className="mt-2 text-small text-ink-soft">Check every item going in the box by scanning its barcode or the lot label stuck on it when it arrived.</p>
+
+      <Button variant="yellow" size="lg" className="mt-4 w-full justify-center" onClick={() => setCamera(true)}>
+        Scan with camera
+      </Button>
+
       <form onSubmit={submit} className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="flex-1">
-          <Field label="Barcode or lot label" hint="Scan with the reader, or type the code and press Enter.">
+          <Field label="Barcode or lot label" hint="Or use a barcode reader, or type the code and press Enter.">
             {({ id, describedBy }) => (
               <Input ref={input} id={id} aria-describedby={describedBy} autoComplete="off" value={code} maxLength={64} onChange={(event) => setCode(event.target.value)} className="font-mono" />
             )}
           </Field>
         </div>
-        <Button type="submit" variant="yellow" loading={busy} className="sm:mb-[22px]">
-          Scan
+        <Button type="submit" variant="ghost" loading={busy} className="sm:mb-[22px]">
+          Add code
         </Button>
       </form>
+
       <div aria-live="polite" className="mt-3 min-h-[44px]">
         {problem ? (
           <p className="rounded-card bg-pink px-4 py-2.5 text-small text-cocoa">{problem}</p>
         ) : last ? (
-          <p className={cn("rounded-card px-4 py-2.5 text-small text-cocoa", last.complete ? "bg-lime" : "bg-sky")}>
-            {last.productName}: {last.scannedQuantity} of {last.quantity}
-            {last.complete ? " — done" : ""}
-          </p>
+          <p className={cn("rounded-card px-4 py-2.5 text-small text-cocoa", last.complete ? "bg-lime" : "bg-sky")}>{resultText(last)}</p>
         ) : null}
       </div>
-      <p className="mt-1 text-meta text-ink-faint">{remaining === 0 ? "Everything is scanned. Record the parcel below." : `${remaining} ${remaining === 1 ? "unit" : "units"} still to scan.`}</p>
+
+      {unlabelled.length > 0 ? (
+        <section aria-labelledby="no-barcode" className="mt-3 rounded-card bg-paper-sunk px-4 py-4">
+          <p id="no-barcode" className="text-small font-medium">
+            No barcode on the product?
+          </p>
+          <p className="mt-1 text-meta text-ink-soft">Check the item matches, then confirm it. This is noted on the order.</p>
+          <ul className="mt-3 flex flex-col gap-2">
+            {unlabelled.map((line) => (
+              <li key={line.id} className="flex items-center justify-between gap-3">
+                <span className="min-w-0">
+                  <span className="block truncate text-small font-medium">{line.productName}</span>
+                  <span className="text-meta text-ink-faint">
+                    {line.scannedQuantity} of {line.quantity} checked
+                  </span>
+                </span>
+                <Button variant="ghost" disabled={busy} onClick={() => onConfirm(line.id)}>
+                  Confirm 1
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <p className="mt-3 text-meta text-ink-faint">{remaining === 0 ? "Everything is scanned. Record the parcel below." : `${remaining} ${remaining === 1 ? "unit" : "units"} still to scan.`}</p>
+      {camera ? <CameraScanner remaining={remaining} lastResult={problem ?? resultText(last)} onCode={onScan} onClose={() => setCamera(false)} /> : null}
     </Paper>
   );
 }

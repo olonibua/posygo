@@ -29,7 +29,7 @@ const SIMPLE_ACTIONS: readonly OrderAction[] = ["REPACK", "RELEASE", "RETRY_LABE
 
 export function FulfilmentPage({ orderId }: { orderId: string }) {
   const user = useCurrentUser();
-  const { order, scan, resetScans, pack, act, decide, simulate, addPhotos } = useFulfilment(orderId);
+  const { order, scan, confirmUnit, resetScans, pack, act, decide, simulate, addPhotos } = useFulfilment(orderId);
   const [pending, setPending] = useState<Pending>(null);
   const data = order.data;
   const presets = usePackaging(data?.countryCode ?? null);
@@ -123,7 +123,16 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
       <div className="grid gap-5 xl:grid-cols-[1fr_400px]">
         <div className="flex flex-col gap-5">
           {data.actions.includes("RECORD_PACK") ? (
-            <ScanPanel remaining={remaining} busy={scan.isPending} error={scan.error} last={scan.data} onScan={(code) => scan.mutate(code)} onReset={() => resetScans.mutate()} />
+            <ScanPanel
+              lines={data.lines}
+              remaining={remaining}
+              busy={scan.isPending || confirmUnit.isPending}
+              error={confirmUnit.submittedAt > scan.submittedAt ? confirmUnit.error : scan.error}
+              last={confirmUnit.submittedAt > scan.submittedAt ? confirmUnit.data : scan.data}
+              onScan={(code) => scan.mutate(code)}
+              onConfirm={(lineId) => confirmUnit.mutate(lineId)}
+              onReset={() => resetScans.mutate()}
+            />
           ) : null}
           <OrderLines order={data} showScans />
           {data.actions.includes("RECORD_PACK") ? (

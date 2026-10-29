@@ -52,6 +52,10 @@ export function useFulfilment(orderId: string) {
   const refresh = () => queryClient.invalidateQueries({ queryKey: key });
   const order = useQuery({ queryKey: key, queryFn: () => apiRequest<OrderDetailView>(`/v1/warehouse/orders/${orderId}`) });
   const scan = useMutation({ mutationFn: (code: string) => apiRequest<ScanResultView>(`/v1/warehouse/orders/${orderId}/scans`, { method: "POST", body: { code } }), onSuccess: () => void refresh() });
+  const confirmUnit = useMutation({
+    mutationFn: (lineId: string) => apiRequest<ScanResultView>(`/v1/warehouse/orders/${orderId}/lines/${lineId}/confirm`, { method: "POST" }),
+    onSuccess: () => void refresh(),
+  });
   const resetScans = useMutation({ mutationFn: () => apiRequest<OrderDetailView>(`/v1/warehouse/orders/${orderId}/scans`, { method: "DELETE" }), onSuccess: store });
   const pack = useMutation({
     mutationFn: (input: PackInput) => apiRequest<OrderDetailView>(`/v1/warehouse/orders/${orderId}/pack`, { method: "POST", body: input }),
@@ -87,5 +91,5 @@ export function useFulfilment(orderId: string) {
       toast.success("Dispatch photo added", next.reference);
     },
   });
-  return { order, scan, resetScans, pack, act, decide, simulate, addPhotos };
+  return { order, scan, confirmUnit, resetScans, pack, act, decide, simulate, addPhotos };
 }
