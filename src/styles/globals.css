@@ -302,3 +302,25 @@ details.faq[open]::details-content {
     display: none !important;
   }
 }
+
+#label-print {
+  display: none;
+}
+
+@media print {
+  body:has(#label-print) > *:not(#label-print) {
+    display: none !important;
+  }
+
+  #label-print {
+    display: block;
+  }
+
+  #label-print .print-label {
+    break-after: page;
+  }
+
+  #label-print .print-label:last-child {
+    break-after: auto;
+  }
+}
