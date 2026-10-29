@@ -59,6 +59,8 @@ const CONSOLE_PAGES = [
   "/admin/storefront-orders",
   "/admin/storefront-returns",
   "/admin/support",
+  "/admin/tax",
+  "/admin/tax/GB",
   "/admin/transfers",
   "/admin/vendors",
   "/admin/verifications",
