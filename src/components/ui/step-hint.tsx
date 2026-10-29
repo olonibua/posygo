@@ -1,10 +1,12 @@
 "use client";
 
-import { type ReactNode, type RefObject, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
+import { type ReactNode, type RefObject, useEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 import { cn } from "@/lib/cn";
 import { hintStore } from "@/lib/hints/hint-store";
+
+import { useAnchorPlacement } from "./use-anchor-placement";
 
 const VISIBLE_SHARE = 0.6;
 
@@ -63,33 +65,12 @@ export function StepHint({ id, title, text, children, className, enabled = true 
 }
 
 const GAP = 12;
-const EDGE = 16;
-
-function usePlacement(anchor: RefObject<HTMLDivElement | null>) {
-  const [place, setPlace] = useState<{ top: number; right: number } | null>(null);
-  useLayoutEffect(() => {
-    const measure = () => {
-      const rect = anchor.current?.getBoundingClientRect();
-      if (rect) {
-        setPlace({ top: rect.bottom + window.scrollY + GAP, right: Math.max(EDGE, document.documentElement.clientWidth - rect.right - 4) });
-      }
-    };
-    measure();
-    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
-    observer?.observe(document.body);
-    window.addEventListener("resize", measure);
-    return () => {
-      observer?.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-  }, [anchor]);
-  return place;
-}
+const WIDTH = 300;
 
 function HintCard({ anchor, title, text, onDone }: { anchor: RefObject<HTMLDivElement | null>; title: string; text: string; onDone: () => void }) {
   const card = useRef<HTMLDivElement>(null);
   const done = useRef(onDone);
-  const place = usePlacement(anchor);
+  const place = useAnchorPlacement(anchor, GAP, WIDTH);
   done.current = onDone;
   useEffect(() => {
     const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && done.current();

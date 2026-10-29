@@ -40,6 +40,7 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
   const remaining = data.lines.reduce((total, line) => total + line.quantity - line.scannedQuantity, 0);
   const canDecide = hasPermission(user.role, "orders.cancel") && data.cancellation?.status === "PENDING";
   const showRates = data.actions.includes("FETCH_RATES") || data.actions.includes("SELECT_RATE");
+  const viewOnly = !hasPermission(user.role, "orders.fulfil") && !data.label && data.status !== "CANCELLED";
   const busy = act.isPending;
 
   return (
@@ -110,6 +111,14 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
             <p className="text-small">A country operations lead decides this.</p>
           )}
         </NotebookNote>
+      ) : null}
+      {viewOnly ? (
+        <Paper className="max-w-[720px] px-6 py-5">
+          <Stamp>View only</Stamp>
+          <p className="mt-2 text-small text-ink-soft">
+            The team at {data.warehouseName} packs this order. When they open it from Orders, they scan each item, pack the parcel and buy the label here.
+          </p>
+        </Paper>
       ) : null}
       <div className="grid gap-5 xl:grid-cols-[1fr_400px]">
         <div className="flex flex-col gap-5">

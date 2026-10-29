@@ -56,6 +56,7 @@ function toDelivery(delivery: DeliveryDraft): DeliveryInput {
     },
     lines: delivery.lines.filter((line) => line.productId).map((line) => ({ productId: line.productId, quantity: Number(line.quantity) || 0 })),
     deliveryPreference: delivery.deliveryPreference ?? "CHEAPEST",
+    preferredService: delivery.preferredService,
   };
 }
 
@@ -148,7 +149,11 @@ export function NewOrderPage() {
               onRemove={current.length > 1 ? () => setDeliveries(current.filter((_, position) => position !== index)) : undefined}
               newKey={newKey}
             >
-              <ShippingEstimate delivery={toDelivery(delivery)} locale={locale} />
+              <ShippingEstimate
+                delivery={toDelivery(delivery)}
+                locale={locale}
+                onChoose={(choice) => update(index, { ...delivery, ...choice })}
+              />
             </DeliveryFields>
           ))}
           <div>

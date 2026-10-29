@@ -1,6 +1,6 @@
 "use client";
 
-import { DELIVERY_PREFERENCE_LABELS, type OrderDetailView, type RateTag } from "@/shared";
+import { DELIVERY_PREFERENCE_LABELS, deliveryTimeLabel, type OrderDetailView, type RateTag } from "@/shared";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,15 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
         ) : null}
       </div>
       <p className="mt-2 text-small">
-        The seller wants <b className="font-semibold">{wanted.label.toLowerCase()}</b> delivery.
+        {order.preferredService ? (
+          <>
+            The seller chose <b className="font-semibold">{order.preferredService}</b>. If it isn&apos;t offered, use the {wanted.label.toLowerCase()} option.
+          </>
+        ) : (
+          <>
+            The seller wants <b className="font-semibold">{wanted.label.toLowerCase()}</b> delivery.
+          </>
+        )}
       </p>
       {order.rates.length === 0 ? (
         <p className="mt-3 text-small text-ink-soft">Get rates for the packed parcel. The vendor pays the carrier&rsquo;s price plus our handling, taken from their wallet when you buy the label.</p>
@@ -60,7 +68,7 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
                 <span className="block font-medium">
                   {rate.carrier} {rate.service}
                 </span>
-                <span className="text-meta text-ink-soft">{rate.estimatedDays ? `About ${rate.estimatedDays} ${rate.estimatedDays === 1 ? "day" : "days"}` : "Delivery time not given"}</span>
+                <DeliveryTime estimatedDays={rate.estimatedDays} service={rate.service} />
                 {rate.tags.length > 0 || rate.preferred ? (
                   <span className="mt-1.5 flex flex-wrap gap-1.5">
                     {rate.preferred ? <StatusPill tone="orange">Seller&apos;s choice</StatusPill> : null}
@@ -84,4 +92,9 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
       ) : null}
     </Paper>
   );
+}
+
+function DeliveryTime({ estimatedDays, service }: { estimatedDays: number | null; service: string }) {
+  const label = deliveryTimeLabel(estimatedDays, service);
+  return label ? <span className="text-meta text-ink-soft">{label}</span> : null;
 }

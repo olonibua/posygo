@@ -12,21 +12,30 @@ test("a seller picks fast delivery for an order", async ({ page }) => {
     .waitFor({ timeout: 4_000 })
     .then(() => discard.click())
     .catch(() => undefined);
-  const estimate = page.getByRole("region", { name: "Estimated delivery" });
-  await expect(estimate.getByText("Add the address and products to see delivery prices.")).toBeVisible();
+  const delivery = page.getByRole("region", { name: "Delivery" });
+  await expect(delivery.getByText("Add the address and products to see the services and prices.")).toBeVisible();
   await page.getByLabel("Recipient name").fill("Ada Obi");
   await page.getByLabel("Address", { exact: true }).fill("1 High Street");
   await page.getByLabel("Town or city").fill("Manchester");
   await page.getByLabel("Postcode").fill("M1 1AA");
   await page.getByLabel("Product 1").selectOption({ index: 1 });
-  await expect(estimate.getByText("Your choice")).toBeVisible();
-  await expect(estimate.getByText(/£\d+\.\d{2}/).first()).toBeVisible();
-  await expect(estimate.getByText(/The final price is set when the hub weighs the packed parcel/)).toBeVisible();
-  const fastest = page.getByRole("button", { name: /Fastest/ });
-  await expect(page.getByRole("button", { name: /Cheapest/ })).toHaveAttribute("aria-pressed", "true");
-  await fastest.click();
-  await expect(fastest).toHaveAttribute("aria-pressed", "true");
-  await expect(estimate.getByText(/sent fastest/)).toBeVisible();
+  const chosen = delivery.getByRole("button", { pressed: true });
+  await expect(chosen.getByText("Your choice")).toBeVisible();
+  await expect(chosen.getByText("Cheapest", { exact: true })).toBeVisible();
+  await expect(delivery.getByText(/The final price is set when the hub weighs the packed parcel/)).toBeVisible();
+
+  const picker = delivery.getByRole("combobox", { name: "Delivery" });
+  await picker.selectOption("FASTEST");
+  await expect(chosen.getByText("Fastest", { exact: true })).toBeVisible();
+
+  const services = picker.locator('optgroup[label="Choose a service"] option');
+  const service = (await services.last().getAttribute("value"))!;
+  await picker.selectOption(service);
+  await expect(delivery.getByText(/The hub books this service/)).toBeVisible();
+  await expect(delivery.getByRole("button", { pressed: true })).toHaveCount(1);
+
+  await delivery.getByRole("button", { pressed: false }).first().click();
+  await expect(picker).not.toHaveValue(service);
   await discard.click();
   expect(problems).toEqual([]);
 });

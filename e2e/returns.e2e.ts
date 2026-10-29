@@ -89,9 +89,16 @@ test.describe("a customer return, from the order to back on sale", () => {
     expect((await stock).suggestedFilename()).toMatch(/^inventory-([a-z]{2}-)?\d{4}-\d{2}-\d{2}\.csv$/);
     await page.goto("/orders");
     await page.getByRole("button", { name: "Download CSV" }).click();
-    const orders = page.waitForEvent("download");
+    const panel = page.getByRole("dialog", { name: "Download orders" });
+    await expect(panel.getByRole("button", { name: "Last 30 days" })).toHaveAttribute("aria-pressed", "true");
+    await page.getByRole("heading", { name: "Orders", exact: true }).click();
+    await expect(panel).toHaveCount(0);
     await page.getByRole("button", { name: "Download CSV" }).click();
+    await panel.getByRole("button", { name: "Last 7 days" }).click();
+    const orders = page.waitForEvent("download");
+    await panel.getByRole("button", { name: "Download", exact: true }).click();
     const file = await orders;
+    await expect(panel).toHaveCount(0);
     expect(file.suggestedFilename()).toMatch(/^orders-.*\.csv$/);
     expect(readFileSync((await file.path())!, "utf8")).toContain(order.reference);
   });

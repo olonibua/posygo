@@ -39,7 +39,12 @@ export const NEW_ORDER_KNOWLEDGE = describePage<DeliveryInput & Recipient>({
     email: { labels: ["Email (optional)"], meaning: "The customer's email, so the carrier can send delivery updates." },
     deliveryPreference: {
       labels: ["Delivery"],
-      meaning: "How you'd like this order sent. Cheapest picks the lowest price even if it takes longer; Fastest picks the quickest delivery even if it costs more. The hub sees your choice first when it books the courier.",
+      meaning:
+        "How this order is sent. Cheapest available or Fastest available lets the hub pick, or choose a named service from the list, such as a next day service. The hub sees your choice first when it books the courier.",
+    },
+    preferredService: {
+      labels: [],
+      meaning: "The courier service you chose. If it isn't offered once the parcel is packed and weighed, the hub uses the cheapest or fastest option instead.",
     },
     lines: {
       labels: [/^Product \d+$/, "Units"],

@@ -68,7 +68,7 @@ export function ChargesCard({ order, locale }: { order: OrderDetailView; locale:
 }
 
 export function ParcelCard({ order, locale }: { order: OrderDetailView; locale: string }) {
-  const rows: Array<[string, string]> = [["Delivery", DELIVERY_PREFERENCE_LABELS[order.deliveryPreference].label]];
+  const rows: Array<[string, string]> = [["Delivery", order.preferredService ?? DELIVERY_PREFERENCE_LABELS[order.deliveryPreference].label]];
   if (order.pack) {
     rows.push(
       ["Package", order.pack.presetLabel ?? "Custom size"],
