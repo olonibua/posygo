@@ -1,8 +1,11 @@
 "use client";
 
-import type { ProductView, VendorCountryView } from "@/shared";
+import { DELIVERY_PREFERENCE_LABELS, DELIVERY_PREFERENCES, type DeliveryPreference, type ProductView, type VendorCountryView } from "@/shared";
+
+import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ChoiceChip } from "@/components/ui/choice-chip";
 import { Field, Input, Select } from "@/components/ui/form-controls";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 
@@ -26,6 +29,7 @@ export interface DeliveryDraft {
   postalCode: string;
   phone: string;
   email: string;
+  deliveryPreference?: DeliveryPreference;
   lines: LineDraft[];
 }
 
@@ -39,9 +43,10 @@ interface DeliveryFieldsProps {
   onChange: (next: DeliveryDraft) => void;
   onRemove?: () => void;
   newKey: () => string;
+  children?: ReactNode;
 }
 
-export function DeliveryFields({ index, delivery, country, products, available, errorFor, onChange, onRemove, newKey }: DeliveryFieldsProps) {
+export function DeliveryFields({ index, delivery, country, products, available, errorFor, onChange, onRemove, newKey, children }: DeliveryFieldsProps) {
   const rules = country.address;
   const set = (patch: Partial<DeliveryDraft>) => onChange({ ...delivery, ...patch });
   const setLine = (key: string, patch: Partial<LineDraft>) => set({ lines: delivery.lines.map((line) => (line.key === key ? { ...line, ...patch } : line)) });
@@ -140,6 +145,18 @@ export function DeliveryFields({ index, delivery, country, products, available, 
           </Button>
         </div>
       </div>
+      <fieldset className="flex flex-col gap-3">
+        <legend className="mb-3 text-small font-medium">Delivery</legend>
+        <div className="flex flex-wrap gap-2.5">
+          {DELIVERY_PREFERENCES.map((preference, preferenceIndex) => (
+            <ChoiceChip key={preference} selected={(delivery.deliveryPreference ?? "CHEAPEST") === preference} tone={preferenceIndex === 0 ? "lime" : "sky"} onToggle={() => set({ deliveryPreference: preference })}>
+              {DELIVERY_PREFERENCE_LABELS[preference].label}
+              <span className="font-normal opacity-70">· {DELIVERY_PREFERENCE_LABELS[preference].hint}</span>
+            </ChoiceChip>
+          ))}
+        </div>
+      </fieldset>
+      {children}
     </Paper>
   );
 }

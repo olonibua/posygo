@@ -1,6 +1,6 @@
 "use client";
 
-import type { OrderDetailView, OrderEventView, OrderStatus, Recipient } from "@/shared";
+import { DELIVERY_PREFERENCE_LABELS, type OrderDetailView, type OrderEventView, type OrderStatus, type Recipient } from "@/shared";
 
 import { StatusPill } from "@/components/ui/chip";
 import { type Column, DataTable } from "@/components/ui/data-table";
@@ -68,7 +68,7 @@ export function ChargesCard({ order, locale }: { order: OrderDetailView; locale:
 }
 
 export function ParcelCard({ order, locale }: { order: OrderDetailView; locale: string }) {
-  const rows: Array<[string, string]> = [];
+  const rows: Array<[string, string]> = [["Delivery", DELIVERY_PREFERENCE_LABELS[order.deliveryPreference].label]];
   if (order.pack) {
     rows.push(
       ["Package", order.pack.presetLabel ?? "Custom size"],
@@ -79,7 +79,7 @@ export function ParcelCard({ order, locale }: { order: OrderDetailView; locale: 
   if (order.label) {
     rows.push(["Carrier", `${order.label.carrier} ${order.label.service}`], ["Tracking", order.label.trackingNumber], ["Label bought", formatDateTime(order.label.purchasedAt, locale)]);
   }
-  return rows.length > 0 ? <Facts title="Parcel" rows={rows} /> : null;
+  return <Facts title="Parcel" rows={rows} />;
 }
 
 export function OrderLines({ order, showScans }: { order: OrderDetailView; showScans: boolean }) {

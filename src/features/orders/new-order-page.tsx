@@ -1,6 +1,6 @@
 "use client";
 
-import { type CreateOrdersInput, fulfilmentFee, type LotView, type ProductView } from "@/shared";
+import { type CreateOrdersInput, type DeliveryInput, fulfilmentFee, type LotView, type ProductView } from "@/shared";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useMemo, useRef, useState } from "react";
@@ -22,6 +22,7 @@ import { formatMoney, localeFor } from "@/lib/format";
 import { toast } from "@/lib/toast/toast-store";
 
 import { type DeliveryDraft, DeliveryFields } from "./delivery-fields";
+import { ShippingEstimate } from "./shipping-estimate";
 import { usePlaceOrders } from "./use-vendor-orders";
 
 const MAX_DELIVERIES = 20;
@@ -39,24 +40,27 @@ function availableUnits(lots: readonly LotView[]): Map<string, number> {
   return units;
 }
 
-function toInput(deliveries: DeliveryDraft[]): CreateOrdersInput {
+function toDelivery(delivery: DeliveryDraft): DeliveryInput {
   return {
-    deliveries: deliveries.map((delivery) => ({
-      externalReference: optional(delivery.externalReference),
-      recipient: {
-        name: delivery.name.trim(),
-        company: optional(delivery.company),
-        line1: delivery.line1.trim(),
-        line2: optional(delivery.line2),
-        city: delivery.city.trim(),
-        region: optional(delivery.region),
-        postalCode: delivery.postalCode.trim().toUpperCase(),
-        phone: optional(delivery.phone),
-        email: optional(delivery.email),
-      },
-      lines: delivery.lines.filter((line) => line.productId).map((line) => ({ productId: line.productId, quantity: Number(line.quantity) || 0 })),
-    })),
+    externalReference: optional(delivery.externalReference),
+    recipient: {
+      name: delivery.name.trim(),
+      company: optional(delivery.company),
+      line1: delivery.line1.trim(),
+      line2: optional(delivery.line2),
+      city: delivery.city.trim(),
+      region: optional(delivery.region),
+      postalCode: delivery.postalCode.trim().toUpperCase(),
+      phone: optional(delivery.phone),
+      email: optional(delivery.email),
+    },
+    lines: delivery.lines.filter((line) => line.productId).map((line) => ({ productId: line.productId, quantity: Number(line.quantity) || 0 })),
+    deliveryPreference: delivery.deliveryPreference ?? "CHEAPEST",
   };
+}
+
+function toInput(deliveries: DeliveryDraft[]): CreateOrdersInput {
+  return { deliveries: deliveries.map(toDelivery) };
 }
 
 export function NewOrderPage() {
@@ -77,7 +81,8 @@ export function NewOrderPage() {
   const draft = useFormDraft({
     key: code ? `order:new:${code.toLowerCase()}` : null,
     values: draftValues,
-    onRestore: (restored) => setDeliveries(restored.deliveries.length > 0 ? restored.deliveries.map((delivery) => ({ ...delivery, key: newKey(), lines: delivery.lines.map((line) => ({ ...line, key: newKey() })) })) : null),
+    onRestore: (restored) =>
+      setDeliveries(restored.deliveries.length > 0 ? restored.deliveries.map((delivery) => ({ ...delivery, key: newKey(), lines: delivery.lines.map((line) => ({ ...line, key: newKey() })) })) : null),
   });
 
   const available = availableUnits(lots.data ?? []);
@@ -142,7 +147,9 @@ export function NewOrderPage() {
               onChange={(next) => update(index, next)}
               onRemove={current.length > 1 ? () => setDeliveries(current.filter((_, position) => position !== index)) : undefined}
               newKey={newKey}
-            />
+            >
+              <ShippingEstimate delivery={toDelivery(delivery)} locale={locale} />
+            </DeliveryFields>
           ))}
           <div>
             <Button variant="ghost" disabled={current.length >= MAX_DELIVERIES} onClick={() => setDeliveries([...current, blank()])}>

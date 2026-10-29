@@ -124,6 +124,7 @@ export function SizeFields({ values, set, errorFor, readOnly, units }: ProductFi
         {dimension("width", "Width")}
         {dimension("height", "Height")}
       </div>
+      <p className="-mt-2 text-meta text-ink-soft">Length, width and height are optional. Add them and we can show you delivery prices while you create an order.</p>
       <fieldset>
         <legend className="mb-3 text-small font-medium">Storage size</legend>
         <div className="flex flex-wrap gap-2.5">

@@ -37,6 +37,10 @@ export const NEW_ORDER_KNOWLEDGE = describePage<DeliveryInput & Recipient>({
     countryCode: { labels: [], meaning: "Set for you: the country you've chosen at the top of the page. Orders only go to addresses in that country." },
     phone: { labels: [/^Phone/], meaning: "A phone number the carrier can call about delivery. Optional." },
     email: { labels: ["Email (optional)"], meaning: "The customer's email, so the carrier can send delivery updates." },
+    deliveryPreference: {
+      labels: ["Delivery"],
+      meaning: "How you'd like this order sent. Cheapest picks the lowest price even if it takes longer; Fastest picks the quickest delivery even if it costs more. The hub sees your choice first when it books the courier.",
+    },
     lines: {
       labels: [/^Product \d+$/, "Units"],
       meaning: "Each product to send and how many units. Only stock you have in this country can be ordered.",

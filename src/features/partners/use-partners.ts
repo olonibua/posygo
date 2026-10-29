@@ -1,6 +1,6 @@
 "use client";
 
-import type { MysteryOrderView, PartnerDetailView, PartnerPayoutView, PartnerStatementView, PartnerStatus, PartnerSummaryView, ScorecardView, StatementRange, StockCountView } from "@/shared";
+import type { MysteryOrderView, PartnerDetailView, PartnerPayoutView, PartnerStatementView, PartnerStatus, PartnerStockSummaryView, PartnerSummaryView, ScorecardView, StatementRange, StockCountView } from "@/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { apiRequest } from "@/lib/api/client";
@@ -56,6 +56,10 @@ export function useAdminStatement(partnerId: string, range: StatementRange, enab
 
 export function usePartnerPayouts(status?: PartnerPayoutView["status"]) {
   return useQuery({ queryKey: [...ADMIN_KEY, "payouts", status ?? "ALL"], queryFn: () => apiRequest<PartnerPayoutView[]>(`/v1/admin/partner-payouts${status ? `?status=${status}` : ""}`) });
+}
+
+export function usePartnerStockSummary() {
+  return useQuery({ queryKey: [...PORTAL_KEY, "stock"], queryFn: () => apiRequest<PartnerStockSummaryView>("/v1/partner/stock"), refetchInterval: 60_000 });
 }
 
 export function usePartnerOverview() {

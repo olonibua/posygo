@@ -19,9 +19,7 @@ test("prints each label on its own label-sized page, not on A4", async ({ page, 
   expect(small).toEqual(["176x113", "176x113"]);
 
   await page.getByLabel("Label size").selectOption({ label: "4 × 6 in" });
-  const shipping = pageSizes(await page.pdf({ preferCSSPageSize: true, path: "/tmp/claude-0/-home-claude/13fa2322-bc5c-511d-9853-959e5edefb33/scratchpad/labels-4x6.pdf" }));
+  const shipping = pageSizes(await page.pdf({ preferCSSPageSize: true }));
   expect(shipping).toEqual(["288x432", "288x432"]);
-  await page.getByLabel("Label size").selectOption({ label: "62 × 40 mm" });
-  await page.pdf({ preferCSSPageSize: true, path: "/tmp/claude-0/-home-claude/13fa2322-bc5c-511d-9853-959e5edefb33/scratchpad/labels-62x40.pdf" });
   expect(problems).toEqual([]);
 });

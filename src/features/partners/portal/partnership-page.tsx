@@ -13,6 +13,7 @@ import { formatMoney, localeFor } from "@/lib/format";
 
 import { PartnerStatusNote, ReadinessList, ScorecardPanel } from "../partner-parts";
 import { usePartnerOverview, usePartnerScorecard, usePortalMutation } from "../use-partners";
+import { HubStockSummary } from "./hub-stock-summary";
 import { InsuranceCard } from "./insurance-card";
 import { VerificationSection } from "./verification-section";
 
@@ -61,6 +62,7 @@ export function PartnershipPage() {
           Up to {money(partner.tier.maxStockValueMinor)} of stock, items up to {money(partner.tier.maxItemValueMinor)} each. Holding {money(partner.heldStockValueMinor)} now.
         </FeaturePanel>
       ) : null}
+      {partner.status === "ACTIVE" ? <HubStockSummary /> : null}
       {lead ? (
         <>
           {operating ? <Scorecard tierName={partner.tier.name} /> : null}

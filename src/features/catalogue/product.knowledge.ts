@@ -37,7 +37,7 @@ const PRODUCT: Omit<PageKnowledgeOf<ProductInput>, "route"> = {
       fix: tariffCodeFix,
     },
     weightGrams: { labels: [/^Weight/], meaning: "The weight of one unit in its packaging. It's used to price shipping." },
-    lengthMm: { labels: [/^Length/], meaning: "The length of one packed unit. Give all three sizes or none." },
+    lengthMm: { labels: [/^Length/], meaning: "The length of one packed unit. Give all three sizes or none. They are optional, but with them we can show you delivery prices from couriers while you create an order." },
     widthMm: { labels: [/^Width/], meaning: "The width of one packed unit. Give all three sizes or none." },
     heightMm: { labels: [/^Height/], meaning: "The height of one packed unit. Give all three sizes or none." },
     storageTier: {
