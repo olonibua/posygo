@@ -4,6 +4,7 @@ import { type InboundDetailView, type InboundEstimateView, withCountry } from "@
 import { useQuery } from "@tanstack/react-query";
 
 import { ButtonLink } from "@/components/ui/button";
+import { HintButton, StepHint } from "@/components/ui/step-hint";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { useVendorWallet } from "@/features/finance/use-vendor-wallet";
 import { errorMessage } from "@/features/receiving/api-errors";
@@ -18,6 +19,12 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
     </div>
   );
 }
+
+const CHARGES_HINT = {
+  id: "inbound-charges",
+  title: "What you're paying for",
+  text: "Stocking pays the hub to check in, count and shelve each box, and the first month of storage is paid upfront. After that, storage is charged per box every 30 days. Packing, delivery and returns are charged when orders go out. Your first shipment's stocking is free.",
+};
 
 function useEstimate(inbound: InboundDetailView) {
   const body = { shippingMode: inbound.shippingMode, boxCounts: inbound.declaredBoxCounts };
@@ -40,7 +47,10 @@ export function InboundChargesCard({ inbound, locale }: { inbound: InboundDetail
     const short = quote && wallet.data ? quote.totalMinor - wallet.data.balanceMinor : 0;
     return (
       <Paper className="px-6 py-5">
-        <Stamp>Charge when you submit</Stamp>
+        <StepHint {...CHARGES_HINT} className="flex items-center justify-between gap-3">
+          <Stamp>Charge when you submit</Stamp>
+          <HintButton id={CHARGES_HINT.id} label={CHARGES_HINT.title} />
+        </StepHint>
         {quote ? (
           <dl className="mt-3 text-small">
             <Row label="Stocking" value={money(quote.stockingMinor)} />
