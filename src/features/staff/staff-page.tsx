@@ -1,7 +1,8 @@
 "use client";
 
-import type { StaffDirectoryView, StaffInvitationView, StaffMemberView } from "@/shared";
+import { INVITABLE_STAFF_ROLES, type InvitableStaffRole, type StaffDirectoryView, type StaffInvitationView, type StaffMemberView } from "@/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/ui/chip";
@@ -14,14 +15,22 @@ import { apiRequest } from "@/lib/api/client";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatDate } from "@/lib/format";
 
+import { ChangeRoleForm } from "./change-role-form";
 import { InviteStaffForm } from "./invite-staff-form";
 import { STAFF_ROLE_LABELS } from "./staff-display";
 
 const KEY = ["admin", "staff"];
 
+type ChangeableMember = StaffMemberView & { role: InvitableStaffRole };
+
+function isChangeable(member: StaffMemberView): member is ChangeableMember {
+  return (INVITABLE_STAFF_ROLES as readonly string[]).includes(member.role);
+}
+
 export function StaffPage() {
   const user = useCurrentUser();
   const queryClient = useQueryClient();
+  const [changing, setChanging] = useState<ChangeableMember | null>(null);
   const directory = useQuery({ queryKey: KEY, queryFn: () => apiRequest<StaffDirectoryView>("/v1/admin/staff") });
   const refresh = () => void queryClient.invalidateQueries({ queryKey: KEY });
   const suspend = useMutation({ mutationFn: (userId: string) => apiRequest(`/v1/admin/staff/members/${userId}/suspend`, { method: "POST" }), onSuccess: refresh });
@@ -38,10 +47,15 @@ export function StaffPage() {
       header: "Action",
       align: "right",
       render: (row) =>
-        row.role !== "SUPER_ADMIN" && row.status === "ACTIVE" && row.userId !== user.id ? (
-          <Button variant="ghost" onClick={() => suspend.mutate(row.userId)}>
-            Suspend
-          </Button>
+        isChangeable(row) && row.status === "ACTIVE" && row.userId !== user.id ? (
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setChanging(row)}>
+              Change role
+            </Button>
+            <Button variant="ghost" onClick={() => suspend.mutate(row.userId)}>
+              Suspend
+            </Button>
+          </div>
         ) : null,
     },
   ];
@@ -66,6 +80,17 @@ export function StaffPage() {
     <div className="flex flex-col gap-7">
       <PageHeader stamp="Platform" title="Staff" lead="Everyone with access to the platform console. New staff set up two-factor sign-in before they can do anything." />
       <FormAlert message={errorMessage(suspend.error) ?? errorMessage(revoke.error)} />
+      {changing ? (
+        <ChangeRoleForm
+          key={changing.userId}
+          member={changing}
+          onCancel={() => setChanging(null)}
+          onDone={() => {
+            setChanging(null);
+            refresh();
+          }}
+        />
+      ) : null}
       <DataTable caption="Staff" columns={memberColumns} rows={directory.data?.members ?? []} rowKey={(row) => row.userId} loading={directory.isLoading} empty={"No staff yet."} />
       <section aria-labelledby="pending-heading" className="flex flex-col gap-3">
         <h2 id="pending-heading" className="text-h3">
