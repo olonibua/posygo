@@ -78,7 +78,7 @@ export function LabelCard({ order, busy, photoRequired, photoError, handOffError
               disabled={(photoRequired && photos.length === 0) || (order.sealRequired && seal.trim().length < 3)}
               onClick={() => onHandOff(photos, seal.trim() || undefined)}
             >
-              Handed to the carrier
+              Handed to the courier
             </Button>
           ) : (
             <Button variant="lime" className="w-full" loading={busy} disabled={photos.length === 0} onClick={() => onAddPhotos(photos)}>

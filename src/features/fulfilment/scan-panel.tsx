@@ -18,7 +18,6 @@ interface ScanPanelProps {
   error: unknown;
   last: ScanResultView | undefined;
   onScan: (code: string) => void;
-  onConfirm: (lineId: string) => void;
   onReset: () => void;
 }
 
@@ -26,11 +25,15 @@ function resultText(last: ScanResultView | undefined): string | null {
   return last ? `${last.productName}: ${last.scannedQuantity} of ${last.quantity}${last.complete ? " — done" : ""}` : null;
 }
 
-export function ScanPanel({ lines, remaining, busy, error, last, onScan, onConfirm, onReset }: ScanPanelProps) {
+export function ScanPanel({ lines, remaining, busy, error, last, onScan, onReset }: ScanPanelProps) {
   const [code, setCode] = useState("");
   const [camera, setCamera] = useState(false);
   const input = useRef<HTMLInputElement>(null);
-  const unlabelled = lines.filter((line) => line.barcodes.length === 0 && line.scannedQuantity < line.quantity);
+  const unlabelled = lines.filter((line) => line.barcodes.length === 0 && line.lotCodes.length > 0 && line.scannedQuantity < line.quantity);
+  const fill = (lotCode: string) => {
+    setCode(lotCode);
+    input.current?.focus({ preventScroll: true });
+  };
 
   useEffect(() => {
     if (!busy && !camera) {
@@ -47,7 +50,7 @@ export function ScanPanel({ lines, remaining, busy, error, last, onScan, onConfi
     }
   }
 
-  const problem = fieldError(error, "code") ?? fieldError(error, "lineId") ?? (error ? errorMessage(error) : null);
+  const problem = fieldError(error, "code") ?? (error ? errorMessage(error) : null);
   return (
     <Paper className="px-6 py-6">
       <div className="flex items-center justify-between gap-3">
@@ -70,7 +73,7 @@ export function ScanPanel({ lines, remaining, busy, error, last, onScan, onConfi
             )}
           </Field>
         </div>
-        <Button type="submit" variant="ghost" loading={busy} className="sm:mb-[22px]">
+        <Button type="submit" variant={code.trim() ? "yellow" : "ghost"} loading={busy} disabled={!code.trim()} className="sm:mb-[22px]">
           Add code
         </Button>
       </form>
@@ -88,19 +91,32 @@ export function ScanPanel({ lines, remaining, busy, error, last, onScan, onConfi
           <p id="no-barcode" className="text-small font-medium">
             No barcode on the product?
           </p>
-          <p className="mt-1 text-meta text-ink-soft">Check the item matches, then confirm it. This is noted on the order.</p>
-          <ul className="mt-3 flex flex-col gap-2">
+          <p className="mt-1 text-meta text-ink-soft">Find the lot label on the item and check it matches. Tap the code to put it in the box above, then tap Add code.</p>
+          <ul className="mt-3 flex flex-col gap-2.5">
             {unlabelled.map((line) => (
-              <li key={line.id} className="flex items-center justify-between gap-3">
-                <span className="min-w-0">
-                  <span className="block truncate text-small font-medium">{line.productName}</span>
-                  <span className="text-meta text-ink-faint">
-                    {line.scannedQuantity} of {line.quantity} checked
+              <li key={line.id} className="flex flex-wrap items-center justify-between gap-2">
+                <span className="min-w-0 text-small">
+                  <span className="font-medium">{line.productName}</span>{" "}
+                  <span className="text-ink-faint">
+                    {line.scannedQuantity} of {line.quantity}
                   </span>
                 </span>
-                <Button variant="ghost" disabled={busy} onClick={() => onConfirm(line.id)}>
-                  Confirm 1
-                </Button>
+                <span className="flex flex-wrap gap-1.5">
+                  {line.lotCodes.map((lotCode) => (
+                    <button
+                      key={lotCode}
+                      type="button"
+                      onClick={() => fill(lotCode)}
+                      aria-pressed={code === lotCode}
+                      className={cn(
+                        "rounded-[10px] border-[1.5px] px-2.5 py-1.5 font-mono text-[13px] transition-colors duration-200",
+                        code === lotCode ? "border-ink bg-white" : "border-line-strong bg-paper hover:border-ink",
+                      )}
+                    >
+                      {lotCode}
+                    </button>
+                  ))}
+                </span>
               </li>
             ))}
           </ul>
@@ -108,7 +124,15 @@ export function ScanPanel({ lines, remaining, busy, error, last, onScan, onConfi
       ) : null}
 
       <p className="mt-3 text-meta text-ink-faint">{remaining === 0 ? "Everything is scanned. Record the parcel below." : `${remaining} ${remaining === 1 ? "unit" : "units"} still to scan.`}</p>
-      {camera ? <CameraScanner remaining={remaining} lastResult={problem ?? resultText(last)} onCode={onScan} onClose={() => setCamera(false)} /> : null}
+      {camera ? (
+        <CameraScanner
+          onCode={(value) => {
+            setCamera(false);
+            fill(value);
+          }}
+          onClose={() => setCamera(false)}
+        />
+      ) : null}
     </Paper>
   );
 }

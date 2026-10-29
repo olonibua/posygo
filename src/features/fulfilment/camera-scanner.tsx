@@ -5,8 +5,6 @@ import { createPortal } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 
-const REPEAT_GAP_MS = 1500;
-
 type CameraState = "starting" | "ready" | "blocked" | "unavailable";
 
 const STATE_NOTES: Record<Exclude<CameraState, "ready">, string> = {
@@ -16,13 +14,11 @@ const STATE_NOTES: Record<Exclude<CameraState, "ready">, string> = {
 };
 
 interface CameraScannerProps {
-  remaining: number;
-  lastResult: string | null;
   onCode: (code: string) => void;
   onClose: () => void;
 }
 
-export function CameraScanner({ remaining, lastResult, onCode, onClose }: CameraScannerProps) {
+export function CameraScanner({ onCode, onClose }: CameraScannerProps) {
   const video = useRef<HTMLVideoElement>(null);
   const handler = useRef(onCode);
   const [state, setState] = useState<CameraState>("starting");
@@ -31,10 +27,12 @@ export function CameraScanner({ remaining, lastResult, onCode, onClose }: Camera
   useEffect(() => {
     let stop: (() => void) | null = null;
     let cancelled = false;
-    let last = { code: "", at: 0 };
+    let found = false;
     void (async () => {
       const [{ BrowserMultiFormatReader }, { BarcodeFormat, DecodeHintType }] = await Promise.all([import("@zxing/browser"), import("@zxing/library")]);
-      const hints = new Map([[DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.CODE_128, BarcodeFormat.CODE_39, BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.QR_CODE]]]);
+      const hints = new Map([
+        [DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.CODE_128, BarcodeFormat.CODE_39, BarcodeFormat.EAN_13, BarcodeFormat.EAN_8, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.QR_CODE]],
+      ]);
       const reader = new BrowserMultiFormatReader(hints);
       if (cancelled || !video.current) {
         return;
@@ -42,9 +40,8 @@ export function CameraScanner({ remaining, lastResult, onCode, onClose }: Camera
       try {
         const controls = await reader.decodeFromConstraints({ video: { facingMode: "environment" } }, video.current, (result) => {
           const code = result?.getText().trim();
-          const now = Date.now();
-          if (code && (code !== last.code || now - last.at > REPEAT_GAP_MS)) {
-            last = { code, at: now };
+          if (code && !found) {
+            found = true;
             navigator.vibrate?.(60);
             handler.current(code);
           }
@@ -81,12 +78,9 @@ export function CameraScanner({ remaining, lastResult, onCode, onClose }: Camera
         {state === "ready" ? null : <p className="absolute inset-x-6 top-1/2 -translate-y-1/2 text-center text-body">{STATE_NOTES[state]}</p>}
       </div>
       <div className="flex flex-col gap-3 px-5 pb-[max(20px,env(safe-area-inset-bottom))] pt-4">
-        <p aria-live="polite" className="min-h-[22px] text-center text-small text-white/85">
-          {lastResult ?? "Point the camera at the barcode or the lot label."}
-        </p>
-        <p className="text-center text-meta text-white/60">{remaining === 0 ? "Everything is scanned." : `${remaining} ${remaining === 1 ? "unit" : "units"} still to scan`}</p>
+        <p className="text-center text-small text-white/85">Point the camera at the barcode or the lot label. The code goes in the box for you to check.</p>
         <Button variant="yellow" size="lg" className="w-full justify-center" onClick={onClose}>
-          {remaining === 0 ? "Done" : "Close camera"}
+          Close camera
         </Button>
       </div>
     </div>,

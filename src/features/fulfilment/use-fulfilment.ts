@@ -1,6 +1,16 @@
 "use client";
 
-import type { OrderDetailView, OrderStatus, OrderSummaryView, PackagingPresetView, PackInput, ScanResultView, StaffOrderActionInput } from "@/shared";
+import {
+  HUB_ORDER_STAGES,
+  type HubOrderStage,
+  type OrderDetailView,
+  type OrderStatus,
+  type OrderSummaryView,
+  type PackagingPresetView,
+  type PackInput,
+  type ScanResultView,
+  type StaffOrderActionInput,
+} from "@/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { apiRequest } from "@/lib/api/client";
@@ -9,23 +19,23 @@ import { toast } from "@/lib/toast/toast-store";
 const KEY = ["warehouse", "orders"] as const;
 
 const ACTION_DONE: Partial<Record<StaffOrderActionInput["action"], string>> = {
-  HAND_OFF: "Handed to the carrier",
+  HAND_OFF: "Handed to the courier",
   HOLD: "Order on hold",
   RELEASE: "Hold released",
   REPACK: "Back to packing",
   SELECT_RATE: "Shipping chosen",
 };
 
-export function useOrderQueue(status: OrderStatus | "OPEN", search: string) {
+export type QueueFilter = OrderStatus | HubOrderStage;
+
+export function useOrderQueue(filter: QueueFilter, search: string) {
   const params = new URLSearchParams();
-  if (status !== "OPEN") {
-    params.set("status", status);
-  }
+  params.set((HUB_ORDER_STAGES as readonly string[]).includes(filter) ? "stage" : "status", filter);
   if (search) {
     params.set("q", search);
   }
-  const suffix = params.size > 0 ? `?${params.toString()}` : "";
-  return useQuery({ queryKey: [...KEY, "queue", status, search], queryFn: () => apiRequest<OrderSummaryView[]>(`/v1/warehouse/orders${suffix}`), refetchInterval: 30_000 });
+  const suffix = `?${params.toString()}`;
+  return useQuery({ queryKey: [...KEY, "queue", filter, search], queryFn: () => apiRequest<OrderSummaryView[]>(`/v1/warehouse/orders${suffix}`), refetchInterval: 30_000 });
 }
 
 export function useCancellationQueue() {
@@ -52,10 +62,6 @@ export function useFulfilment(orderId: string) {
   const refresh = () => queryClient.invalidateQueries({ queryKey: key });
   const order = useQuery({ queryKey: key, queryFn: () => apiRequest<OrderDetailView>(`/v1/warehouse/orders/${orderId}`) });
   const scan = useMutation({ mutationFn: (code: string) => apiRequest<ScanResultView>(`/v1/warehouse/orders/${orderId}/scans`, { method: "POST", body: { code } }), onSuccess: () => void refresh() });
-  const confirmUnit = useMutation({
-    mutationFn: (lineId: string) => apiRequest<ScanResultView>(`/v1/warehouse/orders/${orderId}/lines/${lineId}/confirm`, { method: "POST" }),
-    onSuccess: () => void refresh(),
-  });
   const resetScans = useMutation({ mutationFn: () => apiRequest<OrderDetailView>(`/v1/warehouse/orders/${orderId}/scans`, { method: "DELETE" }), onSuccess: store });
   const pack = useMutation({
     mutationFn: (input: PackInput) => apiRequest<OrderDetailView>(`/v1/warehouse/orders/${orderId}/pack`, { method: "POST", body: input }),
@@ -91,5 +97,5 @@ export function useFulfilment(orderId: string) {
       toast.success("Dispatch photo added", next.reference);
     },
   });
-  return { order, scan, confirmUnit, resetScans, pack, act, decide, simulate, addPhotos };
+  return { order, scan, resetScans, pack, act, decide, simulate, addPhotos };
 }

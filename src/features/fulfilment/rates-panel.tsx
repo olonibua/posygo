@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/ui/chip";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { RadioDot } from "@/components/ui/form-controls";
+import { formatSize, formatWeight } from "@/features/orders/order-display";
 import { cn } from "@/lib/cn";
 import { formatMoney } from "@/lib/format";
 
@@ -28,10 +29,10 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
   return (
     <Paper className="px-6 py-6">
       <div className="flex items-center justify-between gap-3">
-        <Stamp>Shipping</Stamp>
+        <Stamp>Choose the courier</Stamp>
         {order.actions.includes("FETCH_RATES") ? (
           <Button variant="ghost" loading={busy && !chosen} onClick={onFetch}>
-            {order.rates.length > 0 ? "Refresh rates" : "Get rates"}
+            {order.rates.length > 0 ? "Refresh prices" : "Get courier prices"}
           </Button>
         ) : null}
       </div>
@@ -46,8 +47,13 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
           </>
         )}
       </p>
+      {order.pack && order.rates.length > 0 ? (
+        <p className="mt-1 text-meta text-ink-faint">
+          Prices for a {formatSize(order.pack.lengthMm, order.pack.widthMm, order.pack.heightMm)} parcel weighing {formatWeight(order.pack.weightGrams)}, from the couriers connected for this country.
+        </p>
+      ) : null}
       {order.rates.length === 0 ? (
-        <p className="mt-3 text-small text-ink-soft">Get rates for the packed parcel. The vendor pays the carrier&rsquo;s price plus our handling, taken from their wallet when you buy the label.</p>
+        <p className="mt-3 text-small text-ink-soft">Get courier prices for the packed parcel. The seller pays the courier&rsquo;s price plus our handling from their wallet when you buy the label.</p>
       ) : (
         <div role="radiogroup" aria-label="Shipping options" className="mt-4 flex flex-col gap-2">
           {order.rates.map((rate) => (
@@ -87,7 +93,7 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
       )}
       {canSelect && order.rates.length > 0 ? (
         <Button variant="yellow" className="mt-4 w-full" loading={busy && Boolean(chosen)} disabled={!selected} onClick={() => selected && onSelect(selected)}>
-          {order.charges ? "Charge the vendor and buy the label" : "Buy the label"}
+          {order.charges ? "Charge the seller and buy the label" : "Buy the label"}
         </Button>
       ) : null}
     </Paper>

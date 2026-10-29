@@ -19,7 +19,7 @@ import { useCurrentUser } from "@/lib/auth/use-current-user";
 
 import { usePackaging } from "./use-fulfilment";
 
-const KIND_LABELS: Record<PackagingKind, string> = { BOX: "Box", MAILER: "Mailer" };
+const KIND_LABELS: Record<PackagingKind, string> = { BOX: "Box", MAILER: "Mailer", BAG: "Bag" };
 
 function centimetres(text: string): number {
   return Math.round((Number.parseFloat(text) || 0) * 10);

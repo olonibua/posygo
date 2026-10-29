@@ -20,7 +20,9 @@ import { localeFor } from "@/lib/format";
 import { LabelCard } from "./label-card";
 import { PackForm } from "./pack-form";
 import { RatesPanel } from "./rates-panel";
+import { OrderProgress } from "./order-progress";
 import { ScanPanel } from "./scan-panel";
+import { TrackingCard } from "./tracking-card";
 import { useFulfilment, usePackaging } from "./use-fulfilment";
 
 type Pending = "HOLD" | "CANCEL" | null;
@@ -29,7 +31,7 @@ const SIMPLE_ACTIONS: readonly OrderAction[] = ["REPACK", "RELEASE", "RETRY_LABE
 
 export function FulfilmentPage({ orderId }: { orderId: string }) {
   const user = useCurrentUser();
-  const { order, scan, confirmUnit, resetScans, pack, act, decide, simulate, addPhotos } = useFulfilment(orderId);
+  const { order, scan, resetScans, pack, act, decide, simulate, addPhotos } = useFulfilment(orderId);
   const [pending, setPending] = useState<Pending>(null);
   const data = order.data;
   const presets = usePackaging(data?.countryCode ?? null);
@@ -73,6 +75,7 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
           </span>
         }
       />
+      <OrderProgress status={data.status} allScanned={remaining === 0} />
       <FormAlert message={errorMessage(act.error)} />
       {pending === "HOLD" ? (
         <ReasonForm title="Put this order on hold" busy={busy} onCancel={() => setPending(null)} onSubmit={(reason) => act.mutate({ action: "HOLD", reason }, { onSuccess: () => setPending(null) })} />
@@ -123,20 +126,17 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
       <div className="grid gap-5 xl:grid-cols-[1fr_400px]">
         <div className="flex flex-col gap-5">
           {data.actions.includes("RECORD_PACK") ? (
-            <ScanPanel
-              lines={data.lines}
-              remaining={remaining}
-              busy={scan.isPending || confirmUnit.isPending}
-              error={confirmUnit.submittedAt > scan.submittedAt ? confirmUnit.error : scan.error}
-              last={confirmUnit.submittedAt > scan.submittedAt ? confirmUnit.data : scan.data}
-              onScan={(code) => scan.mutate(code)}
-              onConfirm={(lineId) => confirmUnit.mutate(lineId)}
-              onReset={() => resetScans.mutate()}
-            />
+            <ScanPanel lines={data.lines} remaining={remaining} busy={scan.isPending} error={scan.error} last={scan.data} onScan={(code) => scan.mutate(code)} onReset={() => resetScans.mutate()} />
           ) : null}
           <OrderLines order={data} showScans />
           {data.actions.includes("RECORD_PACK") ? (
-            <PackForm presets={presets.data ?? []} ready={remaining === 0} busy={pack.isPending} error={pack.error} onPack={(input) => pack.mutate(input)} />
+            <PackForm
+              presets={presets.data ?? []}
+              ready={remaining === 0}
+              busy={pack.isPending}
+              error={pack.error}
+              onPack={(input) => pack.mutate(input, { onSuccess: () => act.mutate({ action: "FETCH_RATES" }) })}
+            />
           ) : null}
           {showRates ? (
             <RatesPanel order={data} locale={locale} busy={busy} onFetch={() => act.mutate({ action: "FETCH_RATES" })} onSelect={(rateId) => act.mutate({ action: "SELECT_RATE", rateId })} />
@@ -150,20 +150,12 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
             onHandOff={data.actions.includes("HAND_OFF") ? (photoFileIds, sealNumber) => act.mutate({ action: "HAND_OFF", photoFileIds, sealNumber }) : undefined}
             onAddPhotos={(fileIds) => addPhotos.mutate(fileIds)}
           />
-          {data.label && !data.label.labelUrl && ["LABEL_PURCHASED", "HANDED_OFF", "IN_TRANSIT"].includes(data.status) ? (
-            <Paper className="px-6 py-5">
-              <Stamp>Practice carrier</Stamp>
-              <p className="mt-2 text-small text-ink-soft">This market uses the practice carrier, so tracking updates are sent from here.</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Button variant="ghost" loading={simulate.isPending} onClick={() => simulate.mutate({ status: "IN_TRANSIT", description: "Departed the sorting centre" })}>
-                  Mark in transit
-                </Button>
-                <Button variant="ghost" loading={simulate.isPending} onClick={() => simulate.mutate({ status: "DELIVERED", description: "Delivered to the recipient" })}>
-                  Mark delivered
-                </Button>
-              </div>
-            </Paper>
-          ) : null}
+          <TrackingCard
+            order={data}
+            locale={locale}
+            busy={simulate.isPending}
+            onPractice={(status) => simulate.mutate(status === "DELIVERED" ? { status, description: "Delivered to the recipient" } : { status, description: "Departed the sorting centre" })}
+          />
           <OrderTimeline events={data.events} locale={locale} />
         </div>
         <div className="flex flex-col gap-5">
