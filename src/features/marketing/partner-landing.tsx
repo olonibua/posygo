@@ -32,7 +32,7 @@ export const PARTNER_FAQ: readonly FaqItem[] = [
     question: "Do I need a business?",
     answer: "No. Most partners are individuals who work as self-employed. You confirm you can legally do the work and give a tax reference where your country needs one.",
   },
-  { question: "What happens if stock is damaged or lost?", answer: "Vendors' stock is covered by our insurance. Part of your pay is held back for a while in case of claims, then released to you." },
+  { question: "What happens if stock is damaged or lost?", answer: "Stock is protected by our claims process. Every arrival and every parcel is photographed, and part of your pay is held back for a while in case of claims, then released to you." },
   { question: "How do I get paid?", answer: "Earnings build up in your account as you work. We pay out to your bank through our payment provider. We never see or store your account number." },
   {
     question: "What do you keep about me?",

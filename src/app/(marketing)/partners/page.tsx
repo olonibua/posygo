@@ -11,7 +11,7 @@ import { breadcrumbs, faqPage } from "@/lib/structured-data";
 
 export const metadata = publicPage({
   title: "Become a fulfilment partner: earn from spare space",
-  description: "Earn money from a spare room or unit by receiving, storing and packing orders for online sellers near you. Vetted, insured and paid per task, with no upfront cost.",
+  description: "Earn money from a spare room or unit by receiving, storing and packing orders for online sellers near you. Vetted and paid per task, with no upfront cost.",
   path: "/partners",
 });
 
