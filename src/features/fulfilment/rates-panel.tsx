@@ -1,6 +1,6 @@
 "use client";
 
-import { DELIVERY_PREFERENCE_LABELS, deliveryTimeLabel, type OrderDetailView, type RateTag } from "@/shared";
+import { DELIVERY_PREFERENCE_LABELS, deliveryTimeLabel, type OrderDetailView, type RateTag, serviceKey } from "@/shared";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
   const canSelect = order.actions.includes("SELECT_RATE");
   const selected = chosen ?? order.rates.find((rate) => rate.selected)?.id ?? (canSelect ? (order.rates.find((rate) => rate.preferred)?.id ?? null) : null);
   const wanted = DELIVERY_PREFERENCE_LABELS[order.deliveryPreference];
+  const missingChoice = Boolean(order.preferredService) && order.rates.length > 0 && !order.rates.some((rate) => serviceKey(rate.carrier, rate.service) === order.preferredService);
   return (
     <Paper className="px-6 py-6">
       <div className="flex items-center justify-between gap-3">
@@ -37,9 +38,13 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
         ) : null}
       </div>
       <p className="mt-2 text-small">
-        {order.preferredService ? (
+        {missingChoice ? (
           <>
-            The seller chose <b className="font-semibold">{order.preferredService}</b>. If it isn&apos;t offered, use the {wanted.label.toLowerCase()} option.
+            The seller chose <b className="font-semibold">{order.preferredService}</b>, but it isn&apos;t offered for this parcel. The {wanted.label.toLowerCase()} option is picked instead.
+          </>
+        ) : order.preferredService ? (
+          <>
+            The seller chose <b className="font-semibold">{order.preferredService}</b>.
           </>
         ) : (
           <>
@@ -77,7 +82,7 @@ export function RatesPanel({ order, locale, busy, onFetch, onSelect }: RatesPane
                 <DeliveryTime estimatedDays={rate.estimatedDays} service={rate.service} />
                 {rate.tags.length > 0 || rate.preferred ? (
                   <span className="mt-1.5 flex flex-wrap gap-1.5">
-                    {rate.preferred ? <StatusPill tone="orange">Seller&apos;s choice</StatusPill> : null}
+                    {rate.preferred ? <StatusPill tone="orange">{missingChoice ? "Picked for you" : "Seller's choice"}</StatusPill> : null}
                     {rate.tags.map((tag) => (
                       <StatusPill key={tag} tone={TAG_TONES[tag]}>
                         {DELIVERY_PREFERENCE_LABELS[tag].label}

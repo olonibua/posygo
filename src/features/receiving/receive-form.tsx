@@ -34,18 +34,22 @@ export function ReceiveForm({
   onCancel: () => void;
 }) {
   const [boxes, setBoxes] = useState<Record<StorageTier, string>>(
-    () => Object.fromEntries(STORAGE_TIERS.map((tier) => [tier, String(inbound.declaredBoxCounts[tier] ?? 0)])) as Record<StorageTier, string>,
+    () => Object.fromEntries(STORAGE_TIERS.map((tier) => [tier, ""])) as Record<StorageTier, string>,
   );
   const [photos, setPhotos] = useState<string[]>([]);
   const [note, setNote] = useState("");
   const [lines, setLines] = useState<Record<string, LineCount>>(() =>
-    Object.fromEntries(inbound.lines.map((line) => [line.id, { accepted: String(line.declaredQuantity), damaged: "0", damagePhotos: [], note: "" }])),
+    Object.fromEntries(inbound.lines.map((line) => [line.id, { accepted: "", damaged: "0", damagePhotos: [], note: "" }])),
   );
   const [problem, setProblem] = useState<string | null>(null);
   const setLine = (lineId: string, patch: Partial<LineCount>) => setLines((current) => ({ ...current, [lineId]: { ...current[lineId]!, ...patch } }));
 
   function submit(event: FormEvent) {
     event.preventDefault();
+    if (inbound.lines.some((line) => lines[line.id]!.accepted.trim() === "")) {
+      setProblem("Count the good units of every product, even if it's 0.");
+      return;
+    }
     if (photos.length === 0) {
       setProblem("Add at least one photo of the shipment.");
       return;
