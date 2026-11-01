@@ -80,6 +80,7 @@ export const ADMIN_CONSOLE: Console = {
     { label: "Tax & compliance", icon: "shield", tone: "teal", group: "Money", href: "/admin/tax", permission: "tax.manage" },
     { label: "Staff", icon: "team", tone: "sky", group: "People", href: "/admin/staff", permission: "staff.manage" },
     { label: "Email alerts", icon: "bell", tone: "yellow", group: "People", href: "/admin/email-alerts", permission: "staff.manage" },
+    { label: "Reminder emails", icon: "bell", tone: "pink", group: "People", href: "/admin/reminders", permission: "emails.manage" },
     { label: "Security", icon: "shield", tone: "lime", group: "People", href: "/admin/security" },
   ],
 };

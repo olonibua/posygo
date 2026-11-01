@@ -49,6 +49,8 @@ const CONSOLE_PAGES = [
   "/admin/products",
   "/admin/receiving",
   "/admin/referrals",
+  "/admin/reminders",
+  "/admin/reminders/SELLER_CONFIRM_EMAIL",
   "/admin/returns",
   "/admin/security",
   "/admin/shopping",

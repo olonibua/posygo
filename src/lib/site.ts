@@ -55,6 +55,7 @@ export const PRIVATE_PATHS = [
   "/invite",
   "/staff-invite",
   "/mfa",
+  "/reminders",
   "/v1/",
   "/assistant-knowledge.json",
 ] as const;

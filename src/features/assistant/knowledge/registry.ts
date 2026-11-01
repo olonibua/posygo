@@ -33,6 +33,7 @@ import * as SellerCountries from "@/features/seller-countries/countries.knowledg
 import * as ShoppingAdmin from "@/features/shopping/shopping-admin.knowledge";
 import * as Shopping from "@/features/shopping/shopping.knowledge";
 import * as Staff from "@/features/staff/staff.knowledge";
+import * as Reminders from "@/features/reminders/reminders.knowledge";
 import * as Tax from "@/features/tax/tax.knowledge";
 import * as StorefrontAdmin from "@/features/storefront/admin/storefront-admin.knowledge";
 import * as Storefront from "@/features/storefront/storefront.knowledge";
@@ -80,6 +81,7 @@ const SOURCES: ReadonlyArray<Record<string, unknown>> = [
   ShoppingAdmin,
   Shopping,
   Staff,
+  Reminders,
   Tax,
   StorefrontAdmin,
   Storefront,
