@@ -43,11 +43,11 @@ export function marketFaq(market: Market): FaqItem[] {
   }
   items.push(
     {
-      question: `Is my stock insured while you hold it in ${name}?`,
+      question: `What if my stock is lost or damaged in ${name}?`,
       answer:
         market.hub && market.hub.insuredCoverMinor > 0
-          ? `Yes. Your stock in ${name} is insured up to ${money(market, market.hub.insuredCoverMinor)} while we hold it. Every arrival and every parcel is photographed.`
-          : `Yes. Your stock is insured while we hold it, and every arrival and every parcel is photographed.`,
+          ? `Your stock in ${name} is insured up to ${money(market, market.hub.insuredCoverMinor)} while we hold it. Every arrival and every parcel is photographed, so claims are quick to settle.`
+          : `Every arrival and every parcel is photographed. If something is lost or damaged while we hold it, approved claims are credited to your wallet up to the item's declared value.`,
     },
     {
       question: `Do I need a company in ${name} to use ${word} there?`,

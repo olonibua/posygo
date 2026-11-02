@@ -89,7 +89,7 @@ export function PartnerProgrammeForm({ country, editable }: { country: AdminCoun
             currency={country.currency}
             value={draft.platformCover}
             onChange={(platformCover) => set({ platformCover })}
-            hint="Shown to vendors as insured stock."
+            hint="Only fill this in once a real policy is in place. Vendors see it as insured stock."
           />
           <MoneyField label="Deposit (optional)" currency={country.currency} value={draft.deposit} onChange={(deposit) => set({ deposit })} hint="Zero means none." />
           <MoneyField label="Own insurance (optional)" currency={country.currency} value={draft.insurance} onChange={(insurance) => set({ insurance })} hint="Zero means none." />

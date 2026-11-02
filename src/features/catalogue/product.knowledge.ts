@@ -26,7 +26,7 @@ const PRODUCT: Omit<PageKnowledgeOf<ProductInput>, "route"> = {
     countryOfOrigin: { labels: ["Made in"], meaning: "The country where the product was made. Customs may ask for it when you send stock into a country." },
     declaredValueMinor: {
       labels: [/^Value per unit/],
-      meaning: "What one unit is worth. It's used for customs when you send stock in, and for insurance while it's stored.",
+      meaning: "What one unit cost you. It's used for customs when you send stock in, and to work out compensation if it's lost or damaged.",
       mistakes: ["Use the value of one unit, not the whole shipment."],
     },
     hsCode: {

@@ -13,7 +13,7 @@ import type { SitePage } from "./site-pages";
 
 const ABOUT = [
   `${BRAND.name} is ecommerce fulfilment for online sellers who want faster delivery. Sellers store their stock in the country they sell to, closer to their customers. ${BRAND.name} counts and photographs every arrival, picks, packs and photographs every order, and delivers it with tracking, so customers get their orders in days, not weeks.`,
-  `Stock is insured while ${BRAND.name} holds it, and sellers can see every box and every order at any time.`,
+  `If stock is lost or damaged while ${BRAND.name} holds it, approved claims are credited to the seller's wallet, and sellers can see every box and every order at any time.`,
   "Pricing is pay-as-you-go with no subscription: a stocking fee and monthly storage per box, a fee per packed order, and shipping at carrier cost plus a small markup.",
   "Posygo also offers a marketplace of independent sellers and ready-made storefronts for sellers.",
 ];

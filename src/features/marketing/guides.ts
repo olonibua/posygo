@@ -89,8 +89,8 @@ export const GUIDES: readonly Guide[] = [
   {
     slug: "keeping-your-stock-safe",
     title: "How we keep your stock safe",
-    description: "How Posygo protects a seller's stock: every unit counted, every parcel photographed, regular stock checks and insurance while we hold it.",
-    updated: "2026-10-27",
+    description: "How Posygo protects a seller's stock: every unit counted, every parcel photographed, regular stock checks and a clear claims process.",
+    updated: "2026-11-02",
     sections: [
       {
         heading: "Counted and photographed on arrival",
@@ -104,9 +104,10 @@ export const GUIDES: readonly Guide[] = [
         ],
       },
       {
-        heading: "Insured while we hold it",
+        heading: "If something goes wrong",
         paragraphs: [
-          "Your stock is insured while we hold it. If something is lost or damaged, the photos and the record of every movement make the claim quick to settle, and approved claims are credited to your wallet.",
+          "If something is lost or damaged while we hold it, the photos and the record of every movement make the claim quick to settle. Approved claims are credited to your wallet up to the item's declared value.",
+          "We recommend you keep your own insurance for the full value of your stock as well.",
         ],
       },
     ],

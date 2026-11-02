@@ -16,7 +16,7 @@ export const VENDOR_FAQ: readonly FaqItem[] = [
   },
   {
     question: "What if something goes missing or gets damaged?",
-    answer: "Your stock is insured the whole time we hold it. Every arrival and every parcel is photographed, so there's evidence to settle a claim quickly.",
+    answer: "Every arrival and every parcel is photographed, so there's evidence to settle a claim quickly. Approved claims are credited to your wallet up to the item's declared value.",
   },
   {
     question: "Can I see where my stock is?",

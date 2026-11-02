@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Chip, StatusPill } from "@/components/ui/chip";
+import { StatusPill } from "@/components/ui/chip";
 import { type Column, DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/navigation-controls";
 import { PageHeader } from "@/components/ui/page-header";
@@ -94,7 +94,6 @@ export function InventoryPage() {
         lead="Every unit is counted on arrival and tracked each time it moves. Open a lot's history to see its full chain of custody."
         action={
           <span className="flex flex-wrap items-center gap-2.5">
-            <Chip tone="lime">Insured stock</Chip>
             <ExportButton kind="inventory" label="Download CSV" />
           </span>
         }

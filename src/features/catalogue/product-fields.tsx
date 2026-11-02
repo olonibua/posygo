@@ -66,7 +66,7 @@ export function IdentityFields({ values, set, errorFor, readOnly }: ProductField
 export function CustomsFields({ values, set, errorFor, readOnly, currency }: ProductFieldProps & { currency: string }) {
   return (
     <div className="grid gap-5 sm:grid-cols-2">
-      <Field label={`Value per unit (${currency})`} hint="What one unit is worth, for customs and insurance." error={errorFor("declaredValueMinor")}>
+      <Field label={`Value per unit (${currency})`} hint="What one unit cost you. It's used for customs and for claims." error={errorFor("declaredValueMinor")}>
         {({ id, describedBy, invalid }) => (
           <Input
             id={id}

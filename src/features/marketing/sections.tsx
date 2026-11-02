@@ -13,7 +13,7 @@ const TRUST_POINTS: ReadonlyArray<{ title: string; body: string; tone: Tone }> =
   { title: "Delivered in days", body: "Orders go out from the country your customer is in.", tone: "sky" },
   { title: "Real-time tracking", body: "Every box, unit and parcel is logged as it moves.", tone: "lime" },
   { title: "Photo proof on every order", body: "A photo of each sealed parcel before it's sent.", tone: "yellow" },
-  { title: "Insured stock", body: "Your stock is covered the whole time we hold it.", tone: "pink" },
+  { title: "Claims credited fast", body: "Lost or damaged stock is credited to your wallet.", tone: "pink" },
 ];
 
 const STEPS = [
@@ -26,7 +26,7 @@ const STEPS = [
 const SAFEGUARDS: ReadonlyArray<{ label: string; tone: Tone }> = [
   { label: "Counted on arrival", tone: "sky" },
   { label: "Photo of every parcel", tone: "lime" },
-  { label: "Insured stock", tone: "blue" },
+  { label: "Claims credited to your wallet", tone: "blue" },
   { label: "Surprise stock counts", tone: "orange" },
   { label: "Tracking on every order", tone: "yellow" },
   { label: "See your stock any time", tone: "pink" },
@@ -76,7 +76,7 @@ export function TrustBand() {
         </h2>
         <div className="relative">
           <p className="mb-[22px] text-[17px] leading-[26px] text-on-ink-soft">
-            Every unit is counted when it arrives and checked again with surprise stock counts. Every parcel is photographed before it goes, and your stock is insured the whole time we hold it.
+            Every unit is counted when it arrives and checked again with surprise stock counts. Every parcel is photographed before it goes, and if anything is lost or damaged, approved claims are credited to your wallet.
           </p>
           <div className="stagger flex flex-wrap gap-2.5">
             {SAFEGUARDS.map((item) => (
@@ -125,7 +125,7 @@ export function CountriesBand({ hubs }: { hubs: readonly HubView[] }) {
                 </h3>
                 <p className="text-small">
                   Billed in {hub.currency}
-                  {hub.insuredCoverMinor > 0 ? ` · stock insured up to ${formatMoney(hub.insuredCoverMinor, hub.currency, localeFor(hub.countryCode))}` : " · insured stock"}
+                  {hub.insuredCoverMinor > 0 ? ` · stock insured up to ${formatMoney(hub.insuredCoverMinor, hub.currency, localeFor(hub.countryCode))}` : null}
                 </p>
               </NotebookNote>
             ))
