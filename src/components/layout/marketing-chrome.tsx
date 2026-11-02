@@ -36,18 +36,23 @@ export function MarketingHeader() {
 export function MarketingFooter() {
   return (
     <div className="mx-auto max-w-container px-4 sm:px-8">
-      <footer className="flex flex-col items-center justify-between gap-4 py-11 text-small text-ink-soft md:flex-row">
-        <Logo size="sm" />
-        <nav aria-label="Footer" className="flex flex-wrap justify-center gap-x-3 gap-y-1">
-          {FOOTER_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="text-ink-soft no-underline hover:underline">
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-        <span>
-          © {new Date().getFullYear()} {BRAND.name}
-        </span>
+      <footer className="flex flex-col gap-6 py-11 text-small text-ink-soft">
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <Logo size="sm" />
+          <nav aria-label="Footer" className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+            {FOOTER_LINKS.map((link) => (
+              <Link key={link.href} href={link.href} className="text-ink-soft no-underline hover:underline">
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <span>
+            © {new Date().getFullYear()} {BRAND.company.legalName}
+          </span>
+        </div>
+        <p className="text-center text-meta md:text-left">
+          {BRAND.company.legalName} is registered in {BRAND.company.jurisdiction}, company number {BRAND.company.number}. Registered office: {BRAND.company.registeredOffice}.
+        </p>
       </footer>
     </div>
   );

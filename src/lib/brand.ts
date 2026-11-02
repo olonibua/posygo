@@ -7,4 +7,10 @@ export const BRAND = {
   vendorPortalLabel: "Vendor portal",
   adminConsoleLabel: "Platform console",
   supportPromise: "Our team answers within one working day.",
+  company: {
+    legalName: "Posygo Ltd",
+    number: "17557238",
+    jurisdiction: "England and Wales",
+    registeredOffice: "Bartle House, 9 Oxford Court, Manchester, M2 3WQ",
+  },
 } as const;
