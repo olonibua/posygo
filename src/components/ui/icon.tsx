@@ -69,6 +69,7 @@ export const ICONS = {
       <path d="M14 3v4h4M10 12h5M10 16h5" />
     </>
   ),
+  download: <path d="M12 4v11m-5-5 5 5 5-5M5 20h14" />,
   shield: <path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6z" />,
   settings: (
     <>

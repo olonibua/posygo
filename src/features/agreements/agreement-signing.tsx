@@ -86,20 +86,24 @@ export function AgreementSigning({ document, party, signerName, lockedName = fal
           <img src="/brand/flower-mark.svg" alt="" className="h-7 w-7 invert" />
           <div className="min-w-0">
             <b className="block truncate text-[15px] font-semibold">{document.title}</b>
-            <span className="block text-[12px] uppercase tracking-[1.4px] text-white/60">{signed ? "Completed" : canSign ? "Review and sign" : "Review"}</span>
+            <span className="block truncate text-[12px] uppercase tracking-[1.4px] text-white/60">{signed ? "Completed" : canSign ? "Review and sign" : "Review"}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {signed ? (
-            <button type="button" onClick={() => window.print()} className="hidden items-center gap-2 rounded-control px-3 py-2 text-small font-medium text-white/90 hover:bg-white/10 sm:flex">
-              Download PDF
-            </button>
-          ) : null}
+          <button
+            type="button"
+            onClick={() => window.print()}
+            aria-label="Download PDF"
+            className="flex h-10 min-w-10 items-center justify-center gap-2 rounded-control text-small font-medium text-white/90 hover:bg-white/10 sm:px-3"
+          >
+            <Icon name="download" className="h-5 w-5 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">Download PDF</span>
+          </button>
           {!signed && canSign ? (
             <button
               type="button"
               onClick={() => signHere.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
-              className="rounded-control bg-yellow px-4 py-2 text-small font-semibold text-cocoa transition-transform duration-200 hover:-translate-y-px"
+              className="whitespace-nowrap rounded-control bg-yellow px-4 py-2 text-small font-semibold text-cocoa transition-transform duration-200 hover:-translate-y-px"
             >
               Go to signature
             </button>
@@ -128,7 +132,12 @@ export function AgreementSigning({ document, party, signerName, lockedName = fal
                 <span className="font-signature text-[44px] leading-none text-seal">Posygo</span>
                 <OfficialSeal caption="Company seal" className="absolute -right-2 -top-10 w-[118px] rotate-[-14deg]" />
               </SignatureBlock>
-              <SignatureBlock label={`For and on behalf of ${party.name}`} name={certificate?.signerName ?? signerName} title={party.role} date={certificate ? formatDate(certificate.signedAt, locale) : "On signing"}>
+              <SignatureBlock
+                label={`For and on behalf of ${party.name}`}
+                name={certificate?.signerName ?? signerName}
+                title={party.role}
+                date={certificate ? formatDate(certificate.signedAt, locale) : "On signing"}
+              >
                 {certificate ? (
                   <img src={certificate.image} alt={`Signature of ${certificate.signerName}`} className="max-h-[64px] max-w-full object-contain" />
                 ) : canSign ? (
@@ -158,7 +167,9 @@ export function AgreementSigning({ document, party, signerName, lockedName = fal
         ) : null}
       </div>
 
-      {adopting ? <SignatureDialog defaultName={signerName} lockedName={lockedName} busy={busy} error={error} onCancel={() => setAdopting(false)} onAdopt={(signature) => void adopt(signature)} /> : null}
+      {adopting ? (
+        <SignatureDialog defaultName={signerName} lockedName={lockedName} busy={busy} error={error} onCancel={() => setAdopting(false)} onAdopt={(signature) => void adopt(signature)} />
+      ) : null}
     </div>,
     window.document.body,
   );
