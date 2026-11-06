@@ -23,9 +23,9 @@ describe("partner console navigation", () => {
 
   it("hides warehouse work until the partnership is active", () => {
     const labels = (status: SessionUser["partnerStatus"]) => visibleItems(PARTNER_CONSOLE, partnerLead(status)).map((item) => item.label);
-    expect(labels("APPLIED")).toEqual(["Partnership", "Team", "Earnings", "Security"]);
-    expect(labels("SUSPENDED")).toEqual(["Partnership", "Stock counts", "Transfers", "Team", "Earnings", "Claims", "Security"]);
-    expect(labels("ACTIVE")).toEqual(["Partnership", "Receiving", "Orders", "Returns", "Stock", "Stock counts", "Transfers", "Hub", "Team", "Earnings", "Claims", "Security"]);
+    expect(labels("APPLIED")).toEqual(["Partnership", "Team", "Account", "Earnings", "Security"]);
+    expect(labels("SUSPENDED")).toEqual(["Partnership", "Stock counts", "Transfers", "Team", "Account", "Earnings", "Claims", "Security"]);
+    expect(labels("ACTIVE")).toEqual(["Partnership", "Receiving", "Orders", "Returns", "Stock", "Stock counts", "Transfers", "Hub", "Team", "Account", "Earnings", "Claims", "Security"]);
   });
 
   it("shows partner staff no team or earnings pages", () => {

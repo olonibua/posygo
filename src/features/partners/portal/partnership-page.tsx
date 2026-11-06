@@ -1,7 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { wasApproved } from "@/shared";
 
 import { PageHeader } from "@/components/ui/page-header";
 import { FeaturePanel } from "@/components/ui/surfaces";
@@ -12,41 +11,23 @@ import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatMoney, localeFor } from "@/lib/format";
 
 import { PartnerStatusNote, ReadinessList, ScorecardPanel } from "../partner-parts";
-import { usePartnerOverview, usePartnerScorecard, usePortalMutation } from "../use-partners";
+import { usePartnerOverview, usePartnerScorecard } from "../use-partners";
 import { HubStockSummary } from "./hub-stock-summary";
 import { InsuranceCard } from "./insurance-card";
+import { useProviderReturn } from "./use-provider-return";
 import { VerificationSection } from "./verification-section";
-
-function useReturnFromProvider() {
-  const params = useSearchParams();
-  const identity = usePortalMutation(() => ({ path: "/v1/partner/identity/refresh" }));
-  const payouts = usePortalMutation(() => ({ path: "/v1/partner/payouts/refresh" }));
-  const handled = useRef(false);
-  useEffect(() => {
-    if (handled.current) {
-      return;
-    }
-    handled.current = true;
-    if (params.get("identity") === "returned") {
-      identity.mutate(undefined);
-    }
-    if (params.get("payouts") === "returned") {
-      payouts.mutate(undefined);
-    }
-  }, [params, identity, payouts]);
-}
 
 export function PartnershipPage() {
   const user = useCurrentUser();
   const overview = usePartnerOverview();
   const lead = user.role === "FULFILMENT_PARTNER";
-  useReturnFromProvider();
+  useProviderReturn();
   const partner = overview.data;
   if (!partner) {
     return overview.isError ? <p className="text-ink-soft">{"We couldn't load your partnership. Try again shortly."}</p> : <PageSkeleton />;
   }
   const locale = localeFor(partner.countryCode);
-  const operating = ["ACTIVE", "SUSPENDED", "OFFBOARDING"].includes(partner.status);
+  const operating = wasApproved(partner.status);
   const money = (amount: number) => formatMoney(amount, partner.currency, locale);
 
   return (

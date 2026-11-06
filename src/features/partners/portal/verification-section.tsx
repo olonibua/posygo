@@ -59,13 +59,7 @@ export function VerificationSection({ partner, locale }: { partner: PartnerDetai
         </div>
       ) : null}
       <ProfileCard partner={partner} editable={verifying} />
-      <div className="grid gap-4 lg:grid-cols-2">
-        {ORDER.map((kind) => {
-          const check = partner.checks.find((candidate) => candidate.kind === kind);
-          const Step = STEPS[kind];
-          return check ? <Step key={kind} partner={partner} check={check} editable={verifying} locale={locale} /> : null;
-        })}
-      </div>
+      <VerificationChecks partner={partner} locale={locale} editable={verifying} />
       <h2 className="mt-3 flex items-center gap-3 text-h3">
         <StepNumber value={2} />
         Agreement and payouts
@@ -78,7 +72,19 @@ export function VerificationSection({ partner, locale }: { partner: PartnerDetai
   );
 }
 
-function ProfileCard({ partner, editable }: { partner: PartnerDetailView; editable: boolean }) {
+export function VerificationChecks({ partner, locale, editable }: { partner: PartnerDetailView; locale: string; editable: boolean }) {
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      {ORDER.map((kind) => {
+        const check = partner.checks.find((candidate) => candidate.kind === kind);
+        const Step = STEPS[kind];
+        return check ? <Step key={kind} partner={partner} check={check} editable={editable} locale={locale} /> : null;
+      })}
+    </div>
+  );
+}
+
+export function ProfileCard({ partner, editable }: { partner: PartnerDetailView; editable: boolean }) {
   const [form, setForm] = useState<PartnerProfileInput | null>(partner.profile);
   const save = usePortalMutation((input: PartnerProfileInput) => ({ path: "/v1/partner/profile", method: "PUT", body: input }));
   const profile = partner.profile;

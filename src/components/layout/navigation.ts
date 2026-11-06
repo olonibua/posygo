@@ -99,6 +99,7 @@ export const PARTNER_CONSOLE: Console = {
     { label: "Transfers", icon: "transfer", tone: "orange", group: "Your hub", href: "/admin/partnership/transfers", permission: "partner.profile.read", holdsStock: true },
     { label: "Hub", icon: "storefront", tone: "teal", group: "Your hub", href: "/admin/warehouses", permission: "warehouses.read", operational: true },
     { label: "Team", icon: "team", tone: "sky", group: "You", href: "/admin/partnership/team", permission: "partner.team.manage" },
+    { label: "Account", icon: "verification", tone: "teal", group: "You", href: "/admin/partnership/account", permission: "partner.profile.manage" },
     { label: "Earnings", icon: "wallet", tone: "lime", group: "You", href: "/admin/partnership/earnings", permission: "partner.statement.read" },
     { label: "Claims", icon: "claim", tone: "pink", group: "You", href: "/admin/partnership/claims", permission: "partner.statement.read", holdsStock: true },
     { label: "Security", icon: "shield", tone: "pink", group: "You", href: "/admin/security" },

@@ -16,6 +16,7 @@ export function PayoutAccountCard({ partner, disabled }: { partner: PartnerDetai
   const refresh = usePortalMutation(() => ({ path: "/v1/partner/payouts/refresh" }));
   const account = partner.payoutAccount;
   const display = account ? PAYOUT_ACCOUNT_DISPLAY[account.status] : null;
+  const ready = account?.status === "ACTIVE";
   const open = () => setup.mutate(undefined, { onSuccess: (result) => window.location.assign(result.url) });
 
   return (
@@ -26,7 +27,9 @@ export function PayoutAccountCard({ partner, disabled }: { partner: PartnerDetai
       </div>
       {account?.bankSummary ? <p className="text-small font-medium">{account.bankSummary}</p> : null}
       <p className="text-small text-ink-soft">
-        Bank details are held by our payment provider, not by us. If they change, payouts pause until we&apos;ve checked the change, and we email you straight away.
+        {ready
+          ? "To change your bank, sign in to Stripe with the code sent to your phone. Payouts pause until we've checked the change, and we email you straight away."
+          : "Bank details are held by our payment provider, Stripe, not by us."}
       </p>
       <FormAlert message={errorMessage(setup.error) ?? errorMessage(refresh.error)} />
       {disabled ? null : (
@@ -36,8 +39,8 @@ export function PayoutAccountCard({ partner, disabled }: { partner: PartnerDetai
               Check status
             </Button>
           ) : null}
-          <Button variant={account?.status === "ACTIVE" ? "ghost" : "lime"} loading={setup.isPending} onClick={open}>
-            {account ? (account.status === "ACTIVE" ? "Update bank details" : "Continue setup") : "Set up payouts"}
+          <Button variant={ready ? "ghost" : "lime"} loading={setup.isPending} onClick={open}>
+            {account ? (ready ? "Change bank account" : "Continue setup") : "Set up payouts"}
           </Button>
         </div>
       )}

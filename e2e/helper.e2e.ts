@@ -68,7 +68,15 @@ const CONSOLE_PAGES = [
   "/admin/verifications",
   "/admin/warehouses",
 ];
-const PARTNER_PAGES = ["/admin", "/admin/partnership/claims", "/admin/partnership/earnings", "/admin/partnership/stock-counts", "/admin/partnership/team", "/admin/partnership/transfers"];
+const PARTNER_PAGES = [
+  "/admin",
+  "/admin/partnership/account",
+  "/admin/partnership/claims",
+  "/admin/partnership/earnings",
+  "/admin/partnership/stock-counts",
+  "/admin/partnership/team",
+  "/admin/partnership/transfers",
+];
 
 function visibleFieldLabels(page: Page): Promise<string[]> {
   return page.evaluate(() => {
