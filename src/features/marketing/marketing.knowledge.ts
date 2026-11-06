@@ -144,3 +144,17 @@ export const LEGAL_KNOWLEDGE = describePage({
     { href: "/legal/vendor-agreement", label: "Vendor agreement" },
   ],
 });
+
+export const PARTNER_EARNINGS_SCHEDULE_KNOWLEDGE = describePage({
+  route: "/partners/earnings",
+  title: "Partner earnings schedule",
+  purpose: "What fulfilment partners earn in each country: per box received, per box stored each month and per order packed, plus how earnings are paid and the tier limits.",
+  steps: [
+    "Find your country.",
+    "Check what you earn per box by size and per order.",
+    "Part of each earning is held for a while to cover claims for lost stock, then paid to you.",
+    "There's no deposit and no insurance to buy.",
+  ],
+  fields: {},
+  related: [{ href: "/partners", label: "Become a partner" }],
+});

@@ -7,7 +7,7 @@ import { CAST } from "./support/cast";
 import { signIn, watchConsole } from "./support/session";
 
 const HELPER = /^Open Posy/;
-const PUBLIC_PAGES = ["/signup", "/login", "/forgot-password", "/track", "/partners"];
+const PUBLIC_PAGES = ["/signup", "/login", "/forgot-password", "/track", "/partners", "/partners/earnings"];
 const SELLER_PAGES = [
   "/overview",
   "/inbound",

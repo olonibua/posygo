@@ -21,6 +21,7 @@ const CORE_PAGES: readonly SitePage[] = [
   { path: "/fulfilment", title: "Where we deliver", summary: "The countries where we store your stock and deliver your orders.", priority: 0.9 },
   { path: "/signup", title: "Sign up", summary: "Create a seller account.", priority: 0.8 },
   { path: "/partners", title: "Partners", summary: "Work with Posygo.", priority: 0.3 },
+  { path: "/partners/earnings", title: "Partner earnings", summary: "What partners earn.", priority: 0.2 },
   { path: "/guides", title: "Guides", summary: "Guides to selling abroad and getting orders to customers fast.", priority: 0.6 },
   { path: "/track", title: "Track a parcel", summary: "Track an order sent by Posygo.", priority: 0.4 },
   { path: "/legal/terms", title: "Terms of service", summary: "Terms of service.", priority: 0.2 },
