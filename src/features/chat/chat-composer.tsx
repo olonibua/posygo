@@ -1,10 +1,12 @@
 "use client";
 
 import { CHAT_MESSAGE_MAX, type ChatMessageView } from "@/shared";
-import { type FormEvent, type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { type FormEvent, type KeyboardEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/form-controls";
+
+const MAX_INPUT_HEIGHT = 140;
 
 export function Composer({ replyTo, onCancelReply, onSend, onTyping }: { replyTo: ChatMessageView | null; onCancelReply: () => void; onSend: (body: string) => void; onTyping: () => void }) {
   const [text, setText] = useState("");
@@ -14,6 +16,14 @@ export function Composer({ replyTo, onCancelReply, onSend, onTyping }: { replyTo
       input.current?.focus();
     }
   }, [replyTo]);
+
+  useLayoutEffect(() => {
+    const element = input.current;
+    if (element) {
+      element.style.height = "auto";
+      element.style.height = `${Math.min(element.scrollHeight + 3, MAX_INPUT_HEIGHT)}px`;
+    }
+  }, [text]);
 
   const submit = (event?: FormEvent) => {
     event?.preventDefault();
@@ -32,7 +42,7 @@ export function Composer({ replyTo, onCancelReply, onSend, onTyping }: { replyTo
   };
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-2 border-t border-line px-4 py-3 sm:px-5">
+    <form onSubmit={submit} className="flex flex-col gap-2 border-t border-line px-3 pb-[max(12px,env(safe-area-inset-bottom))] pt-3 sm:px-5">
       {replyTo ? (
         <div className="flex items-start justify-between gap-3 rounded-card bg-paper-sunk px-3 py-2 text-meta">
           <span className="line-clamp-2 border-l-2 border-ink/30 pl-2 text-ink-soft">
@@ -50,18 +60,18 @@ export function Composer({ replyTo, onCancelReply, onSend, onTyping }: { replyTo
         <Textarea
           id="chat-message"
           ref={input}
-          rows={2}
+          rows={1}
           maxLength={CHAT_MESSAGE_MAX}
           value={text}
-          placeholder="Write a message. Add an order or case number and we'll find it."
-          className="min-h-[52px] flex-1 resize-none"
+          placeholder="Write a message"
+          className="h-11 min-h-11 flex-1 resize-none py-[9px]"
           onKeyDown={onKeyDown}
           onChange={(event) => {
             setText(event.target.value);
             onTyping();
           }}
         />
-        <Button type="submit" variant="yellow" disabled={!text.trim()}>
+        <Button type="submit" variant="yellow" className="h-11 shrink-0 px-4" disabled={!text.trim()}>
           Send
         </Button>
       </div>
