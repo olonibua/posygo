@@ -18,6 +18,8 @@ import { useVendorIdentity } from "./use-vendor-identity";
 import { useVerification } from "./use-verification";
 import { IDENTITY_STEP, VerificationWizard } from "./verification-wizard";
 
+const LIVE_COPY = { title: "You're verified and live", body: "Your business details, signed agreements and activation fee are on your Account page." };
+
 const OUTCOME_COPY: Partial<Record<VerificationView["status"], { title: string; body: string }>> = {
   SUBMITTED: { title: "We're reviewing your business", body: "Most reviews finish within one working day. We'll email you as soon as there's a decision." },
   APPROVED: { title: "Your business is verified", body: "Accept the vendor agreement below to finish setting up your account." },
@@ -44,6 +46,7 @@ export function VerificationPage() {
   const state = useVerification();
   const view = state.view.data;
   const canEdit = hasPermission(user.role, "vendor.verification.manage");
+  const outcome = view?.status === "APPROVED" && user.vendorStatus === "ACTIVE" ? LIVE_COPY : view ? OUTCOME_COPY[view.status] : undefined;
 
   return (
     <div className="flex flex-col gap-7">
@@ -60,12 +63,12 @@ export function VerificationPage() {
           Only the account owner can complete verification.
         </NotebookNote>
       ) : null}
-      {view && OUTCOME_COPY[view.status] ? (
+      {view && outcome ? (
         <Paper className="relative max-w-[720px] px-6 py-6">
           <Sticker src="/brand/sticker-flower-blue.svg" className="-right-3.5 -top-5 w-[58px] rotate-12" />
           <Stamp>{view.submittedAt ? `Submitted ${formatDate(view.submittedAt, "en-GB")}` : "Status"}</Stamp>
-          <h2 className="mb-1 mt-1.5 text-[22px] font-medium tracking-[-0.5px]">{OUTCOME_COPY[view.status]?.title}</h2>
-          <p className="text-small text-ink-soft">{view.status === "REJECTED" && view.decisionReason ? view.decisionReason : OUTCOME_COPY[view.status]?.body}</p>
+          <h2 className="mb-1 mt-1.5 text-[22px] font-medium tracking-[-0.5px]">{outcome.title}</h2>
+          <p className="text-small text-ink-soft">{view.status === "REJECTED" && view.decisionReason ? view.decisionReason : outcome.body}</p>
         </Paper>
       ) : null}
       <AgreementsPanel />

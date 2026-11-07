@@ -1,4 +1,4 @@
-import type { ResolveSupportCaseInput } from "@/shared";
+import type { AccountRequestInput, ResolveSupportCaseInput } from "@/shared";
 
 import { describePage } from "@/features/assistant/knowledge/types";
 
@@ -20,4 +20,37 @@ export const ADMIN_SUPPORT_KNOWLEDGE = describePage<ResolveSupportCaseInput & { 
     note: { labels: ["What was done"], meaning: "What was done about the problem or question. It's shown to everyone who reported it.", mistakes: ["Between 5 and 500 characters."] },
   },
   related: [{ href: "/admin/verifications", label: "Business verifications" }],
+});
+
+const MY_REQUESTS = {
+  title: "Help & requests",
+  purpose: "Everything you've sent us: questions you asked Posy to pass on, problems you reported, and requests about your account, with our replies. You can also ask for a copy of your data or, if you own the account, ask to close it.",
+  steps: [
+    "Look under What you've sent us for each question or report and our reply. Open means we're still on it.",
+    "To get a copy of the personal details we hold about you, press Ask for a copy. We email it within one month.",
+    "To close the account, the owner presses Ask to close, adds anything we should know, and sends it. We settle any balance and collect any stock first.",
+  ],
+  fields: {
+    message: { labels: ["Anything we should know? (optional)"], meaning: "Optional notes for our team, such as why you're closing or when you'd like it done." },
+  },
+} as const;
+
+export const VENDOR_REQUESTS_KNOWLEDGE = describePage<AccountRequestInput>({
+  route: "/settings/requests",
+  ...MY_REQUESTS,
+  fields: { ...MY_REQUESTS.fields, kind: { labels: [], meaning: "Which request you're sending: a copy of your data or closing the account." } },
+  related: [
+    { href: "/settings/security", label: "Sign-in & security" },
+    { href: "/settings/account", label: "Account" },
+  ],
+});
+
+export const CONSOLE_REQUESTS_KNOWLEDGE = describePage<AccountRequestInput>({
+  route: "/admin/requests",
+  ...MY_REQUESTS,
+  fields: { ...MY_REQUESTS.fields, kind: { labels: [], meaning: "Which request you're sending: a copy of your data or closing the account." } },
+  related: [
+    { href: "/admin/security", label: "Sign-in & security" },
+    { href: "/admin/partnership/account", label: "Account" },
+  ],
 });

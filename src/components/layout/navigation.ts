@@ -39,11 +39,13 @@ export const VENDOR_CONSOLE: Console = {
     { label: "Returns", icon: "returns", tone: "magenta", group: "Sell", href: "/returns", permission: "vendor.orders.read" },
     { label: "Claims", icon: "claim", tone: "pink", group: "Sell", href: "/claims", permission: "vendor.orders.read" },
     { label: "Wallet", icon: "wallet", tone: "lime", group: "Money", href: "/wallet", permission: "vendor.wallet.read" },
+    { label: "Account", icon: "verification", tone: "teal", group: "Settings", href: "/settings/account" },
     { label: "Team", icon: "team", tone: "orange", group: "Settings", href: "/settings/team", permission: "vendor.team.read" },
     { label: "Countries", icon: "globe", tone: "sky", group: "Settings", href: "/settings/markets" },
     { label: "Integrations", icon: "settings", tone: "yellow", group: "Settings", href: "/settings/integrations", permission: "vendor.integrations.manage" },
     { label: "Refer a business", icon: "team", tone: "lime", group: "Settings", href: "/settings/referrals", permission: "vendor.portal.access" },
     { label: "Security", icon: "shield", tone: "pink", group: "Settings", href: "/settings/security", openBeforeLive: true },
+    { label: "Help & requests", icon: "bell", tone: "teal", group: "Settings", href: "/settings/requests", openBeforeLive: true },
   ],
 };
 
@@ -103,6 +105,7 @@ export const PARTNER_CONSOLE: Console = {
     { label: "Earnings", icon: "wallet", tone: "lime", group: "You", href: "/admin/partnership/earnings", permission: "partner.statement.read" },
     { label: "Claims", icon: "claim", tone: "pink", group: "You", href: "/admin/partnership/claims", permission: "partner.statement.read", holdsStock: true },
     { label: "Security", icon: "shield", tone: "pink", group: "You", href: "/admin/security" },
+    { label: "Help & requests", icon: "bell", tone: "teal", group: "You", href: "/admin/requests" },
   ],
 };
 

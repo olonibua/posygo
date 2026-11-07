@@ -13,6 +13,7 @@ import { HEARD_FROM_LABELS } from "../partner-display";
 import { PartnerStatusNote, ReadinessList } from "../partner-parts";
 import { usePartnerCase } from "../use-partners";
 import { DepositPanel, EarningsPanel, PayoutAccountPanel } from "./case-finance";
+import { ProfileChangeReview } from "./case-profile-change";
 import { ChecksReview, InsuranceReview } from "./case-review";
 import { DecisionsPanel, SetupPanel } from "./case-setup";
 import { TrustSection } from "./case-trust";
@@ -36,6 +37,7 @@ export function PartnerCasePage({ partnerId }: { partnerId: string }) {
     <div className="flex flex-col gap-7">
       <PageHeader stamp={`${partner.reference} · ${countryName(partner.countryCode)}`} title={partner.legalName} lead={`${partner.contactEmail}${partner.founding ? " · founding partner" : ""}`} />
       <PartnerStatusNote status={partner.status} reason={partner.statusReason} />
+      <ProfileChangeReview partner={partner} canReview={canReview} locale={locale} />
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
         <div className="flex flex-col gap-4">
           <ReadinessList readiness={partner.readiness} optional={{ deposit: partner.requiredDepositMinor === 0, insurance: partner.requiredInsuranceMinor === 0 }} />

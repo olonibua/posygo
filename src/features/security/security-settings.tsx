@@ -6,11 +6,18 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 
+import { EmailCard } from "./email-card";
+import { PasswordCard } from "./password-card";
+
 export function SecuritySettings() {
   const user = useCurrentUser();
   return (
     <div className="flex flex-col gap-7">
       <PageHeader stamp="Security" title="Sign-in & security" lead="Protect the account that controls your stock and money." />
+      <div className="grid gap-4 xl:grid-cols-2">
+        <EmailCard />
+        <PasswordCard />
+      </div>
       <Paper className="flex flex-col gap-5 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Stamp>Two-factor authentication</Stamp>
@@ -32,7 +39,7 @@ export function SecuritySettings() {
       </Paper>
       <Paper className="px-6 py-5">
         <Stamp>Sessions</Stamp>
-        <p className="mt-2 text-small leading-[21px] text-ink-soft">You stay signed in on this device for up to 30 days. Changing your password signs out every other device straight away.</p>
+        <p className="mt-2 text-small leading-[21px] text-ink-soft">You stay signed in on this device for up to 30 days.</p>
       </Paper>
     </div>
   );

@@ -77,19 +77,28 @@ export const PARTNERSHIP: Omit<PageKnowledgeOf<PartnershipInput>, "route"> = {
 
 export const PARTNERSHIP_KNOWLEDGE = describePage<PartnershipInput>({ ...PARTNERSHIP, route: "/admin/partnership" });
 
-export const PARTNER_ACCOUNT_KNOWLEDGE = describePage({
+export const PARTNER_ACCOUNT_KNOWLEDGE = describePage<PartnerProfileInput>({
   route: "/admin/partnership/account",
   title: "Account",
   purpose: "For fulfilment partners: your details, the verification checks you passed, your signed agreement, and the bank account we pay you into.",
   steps: [
     "To change the bank account we pay you into, press Change bank account. Stripe sends a code to your phone, then you replace the bank there.",
     "After a bank change, payouts pause until our team has checked it. We email you as soon as it changes.",
-    "To change your name, phone or storage address, contact our team.",
+    "To change your name, phone or storage address, press Ask to change my details, edit them and send them for review. Your current details stay in place until our team approves the change, and we may ask for a new proof of address.",
+    "Changed your mind? Press Withdraw the change while it's waiting for review.",
   ],
-  fields: {},
+  fields: {
+    fullName: PARTNERSHIP.fields.fullName,
+    phone: PARTNERSHIP.fields.phone,
+    addressLines: PARTNERSHIP.fields.addressLines,
+    city: PARTNERSHIP.fields.city,
+    postalCode: PARTNERSHIP.fields.postalCode,
+    spaceDescription: PARTNERSHIP.fields.spaceDescription,
+  },
   related: [
     { href: "/admin/partnership", label: "Partnership" },
     { href: "/admin/partnership/earnings", label: "Earnings" },
+    { href: "/admin/requests", label: "Help & requests" },
   ],
 });
 

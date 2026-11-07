@@ -6,6 +6,7 @@ import type {
   partnerRequirementsSchema,
   partnerTeamInviteSchema,
   payoutDecisionSchema,
+  ProfileChangeDecisionInput,
   recordCallSchema,
   RecordSecurityInput,
   RequestStockCountInput,
@@ -50,6 +51,7 @@ export const PARTNER_CASE_KNOWLEDGE = describePage<
     CreateMysteryOrderInput &
     RecordSecurityInput &
     z.infer<typeof requestPayoutSchema> &
+    ProfileChangeDecisionInput &
     StatementRange
 >({
   route: "/admin/partners/[id]",
@@ -59,6 +61,7 @@ export const PARTNER_CASE_KNOWLEDGE = describePage<
     "Check the Ready to approve list to see which steps are still missing.",
     "Review each verification step: open the files, write a note and accept it or ask again.",
     "Make a decision, such as Approve, Send back or Pause hub, with a reason the partner receives by email.",
+    "If the partner asked to change their details, compare Now with Asked for. For a new address, get a new proof of address and update the hub address first, then approve or decline with a note.",
     "Once the partner is running, request surprise stock counts and place test orders to check their work.",
     "Finance staff record deposits, read the partner's earnings and request payouts.",
   ],
@@ -88,6 +91,7 @@ export const PARTNER_CASE_KNOWLEDGE = describePage<
       mistakes: ["Requirements can't be changed while the partner is approved and running."],
     },
     email: { labels: ["Add another partner login"], meaning: "The email of a co-host who shares the partnership. They're sent an invitation.", mistakes: ["Enter a valid email address."] },
+    approve: { labels: [], meaning: "Whether you approve the partner's change of details or keep their old ones. You choose with Approve the change or Decline." },
     accept: { labels: [], meaning: "Whether you accept a verification step or insurance policy, or send it back. You choose with the Accept or Verify button, or Ask again or Reject." },
     addressMatches: {
       labels: ["The name and address on the document match the application."],
@@ -95,7 +99,7 @@ export const PARTNER_CASE_KNOWLEDGE = describePage<
     },
     note: {
       labels: ["Note", "Review note"],
-      meaning: "On a verification step or insurance policy, the note the partner sees word for word with your decision. On a payout request, why the payout is being made.",
+      meaning: "On a verification step, insurance policy or change of details, the note the partner sees word for word with your decision. On a payout request, why the payout is being made.",
       mistakes: ["A review note must be at least 10 characters.", "A payout note must be at least 5 characters."],
     },
     scheduledAt: { labels: ["Book a call"], meaning: "The date and time of an optional video call to see the partner's storage space. Booking it emails the partner." },

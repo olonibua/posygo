@@ -1,15 +1,15 @@
 "use client";
 
 import type { PartnerCheckKind, PartnerDetailView, PartnerProfileInput } from "@/shared";
-import { type FormEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Field, FormAlert, Input, Textarea } from "@/components/ui/form-controls";
+import { FormAlert } from "@/components/ui/form-controls";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Paper, Stamp, StepNumber } from "@/components/ui/surfaces";
 import { fieldError, formError } from "@/features/receiving/api-errors";
 import { toast } from "@/lib/toast/toast-store";
 
+import { ProfileDetails, ProfileForm } from "../profile-parts";
 import { usePortalMutation } from "../use-partners";
 import { AgreementCard } from "./agreement-card";
 import { PayoutAccountCard } from "./payout-account-card";
@@ -85,92 +85,21 @@ export function VerificationChecks({ partner, locale, editable }: { partner: Par
 }
 
 export function ProfileCard({ partner, editable }: { partner: PartnerDetailView; editable: boolean }) {
-  const [form, setForm] = useState<PartnerProfileInput | null>(partner.profile);
   const save = usePortalMutation((input: PartnerProfileInput) => ({ path: "/v1/partner/profile", method: "PUT", body: input }));
   const profile = partner.profile;
-  if (!profile || !form) {
+  if (!profile) {
     return null;
   }
-  const set = (patch: Partial<PartnerProfileInput>) => {
-    setForm((current) => (current ? { ...current, ...patch } : current));
-  };
-  const error = (field: string) => fieldError(save.error, field);
-
-  function onSubmit(event: FormEvent) {
-    event.preventDefault();
-    if (form) {
-      save.mutate({ ...form, addressLines: form.addressLines.filter((line) => line.trim()) }, { onSuccess: () => toast.success("Details saved") });
-    }
-  }
-
-  if (!editable) {
-    return (
-      <Paper className="px-6 py-5">
-        <Stamp>Your details</Stamp>
-        <dl className="mt-3 grid gap-x-6 gap-y-2 text-small sm:grid-cols-2">
-          {[
-            ["Name", profile.fullName],
-            ["Phone", profile.phone],
-            ["Storage address", [...profile.addressLines, profile.city, profile.postalCode].join(", ")],
-            ["Space", profile.spaceDescription],
-          ].map(([label, value]) => (
-            <div key={label}>
-              <dt className="text-ink-faint">{label}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-      </Paper>
-    );
-  }
-
   return (
     <Paper className="px-6 py-5">
       <Stamp>Your details</Stamp>
-      <form noValidate onSubmit={onSubmit} className="mt-4 grid gap-4 md:grid-cols-2">
-        <div className="md:col-span-2">
-          <FormAlert message={formError(save.error)} />
+      {editable ? (
+        <ProfileForm initial={profile} submitLabel="Save details" pending={save.isPending} error={save.error} onSubmit={(input) => save.mutate(input, { onSuccess: () => toast.success("Details saved") })} />
+      ) : (
+        <div className="mt-3">
+          <ProfileDetails profile={profile} />
         </div>
-        <Field label="Full name" hint="As it appears on your ID." error={error("fullName")}>
-          {({ id, describedBy, invalid }) => (
-            <Input id={id} autoComplete="name" aria-describedby={describedBy} aria-invalid={invalid} value={form.fullName} onChange={(event) => set({ fullName: event.target.value })} />
-          )}
-        </Field>
-        <Field label="Phone" error={error("phone")}>
-          {({ id, invalid }) => <Input id={id} type="tel" autoComplete="tel" aria-invalid={invalid} value={form.phone} onChange={(event) => set({ phone: event.target.value })} />}
-        </Field>
-        <Field label="Storage address" error={error("addressLines") ?? error("addressLines.0")}>
-          {({ id, invalid }) => (
-            <Input
-              id={id}
-              autoComplete="address-line1"
-              aria-invalid={invalid}
-              value={form.addressLines[0] ?? ""}
-              onChange={(event) => set({ addressLines: [event.target.value, ...form.addressLines.slice(1)] })}
-            />
-          )}
-        </Field>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="City" error={error("city")}>
-            {({ id, invalid }) => <Input id={id} autoComplete="address-level2" aria-invalid={invalid} value={form.city} onChange={(event) => set({ city: event.target.value })} />}
-          </Field>
-          <Field label="Postcode" error={error("postalCode")}>
-            {({ id, invalid }) => <Input id={id} autoComplete="postal-code" aria-invalid={invalid} value={form.postalCode} onChange={(event) => set({ postalCode: event.target.value })} />}
-          </Field>
-        </div>
-        <div className="md:col-span-2">
-          <Field label="About the space" error={error("spaceDescription")}>
-            {({ id, invalid }) => (
-              <Textarea id={id} aria-invalid={invalid} className="min-h-[80px]" value={form.spaceDescription} onChange={(event) => set({ spaceDescription: event.target.value })} />
-            )}
-          </Field>
-        </div>
-        <div className="flex justify-end md:col-span-2">
-          <Button type="submit" variant="lime" loading={save.isPending}>
-            Save details
-          </Button>
-        </div>
-      </form>
+      )}
     </Paper>
   );
 }

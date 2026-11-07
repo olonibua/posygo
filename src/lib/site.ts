@@ -51,6 +51,7 @@ export const PRIVATE_PATHS = [
   "/login",
   "/forgot-password",
   "/reset-password",
+  "/confirm-email",
   "/verify-email",
   "/invite",
   "/staff-invite",

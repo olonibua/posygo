@@ -92,3 +92,21 @@ export const VERIFICATION_KNOWLEDGE = describePage<VerificationPageInput>({
     { href: "/settings/team", label: "Your team" },
   ],
 });
+
+export const VENDOR_ACCOUNT_KNOWLEDGE = describePage({
+  route: "/settings/account",
+  title: "Account",
+  purpose: "Everything about your business account in one place: the business details you gave us, whether you're verified, your activation fee, and the agreements you signed with a copy of each.",
+  steps: [
+    "Check Your business for the details we verified.",
+    "If anything has changed, ask Posy, the helper in the corner, and our team will update it after a quick check.",
+    "Check Activation fee for when you paid it.",
+    "Under Agreements, open View signed copy to read or download what you signed.",
+  ],
+  fields: {},
+  related: [
+    { href: "/verification", label: "Verification" },
+    { href: "/settings/requests", label: "Help & requests" },
+    { href: "/settings/security", label: "Sign-in & security" },
+  ],
+});

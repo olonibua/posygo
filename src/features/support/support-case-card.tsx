@@ -1,6 +1,6 @@
 "use client";
 
-import { errorGuide, type SupportCaseView, type SupportReportView } from "@/shared";
+import { ACCOUNT_REQUEST_KINDS, errorGuide, type SupportCaseKind, type SupportCaseView, type SupportReportView } from "@/shared";
 import { type FormEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Paper } from "@/components/ui/surfaces";
 import { fieldError } from "@/features/receiving/api-errors";
 import { formatDateTime } from "@/lib/format";
 
+import { SUPPORT_KIND_DISPLAY } from "./support-display";
 import { useResolveSupportCase, useSupportCase } from "./use-support-cases";
 
 const LOCALE = "en-GB";
@@ -62,12 +63,13 @@ export function SupportCaseCard({ supportCase, canManage }: { supportCase: Suppo
   const [open, setOpen] = useState(false);
   const detail = useSupportCase(supportCase.id, open);
   const side = supportCase.errorCode ? errorGuide(supportCase.errorCode, supportCase.errorStatus ?? 0).side : null;
+  const accountRequest = (ACCOUNT_REQUEST_KINDS as readonly SupportCaseKind[]).includes(supportCase.kind);
   return (
     <Paper className="flex flex-col gap-3 px-6 py-5">
       <div className="flex flex-wrap items-center gap-2.5">
         <span className="font-mono text-small font-semibold">{supportCase.reference}</span>
-        <Chip size="sm" tone={supportCase.kind === "ERROR" ? "pink" : "sky"}>
-          {supportCase.kind === "ERROR" ? "Error" : "Question"}
+        <Chip size="sm" tone={SUPPORT_KIND_DISPLAY[supportCase.kind].tone}>
+          {SUPPORT_KIND_DISPLAY[supportCase.kind].label}
         </Chip>
         {side === "SYSTEM" ? (
           <Chip size="sm" tone="orange">
@@ -75,24 +77,26 @@ export function SupportCaseCard({ supportCase, canManage }: { supportCase: Suppo
           </Chip>
         ) : null}
         <Chip size="sm" tone="lime">
-          {supportCase.source === "SERVER" ? "Caught by the system" : "Reported through Posy"}
+          {accountRequest ? "Sent from their account" : supportCase.source === "SERVER" ? "Caught by the system" : "Reported through Posy"}
         </Chip>
         <span className="ml-auto text-meta text-ink-soft">
           {supportCase.reports} {supportCase.reports === 1 ? "report" : "reports"} · last {formatDateTime(supportCase.lastSeenAt, LOCALE)}
         </span>
       </div>
-      <p className="text-small">
-        <span className="text-ink-soft">Page </span>
-        <span className="font-mono">{supportCase.page}</span>
-        {supportCase.errorCode ? (
-          <>
-            <span className="text-ink-soft"> · </span>
-            <span className="font-mono">
-              {supportCase.errorCode} ({supportCase.errorStatus}) on {supportCase.endpoint}
-            </span>
-          </>
-        ) : null}
-      </p>
+      {accountRequest ? null : (
+        <p className="text-small">
+          <span className="text-ink-soft">Page </span>
+          <span className="font-mono">{supportCase.page}</span>
+          {supportCase.errorCode ? (
+            <>
+              <span className="text-ink-soft"> · </span>
+              <span className="font-mono">
+                {supportCase.errorCode} ({supportCase.errorStatus}) on {supportCase.endpoint}
+              </span>
+            </>
+          ) : null}
+        </p>
+      )}
       {supportCase.resolutionNote ? <p className="text-small text-ink-soft">Resolved: {supportCase.resolutionNote}</p> : null}
       <div>
         <Button variant="ghost" onClick={() => setOpen((value) => !value)} aria-expanded={open}>

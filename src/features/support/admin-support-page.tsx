@@ -1,11 +1,11 @@
 "use client";
 
-import { hasPermission, type SupportCaseKind, type SupportCaseStatus } from "@/shared";
+import { ACCOUNT_REQUEST_KINDS, hasPermission, type SupportCaseKind, type SupportCaseStatus } from "@/shared";
 import { useState } from "react";
 
 import { EmptyState, FilterTabs } from "@/components/ui/navigation-controls";
 import { PageHeader } from "@/components/ui/page-header";
-import { LoadingRows } from "@/components/ui/skeleton";
+import { SkeletonLines } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 
 import { AssistantGaps } from "./assistant-gaps";
@@ -13,22 +13,26 @@ import { EmailLog } from "./email-log";
 import { SupportCaseCard } from "./support-case-card";
 import { useSupportCases } from "./use-support-cases";
 
-type View = "PROBLEMS" | "QUESTIONS" | "RESOLVED" | "GAPS" | "EMAILS";
+type View = "PROBLEMS" | "QUESTIONS" | "REQUESTS" | "RESOLVED" | "GAPS" | "EMAILS";
 
 const FILTERS: ReadonlyArray<{ value: View; label: string }> = [
   { value: "PROBLEMS", label: "System problems" },
   { value: "QUESTIONS", label: "Questions" },
+  { value: "REQUESTS", label: "Account requests" },
   { value: "RESOLVED", label: "Resolved" },
   { value: "GAPS", label: "Unanswered questions" },
   { value: "EMAILS", label: "Emails sent" },
 ];
 
+const EMPTY_TITLES: Partial<Record<View, string>> = { PROBLEMS: "No system problems", QUESTIONS: "No open questions", REQUESTS: "No account requests" };
+
+const KINDS_SHOWN: Partial<Record<View, readonly SupportCaseKind[]>> = { PROBLEMS: ["ERROR"], QUESTIONS: ["QUESTION"], REQUESTS: ACCOUNT_REQUEST_KINDS };
+
 export function AdminSupportPage() {
   const user = useCurrentUser();
   const [filter, setFilter] = useState<View>("PROBLEMS");
   const status: SupportCaseStatus = filter === "RESOLVED" ? "RESOLVED" : "OPEN";
-  const kind: SupportCaseKind | undefined = filter === "PROBLEMS" ? "ERROR" : filter === "QUESTIONS" ? "QUESTION" : undefined;
-  const cases = useSupportCases(status, kind);
+  const cases = useSupportCases(status, KINDS_SHOWN[filter]);
   const canManage = hasPermission(user.role, "support.manage");
   return (
     <div className="flex flex-col gap-7">
@@ -43,11 +47,11 @@ export function AdminSupportPage() {
       ) : filter === "EMAILS" ? (
         <EmailLog />
       ) : cases.isLoading ? (
-        <LoadingRows columns={2} />
+        <SkeletonLines />
       ) : (cases.data ?? []).length === 0 ? (
         <EmptyState
-          title={filter === "PROBLEMS" ? "No system problems" : filter === "QUESTIONS" ? "No open questions" : "Nothing resolved yet"}
-          body="Cases appear here when the system fails, when Posy reports an error, or when someone asks the team a question."
+          title={EMPTY_TITLES[filter] ?? "Nothing resolved yet"}
+          body="Cases appear here when the system fails, when Posy reports an error, when someone asks the team a question, or when someone asks to close their account or for a copy of their data."
         />
       ) : (
         <ul className="stagger flex flex-col gap-4">

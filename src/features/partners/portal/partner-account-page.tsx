@@ -9,7 +9,8 @@ import { usePartnerOverview } from "../use-partners";
 import { AgreementCard } from "./agreement-card";
 import { PayoutAccountCard } from "./payout-account-card";
 import { useProviderReturn } from "./use-provider-return";
-import { ProfileCard, VerificationChecks } from "./verification-section";
+import { ProfileChangeCard } from "./profile-change-card";
+import { VerificationChecks } from "./verification-section";
 
 export function PartnerAccountPage() {
   const overview = usePartnerOverview();
@@ -37,7 +38,7 @@ export function PartnerAccountPage() {
         <h2 id="details-heading" className="text-h3">
           Your details and checks
         </h2>
-        <ProfileCard partner={partner} editable={false} />
+        <ProfileChangeCard partner={partner} locale={locale} disabled={partner.status !== "ACTIVE" && partner.status !== "SUSPENDED"} />
         <VerificationChecks partner={partner} locale={locale} editable={false} />
       </section>
     </div>

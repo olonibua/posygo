@@ -8,7 +8,8 @@ import { toast } from "@/lib/toast/toast-store";
 
 const KEY = ["support-cases"] as const;
 
-export function useSupportCases(status: SupportCaseStatus, kind?: SupportCaseKind) {
+export function useSupportCases(status: SupportCaseStatus, kinds?: readonly SupportCaseKind[]) {
+  const kind = kinds?.join(",");
   return useQuery({
     queryKey: [...KEY, status, kind ?? "ALL"],
     queryFn: () => apiRequest<SupportCaseView[]>(`/v1/admin/support-cases?status=${status}${kind ? `&kind=${kind}` : ""}`),

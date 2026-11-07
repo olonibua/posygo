@@ -1,5 +1,6 @@
 import { describePage } from "@/features/assistant/knowledge/types";
 import { PARTNERSHIP, type PartnershipInput } from "@/features/partners/partner-console.knowledge";
+import { SIGN_IN_FIELDS, SIGN_IN_STEPS } from "@/features/security/security.knowledge";
 
 export const CONSOLE_OVERVIEW_KNOWLEDGE = describePage<PartnershipInput & Record<"market", unknown>>({
   route: "/admin",
@@ -17,11 +18,11 @@ export const CONSOLE_OVERVIEW_KNOWLEDGE = describePage<PartnershipInput & Record
   ],
 });
 
-export const CONSOLE_SECURITY_KNOWLEDGE = describePage({
+export const CONSOLE_SECURITY_KNOWLEDGE = describePage<Record<keyof typeof SIGN_IN_FIELDS, unknown>>({
   route: "/admin/security",
   title: "Sign-in & security",
-  purpose: "Your own sign-in protection: two-factor authentication and how long you stay signed in.",
-  steps: ["Check whether two-factor authentication is on.", "If it's off, press Turn on and add a code from an authenticator app on your phone.", "Keep your recovery codes somewhere safe."],
-  fields: {},
+  purpose: "Your own sign-in details and protection: your email, your password, two-factor authentication and how long you stay signed in.",
+  steps: SIGN_IN_STEPS,
+  fields: SIGN_IN_FIELDS,
   related: [{ href: "/mfa/setup", label: "Turn on two-factor authentication" }],
 });

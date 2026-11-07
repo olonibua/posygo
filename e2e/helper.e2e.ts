@@ -22,9 +22,11 @@ const SELLER_PAGES = [
   "/returns",
   "/returns/new",
   "/claims",
+  "/settings/account",
   "/settings/integrations",
   "/settings/markets",
   "/settings/referrals",
+  "/settings/requests",
   "/settings/security",
   "/settings/team",
   "/storefront",
@@ -76,6 +78,7 @@ const PARTNER_PAGES = [
   "/admin/partnership/stock-counts",
   "/admin/partnership/team",
   "/admin/partnership/transfers",
+  "/admin/requests",
 ];
 
 function visibleFieldLabels(page: Page): Promise<string[]> {
