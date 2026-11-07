@@ -2,6 +2,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { NotebookNote, Sticker } from "@/components/ui/surfaces";
 import { cn } from "@/lib/cn";
 
+import { PeekFeed } from "./peek-feed";
+
 const PEEK_NAV = [
   { label: "Overview", dot: "bg-orange", active: true },
   { label: "Inbound", dot: "bg-blue" },
@@ -74,6 +76,7 @@ function ProductPeek() {
             </div>
           ))}
         </div>
+        <PeekFeed />
       </div>
       <NotebookNote tone="sky" className="absolute -bottom-3.5 right-10 w-[290px] text-small">
         <span className="block text-label uppercase text-cocoa">Next up</span>

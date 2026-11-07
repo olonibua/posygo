@@ -324,3 +324,24 @@ details.faq[open]::details-content {
     break-after: auto;
   }
 }
+
+@keyframes peek-feed {
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes peek-live {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .peek-feed {
+    animation: peek-feed 26s linear infinite;
+  }
+  .peek-live {
+    animation: peek-live 1.6s ease-in-out infinite;
+  }
+}
