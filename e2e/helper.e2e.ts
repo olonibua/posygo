@@ -22,6 +22,7 @@ const SELLER_PAGES = [
   "/returns",
   "/returns/new",
   "/claims",
+  "/messages",
   "/settings/account",
   "/settings/integrations",
   "/settings/markets",
@@ -63,6 +64,7 @@ const CONSOLE_PAGES = [
   "/admin/storefront-orders",
   "/admin/storefront-returns",
   "/admin/support",
+  "/admin/chat",
   "/admin/tax",
   "/admin/tax/GB",
   "/admin/transfers",
@@ -78,6 +80,7 @@ const PARTNER_PAGES = [
   "/admin/partnership/stock-counts",
   "/admin/partnership/team",
   "/admin/partnership/transfers",
+  "/admin/messages",
   "/admin/requests",
 ];
 

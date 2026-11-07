@@ -15,6 +15,7 @@ export interface NavItem {
   holdsStock?: boolean;
   feature?: Feature;
   openBeforeLive?: boolean;
+  unread?: boolean;
 }
 
 const HOLDING_STOCK: ReadonlyArray<SessionUser["partnerStatus"]> = ["ACTIVE", "SUSPENDED", "OFFBOARDING"];
@@ -31,6 +32,7 @@ export const VENDOR_CONSOLE: Console = {
   items: [
     { label: "Overview", icon: "overview", tone: "orange", group: "Start here", href: "/overview", openBeforeLive: true },
     { label: "Verification", icon: "verification", tone: "lime", group: "Start here", href: "/verification", openBeforeLive: true },
+    { label: "Messages", icon: "chat", tone: "sky", group: "Start here", href: "/messages", permission: "chat.use", openBeforeLive: true, unread: true },
     { label: "Products", icon: "products", tone: "sky", group: "Stock", href: "/products", permission: "vendor.stock.read" },
     { label: "Inventory", icon: "inventory", tone: "yellow", group: "Stock", href: "/inventory", permission: "vendor.stock.read" },
     { label: "Inbound", icon: "inbound", tone: "pink", group: "Stock", href: "/inbound", permission: "vendor.stock.read" },
@@ -70,6 +72,7 @@ export const ADMIN_CONSOLE: Console = {
     { label: "Claims", icon: "claim", tone: "pink", group: "Trust", href: "/admin/claims", permission: "claims.read" },
     { label: "Custody alerts", icon: "bell", tone: "yellow", group: "Trust", href: "/admin/custody-alerts", permission: "claims.read" },
     { label: "Verifications", icon: "verification", tone: "lime", group: "Trust", href: "/admin/verifications", permission: "verifications.read" },
+    { label: "Messages", icon: "chat", tone: "sky", group: "Trust", href: "/admin/chat", permission: "support.read", unread: true },
     { label: "Support cases", icon: "bell", tone: "pink", group: "Trust", href: "/admin/support", permission: "support.read" },
     { label: "Legal", icon: "document", tone: "sky", group: "Trust", href: "/admin/legal", permission: "legal.manage" },
     { label: "Audit log", icon: "document", tone: "magenta", group: "Trust", permission: "audit.read" },
@@ -104,6 +107,7 @@ export const PARTNER_CONSOLE: Console = {
     { label: "Account", icon: "verification", tone: "teal", group: "You", href: "/admin/partnership/account", permission: "partner.profile.manage" },
     { label: "Earnings", icon: "wallet", tone: "lime", group: "You", href: "/admin/partnership/earnings", permission: "partner.statement.read" },
     { label: "Claims", icon: "claim", tone: "pink", group: "You", href: "/admin/partnership/claims", permission: "partner.statement.read", holdsStock: true },
+    { label: "Messages", icon: "chat", tone: "sky", group: "You", href: "/admin/messages", permission: "chat.use", unread: true },
     { label: "Security", icon: "shield", tone: "pink", group: "You", href: "/admin/security" },
     { label: "Help & requests", icon: "bell", tone: "teal", group: "You", href: "/admin/requests" },
   ],

@@ -12,6 +12,8 @@ import { BRAND } from "@/lib/brand";
 import { cn } from "@/lib/cn";
 
 import { motionFor } from "./nav-motion";
+import { useChatUnread } from "@/features/chat/use-chat";
+
 import { activeItem, type Console, isLocked, type NavItem, visibleItems } from "./navigation";
 
 const ITEM = "motion-press relative z-[1] flex items-center gap-3 rounded-nav px-2.5 py-[7px] text-[15px] no-underline transition-[background-color,color] duration-200 ease-[var(--ease-out)]";
@@ -43,6 +45,7 @@ export function Sidebar({ console, user, onNavigate, collapsed = false, onToggle
   const current = activeItem(items, pathname);
   const groups = [...new Set(items.map((item) => item.group))];
   const order = new Map(items.map((item, index) => [item, index]));
+  const unread = useChatUnread(items.some((item) => item.unread)).data?.count ?? 0;
   const entering = useEntrance();
   const nav = useRef<HTMLElement>(null);
   const [pill, setPill] = useState<{ top: number; height: number } | null>(null);
@@ -87,7 +90,16 @@ export function Sidebar({ console, user, onNavigate, collapsed = false, onToggle
             {items
               .filter((item) => item.group === group)
               .map((item) => (
-                <SidebarItem key={item.label} item={item} index={order.get(item) ?? 0} active={item === current} locked={isLocked(item, user)} collapsed={collapsed} onNavigate={onNavigate} />
+                <SidebarItem
+                  key={item.label}
+                  item={item}
+                  index={order.get(item) ?? 0}
+                  active={item === current}
+                  locked={isLocked(item, user)}
+                  collapsed={collapsed}
+                  onNavigate={onNavigate}
+                  badge={item.unread ? unread : 0}
+                />
               ))}
           </div>
         ))}
@@ -103,7 +115,7 @@ export function Sidebar({ console, user, onNavigate, collapsed = false, onToggle
   );
 }
 
-function ToneIcon({ item, active, index }: { item: NavItem; active: boolean; index: number }) {
+function ToneIcon({ item, active, index, alert = false }: { item: NavItem; active: boolean; index: number; alert?: boolean }) {
   return (
     <span
       aria-hidden
@@ -112,11 +124,12 @@ function ToneIcon({ item, active, index }: { item: NavItem; active: boolean; ind
       style={{ "--nav-delay": `${index * STAGGER_MS}ms` } as CSSProperties}
       className={cn(
         "nav-icon",
-        "grid h-8 w-8 shrink-0 place-items-center rounded-[9px] transition-[background-color,scale] duration-300 ease-[var(--ease-spring)]",
+        "relative grid h-8 w-8 shrink-0 place-items-center rounded-[9px] transition-[background-color,scale] duration-300 ease-[var(--ease-spring)]",
         active ? cn(toneSurface[item.tone], "scale-105") : cn("bg-transparent group-hover:scale-105", toneOnGroupHover[item.tone]),
       )}
     >
       <Icon name={item.icon} className="h-[18px] w-[18px]" />
+      {alert ? <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-ground bg-danger" /> : null}
     </span>
   );
 }
@@ -130,9 +143,10 @@ interface SidebarItemProps {
   locked: boolean;
   collapsed: boolean;
   onNavigate?: () => void;
+  badge?: number;
 }
 
-function SidebarItem({ item, index, active, locked, collapsed, onNavigate }: SidebarItemProps) {
+function SidebarItem({ item, index, active, locked, collapsed, onNavigate, badge = 0 }: SidebarItemProps) {
   const label = <span className={cn(FADE, collapsed && "opacity-0")}>{item.label}</span>;
   if (locked) {
     return (
@@ -161,11 +175,22 @@ function SidebarItem({ item, index, active, locked, collapsed, onNavigate }: Sid
       aria-current={active ? "page" : undefined}
       className={cn(ITEM, "group", active ? "font-medium text-ink" : "text-ink-soft hover:bg-paper-sunk hover:text-ink")}
     >
-      <ToneIcon item={item} active={active} index={index} />
+      <ToneIcon item={item} active={active} index={index} alert={badge > 0 && collapsed} />
       {label}
+      {badge > 0 ? (
+        <span className={cn("ml-auto rounded-full bg-yellow px-2 text-meta font-semibold text-cocoa", FADE, collapsed && "opacity-0")}>
+          {badge}
+          <span className="sr-only"> unread</span>
+        </span>
+      ) : null}
       <span
         aria-hidden
-        className={cn("ml-auto h-2 w-2 shrink-0 rounded-full transition-[scale,opacity] duration-300", toneSurface[item.tone], active && !collapsed ? "scale-100 opacity-100" : "scale-0 opacity-0")}
+        className={cn(
+          badge > 0 ? "hidden" : "ml-auto",
+          "h-2 w-2 shrink-0 rounded-full transition-[scale,opacity] duration-300",
+          toneSurface[item.tone],
+          active && !collapsed ? "scale-100 opacity-100" : "scale-0 opacity-0",
+        )}
       />
     </Link>
   );

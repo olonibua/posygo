@@ -50,6 +50,7 @@ export const ICONS = {
   storefront: <path d="M4 9 6 4h12l2 5M4 9v11h16V9M4 9h16M9 20v-6h6v6" />,
   returns: <path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" />,
   bell: <path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4" />,
+  chat: <path d="M4 5h16v11H9l-5 4zM8 9h8M8 12h5" />,
   globe: (
     <>
       <circle cx="12" cy="12" r="9" />

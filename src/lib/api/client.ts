@@ -68,6 +68,14 @@ export function onSessionChange(listener: SessionListener): () => void {
   return () => listeners.delete(listener);
 }
 
+export function currentAccessToken(): string | null {
+  return accessToken;
+}
+
+export function apiOrigin(): string {
+  return API_URL;
+}
+
 export function setSession(result: AuthenticatedResult | null): void {
   accessToken = result?.accessToken ?? null;
   rememberSignedIn(result !== null);

@@ -2,6 +2,7 @@ import * as AuthPages from "@/features/auth/auth-pages.knowledge";
 import * as Signup from "@/features/auth/signup.knowledge";
 import * as CataloguePages from "@/features/catalogue/catalogue-pages.knowledge";
 import * as Product from "@/features/catalogue/product.knowledge";
+import * as Chat from "@/features/chat/chat.knowledge";
 import * as Countries from "@/features/countries/countries.knowledge";
 import * as VendorClaims from "@/features/custody/claims.knowledge";
 import * as Custody from "@/features/custody/custody.knowledge";
@@ -50,6 +51,7 @@ const SOURCES: ReadonlyArray<Record<string, unknown>> = [
   Signup,
   CataloguePages,
   Product,
+  Chat,
   Countries,
   VendorClaims,
   Custody,

@@ -11,6 +11,7 @@ import { toneSurface } from "@/components/ui/tone";
 import { useAuth } from "@/lib/auth/auth-context";
 import { cn } from "@/lib/cn";
 
+import { chatSideOf, useChatLive } from "@/features/chat/use-chat";
 import { ActivationGate } from "@/features/onboarding/activation/activation-gate";
 import { CountrySwitcher } from "@/features/seller-countries/country-switcher";
 import { SelectedCountryProvider } from "@/features/seller-countries/selected-country";
@@ -27,6 +28,7 @@ export function AppShell({ console, user, children }: { console: Console; user: 
   const close = useCallback(() => setDrawer((state) => (state === "open" ? "closing" : state)), []);
   const [collapsed, toggleCollapsed] = useCollapsedSidebar();
   const sells = user.vendorId !== null;
+  useChatLive(chatSideOf(user));
 
   const shell = (
     <div className={cn("min-h-screen lg:grid lg:transition-[grid-template-columns] lg:duration-300 lg:ease-[var(--ease-out)]", collapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[264px_1fr]")}>

@@ -4,6 +4,7 @@ export type NavMotion = "ring" | "spin" | "hop" | "drive" | "lift" | "pulse" | "
 
 const MOTIONS: Partial<Record<IconName, NavMotion>> = {
   bell: "ring",
+  chat: "ring",
   settings: "spin",
   globe: "spin",
   wallet: "hop",

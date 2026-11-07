@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 const API_ORIGIN = new URL(process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000").origin;
+const API_SOCKET_ORIGIN = API_ORIGIN.replace(/^http/, "ws");
 const STORAGE_ORIGIN = process.env.NEXT_PUBLIC_STORAGE_ORIGIN ? new URL(process.env.NEXT_PUBLIC_STORAGE_ORIGIN).origin : "";
 const DEVELOPMENT = process.env.NODE_ENV !== "production";
 
@@ -11,7 +12,7 @@ export function buildContentSecurityPolicy(nonce: string): string {
     `style-src 'self'${DEVELOPMENT ? " 'unsafe-inline'" : ` 'nonce-${nonce}'`}`,
     `img-src 'self' data: blob: ${API_ORIGIN}${STORAGE_ORIGIN ? ` ${STORAGE_ORIGIN}` : ""}`,
     "font-src 'self'",
-    `connect-src 'self' ${API_ORIGIN}${STORAGE_ORIGIN ? ` ${STORAGE_ORIGIN}` : ""}${DEVELOPMENT ? " ws:" : ""}`,
+    `connect-src 'self' ${API_ORIGIN} ${API_SOCKET_ORIGIN}${STORAGE_ORIGIN ? ` ${STORAGE_ORIGIN}` : ""}${DEVELOPMENT ? " ws:" : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
