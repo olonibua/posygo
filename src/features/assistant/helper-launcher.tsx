@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/cn";
@@ -7,6 +8,8 @@ import { cn } from "@/lib/cn";
 import { ASSISTANT } from "./assistant-identity";
 import { PosyAvatar } from "./flower-avatar";
 import type { AssistantState } from "./use-assistant";
+
+const CHAT_PAGES = ["/messages", "/admin/messages", "/admin/chat"];
 
 const CHIP = "rounded-chip px-3 py-1.5 text-meta font-medium transition-colors duration-150";
 
@@ -53,11 +56,12 @@ function NudgeBubble({ helper }: { helper: AssistantState }) {
 }
 
 export function HelperLauncher({ helper }: { helper: AssistantState }) {
+  const onChatPage = CHAT_PAGES.includes(usePathname());
   if (helper.open) {
     return null;
   }
   return (
-    <div data-assistant className="pointer-events-none fixed bottom-3 right-3 z-40 flex items-end gap-1 sm:bottom-5 sm:right-5 print:hidden">
+    <div data-assistant className={cn("pointer-events-none fixed bottom-3 right-3 z-40 flex items-end gap-1 sm:bottom-5 sm:right-5 print:hidden", onChatPage && "max-md:hidden")}>
       <div className="relative shrink-0">
         <button
           type="button"

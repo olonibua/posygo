@@ -2,6 +2,7 @@
 
 import { type ChatThreadView, hasPermission } from "@/shared";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRef } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import { EmptyState } from "@/components/ui/navigation-controls";
@@ -13,12 +14,15 @@ import { cn } from "@/lib/cn";
 import { formatDateTime, localeFor } from "@/lib/format";
 
 import { ChatConversation } from "./chat-conversation";
+import { useFitToScreen } from "./use-fit-to-screen";
 import { useInbox } from "./use-chat";
 
 export function TeamChatPage() {
   const user = useCurrentUser();
   const locale = localeFor(user.countryCode);
   const inbox = useInbox();
+  const panel = useRef<HTMLDivElement>(null);
+  const { keyboardOpen } = useFitToScreen(panel);
   const router = useRouter();
   const pathname = usePathname();
   const selected = useSearchParams().get("thread");
@@ -28,8 +32,8 @@ export function TeamChatPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader stamp="Messages" title="Sellers and partners" lead="Waiting conversations come first." />
-      <Paper className="grid h-[calc(100dvh-300px)] min-h-[460px] overflow-hidden md:grid-cols-[300px_1fr]">
+      {keyboardOpen ? null : <PageHeader stamp="Messages" title="Sellers and partners" lead="Waiting conversations come first." />}
+      <Paper ref={panel} className="grid h-[calc(100dvh-300px)] overflow-hidden md:min-h-[460px] md:grid-cols-[300px_1fr]">
         <nav aria-label="Conversations" className={cn("min-h-0 overflow-y-auto border-line md:border-r", selected && "hidden md:block")}>
           {inbox.isLoading ? (
             <div className="p-4">
