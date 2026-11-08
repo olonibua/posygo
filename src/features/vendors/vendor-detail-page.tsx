@@ -1,6 +1,6 @@
 "use client";
 
-import type { VendorMemberView } from "@/shared";
+import { hasPermission, type VendorMemberView } from "@/shared";
 
 import { BackLink } from "@/components/ui/back-link";
 import { StatusPill } from "@/components/ui/chip";
@@ -10,7 +10,9 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageSkeleton } from "@/components/ui/skeleton";
 import { StatTile, StatTileGrid } from "@/components/ui/stat-tile";
 import { Paper, Stamp } from "@/components/ui/surfaces";
+import { AccountControlPanel } from "@/features/accounts/account-control-panel";
 import { countryName, VERIFICATION_STATUS_DISPLAY } from "@/features/onboarding/display";
+import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatDate, formatMoney, localeFor } from "@/lib/format";
 
 import { productColumns } from "./directory-parts";
@@ -27,6 +29,7 @@ const MEMBER_COLUMNS: readonly Column<VendorMemberView>[] = [
 const PRODUCT_COLUMNS = productColumns({ showVendor: false });
 
 export function VendorDetailPage({ vendorId }: { vendorId: string }) {
+  const user = useCurrentUser();
   const detail = useVendorDetail(vendorId);
   const vendor = detail.data;
   if (!vendor) {
@@ -81,6 +84,11 @@ export function VendorDetailPage({ vendorId }: { vendorId: string }) {
           <p className="mt-1 text-ink-faint">Home country first, then the other countries they store stock in.</p>
         </Paper>
       </div>
+      {hasPermission(user.role, "accounts.close") ? (
+        <div className="md:max-w-[520px]">
+          <AccountControlPanel accountPath={`/v1/admin/vendors/${vendor.id}`} accountName={vendor.businessName} control={vendor.control} listHref="/admin/vendors" locale={locale} />
+        </div>
+      ) : null}
       <section className="flex flex-col gap-3">
         <h2 className="text-h3">Team</h2>
         <DataTable caption="Team" columns={MEMBER_COLUMNS} rows={vendor.members} rowKey={(row) => row.userId} empty={<EmptyState title="No team" body="Nobody has an account for this business." />} />

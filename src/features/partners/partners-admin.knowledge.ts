@@ -64,6 +64,7 @@ export const PARTNER_CASE_KNOWLEDGE = describePage<
     "If the partner asked to change their details, compare Now with Asked for. For a new address, get a new proof of address and update the hub address first, then approve or decline with a note.",
     "Once the partner is running, request surprise stock counts and place test orders to check their work.",
     "Finance staff record deposits, read the partner's earnings and request payouts.",
+    "Super admins use Account to deactivate a partner, which pauses the hub and signs the team out, or reactivate them. Delete is only offered for an application that never ran a hub and has no money on record.",
   ],
   fields: {
     reason: {

@@ -29,6 +29,7 @@ export const VENDOR_KNOWLEDGE = describePage({
     "Check the stage and verification status at the top to see how far the business has got.",
     "Look at the team to see who has an account and whether they've confirmed their email.",
     "Scroll to Products to see what they've added, who added each one and where its stock is.",
+    "Super admins use Account to deactivate a business, which signs the team out and stops all activity, or reactivate it. Delete is only offered when the business has no orders, stock or money on record, and you type its name to confirm.",
   ],
   fields: {},
   related: [

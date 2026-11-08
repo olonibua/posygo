@@ -5,6 +5,7 @@ import { hasPermission } from "@/shared";
 import { PageHeader } from "@/components/ui/page-header";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { PageSkeleton } from "@/components/ui/skeleton";
+import { AccountControlPanel } from "@/features/accounts/account-control-panel";
 import { countryName } from "@/features/onboarding/display";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatDateTime, localeFor } from "@/lib/format";
@@ -66,6 +67,9 @@ export function PartnerCasePage({ partnerId }: { partnerId: string }) {
         </div>
         <div className="flex flex-col gap-4">
           <DecisionsPanel partner={partner} role={user.role} />
+          {hasPermission(user.role, "accounts.close") ? (
+            <AccountControlPanel accountPath={`/v1/admin/partners/${partner.id}`} accountName={partner.legalName} control={partner.control} listHref="/admin/partners" locale={locale} />
+          ) : null}
           <Paper className="px-6 py-5 text-small">
             <Stamp>Partner agreement</Stamp>
             <p className="mt-2">
