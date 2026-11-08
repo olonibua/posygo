@@ -1,5 +1,6 @@
 "use client";
 
+import { HowItWorksVideo } from "@/features/guide/how-it-works-video";
 import { hasPermission, type InboundSummaryView, OPEN_INBOUND_STATUSES, type VendorCountryFiguresView, type VendorCountryView } from "@/shared";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -80,6 +81,8 @@ export function VendorOverview() {
       )}
 
       <NextStepCard vendorActive={user.vendorStatus === "ACTIVE"} />
+
+      <HowItWorksVideo title="Rewatch any step" body="Adding products, sending stock in, creating and tracking orders, and your wallet, in about two minutes." />
 
       <section aria-labelledby="countries-heading" className="flex flex-col gap-3">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">

@@ -8,6 +8,7 @@ import { StatusPill } from "@/components/ui/chip";
 import { PageHeader } from "@/components/ui/page-header";
 import { NotebookNote, Paper, Stamp, Sticker } from "@/components/ui/surfaces";
 import { PageSkeleton } from "@/components/ui/skeleton";
+import { HowItWorksVideo } from "@/features/guide/how-it-works-video";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatDate } from "@/lib/format";
 
@@ -56,6 +57,12 @@ export function VerificationPage() {
         lead={view ? `We check every business against ${countryName(view.market.countryCode)} rules before stock can be sent to a warehouse.` : undefined}
         action={view ? <StatusPill tone={VERIFICATION_STATUS_DISPLAY[view.status].tone}>{VERIFICATION_STATUS_DISPLAY[view.status].label}</StatusPill> : null}
       />
+      {user.vendorStatus === "ACTIVE" ? null : (
+        <HowItWorksVideo
+          title="Watch this first"
+          body="See how you'll use Posygo once you're verified: adding products, sending stock to a hub, and creating and tracking orders. You can rewatch it any time from your dashboard."
+        />
+      )}
       {state.view.isLoading ? <PageSkeleton /> : null}
       {view && EDITABLE_VERIFICATION_STATUSES.includes(view.status) && canEdit ? <VerificationWizard view={view} state={state} initialStep={returnedFromIdentity ? IDENTITY_STEP : 0} /> : null}
       {view && EDITABLE_VERIFICATION_STATUSES.includes(view.status) && !canEdit ? (

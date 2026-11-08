@@ -27,6 +27,7 @@ export const VERIFICATION_KNOWLEDGE = describePage<VerificationPageInput>({
   title: "Verify your business",
   purpose: "We check every business against its market's rules before stock can be sent to a warehouse. Once you're verified, have signed the vendor agreement, accepted the terms and privacy policy, and paid the activation fee, your account goes live.",
   steps: [
+    "Watch the How to use Posygo video at the top to see how you'll add products, send stock and create orders once you're verified. You can rewatch it later from Overview.",
     "Fill in your business details and registered address.",
     "Add the person we speak to.",
     "Verify your identity: on a computer, scan the QR code with your phone's camera, or tap Open identity check on a phone. You take a photo of your ID and a short selfie video. It takes about 2 minutes, and this page updates by itself when it's done.",
