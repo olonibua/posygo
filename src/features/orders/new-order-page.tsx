@@ -134,7 +134,7 @@ export function NewOrderPage() {
       />
       <DraftStatus draft={draft} locale={locale} />
       <FormAlert message={formError(place.error)} />
-      <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="flex flex-col gap-5">
           {current.map((delivery, index) => (
             <DeliveryFields

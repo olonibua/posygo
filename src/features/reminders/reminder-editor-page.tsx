@@ -50,7 +50,7 @@ function ReminderEditor({ reminder }: { reminder: ReminderView }) {
   return (
     <>
       <PageHeader stamp={reminder.audience === "SELLER" ? "Sellers" : "Fulfilment partners"} title={reminder.title} lead={reminder.trigger} />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
         <Paper className="px-6 py-6">
           <form noValidate onSubmit={submit} className="flex flex-col gap-5">
             <FormAlert message={formError(error)} />

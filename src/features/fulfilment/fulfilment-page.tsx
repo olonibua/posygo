@@ -123,7 +123,7 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
           </p>
         </Paper>
       ) : null}
-      <div className="grid gap-5 xl:grid-cols-[1fr_400px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_400px]">
         <div className="flex flex-col gap-5">
           {data.actions.includes("RECORD_PACK") ? (
             <ScanPanel lines={data.lines} remaining={remaining} busy={scan.isPending} error={scan.error} last={scan.data} onScan={(code) => scan.mutate(code)} onReset={() => resetScans.mutate()} />

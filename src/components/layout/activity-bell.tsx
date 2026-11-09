@@ -40,7 +40,7 @@ export function ActivityBell() {
   }, [open, history.length]);
 
   return (
-    <div ref={panel} className="relative">
+    <div ref={panel} className="relative shrink-0">
       <button
         type="button"
         aria-expanded={open}

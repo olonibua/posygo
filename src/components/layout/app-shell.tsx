@@ -12,6 +12,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { cn } from "@/lib/cn";
 
 import { chatSideOf, useChatLive } from "@/features/chat/use-chat";
+import { useLiveUpdates } from "@/features/chat/use-live-updates";
 import { ActivationGate } from "@/features/onboarding/activation/activation-gate";
 import { CountrySwitcher } from "@/features/seller-countries/country-switcher";
 import { SelectedCountryProvider } from "@/features/seller-countries/selected-country";
@@ -28,7 +29,9 @@ export function AppShell({ console, user, children }: { console: Console; user: 
   const close = useCallback(() => setDrawer((state) => (state === "open" ? "closing" : state)), []);
   const [collapsed, toggleCollapsed] = useCollapsedSidebar();
   const sells = user.vendorId !== null;
-  useChatLive(chatSideOf(user));
+  const chatSide = chatSideOf(user);
+  useChatLive(chatSide);
+  useLiveUpdates(chatSide !== null);
 
   const shell = (
     <div className={cn("min-h-screen lg:grid lg:transition-[grid-template-columns] lg:duration-300 lg:ease-[var(--ease-out)]", collapsed ? "lg:grid-cols-[80px_1fr]" : "lg:grid-cols-[264px_1fr]")}>
@@ -130,16 +133,16 @@ function Topbar({ console, user, sells, onOpenMenu }: { console: Console; user: 
         <button
           type="button"
           onClick={onOpenMenu}
-          className="motion-press grid h-11 w-11 place-items-center rounded-nav border-[1.5px] border-line-strong bg-paper hover:border-ink lg:hidden"
+          className="motion-press grid h-11 w-11 shrink-0 place-items-center rounded-nav border-[1.5px] border-line-strong bg-paper hover:border-ink lg:hidden"
           aria-label="Open menu"
         >
           <Icon name="menu" className="h-5 w-5" />
         </button>
         <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-2 text-small">
-          <span className="hidden text-stamp uppercase text-ink-faint md:block">{console.stamp}</span>
+          <span className="hidden whitespace-nowrap text-stamp uppercase text-ink-faint xl:block">{console.stamp}</span>
           {section ? (
             <>
-              <span aria-hidden className="hidden text-ink-faint md:block">
+              <span aria-hidden className="hidden text-ink-faint xl:block">
                 /
               </span>
               <span aria-hidden className={cn("h-2.5 w-2.5 shrink-0 rounded-full", toneSurface[section.tone])} />
@@ -157,18 +160,18 @@ function Topbar({ console, user, sells, onOpenMenu }: { console: Console; user: 
           ) : null}
         </nav>
       </div>
-      <div className="flex min-w-0 items-center gap-2.5 sm:gap-3.5">
+      <div className="flex shrink-0 items-center gap-2.5 sm:gap-3.5">
         {sells ? <CountrySwitcher /> : null}
         <ActivityBell />
-        <span className="grid h-11 w-11 place-items-center rounded-nav bg-lime font-semibold text-cocoa" aria-hidden>
+        <span className="hidden h-11 w-11 shrink-0 place-items-center rounded-nav bg-lime sm:grid font-semibold text-cocoa" aria-hidden>
           {initials}
         </span>
-        <div className="hidden md:block">
-          <b className="block text-[15px] font-medium">{user.email}</b>
+        <div className="hidden max-w-[240px] 2xl:block">
+          <b className="block truncate text-[15px] font-medium">{user.email}</b>
           <span className="text-label uppercase tracking-[1.2px] text-ink-faint">{user.role.replace(/_/g, " ")}</span>
         </div>
         <Button variant="ghost" onClick={() => void handleSignOut()} icon={<Icon name="signOut" className="h-4 w-4" />}>
-          <span className="hidden sm:inline">Sign out</span>
+          <span className="hidden 2xl:inline">Sign out</span>
         </Button>
       </div>
     </header>

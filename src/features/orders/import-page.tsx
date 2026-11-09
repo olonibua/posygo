@@ -67,7 +67,7 @@ export function ImportPage() {
         title={country ? `Import orders in ${country.name}` : "Import a spreadsheet"}
         lead="Upload a CSV with one row per product. Rows that share an order reference become one order; the address only needs to be on the first row."
       />
-      <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
         <Paper className="flex flex-col gap-4 px-6 py-6">
           <Stamp>Upload</Stamp>
           <FormAlert message={problem ?? formError(run.error) ?? fieldError(run.error, "csv") ?? null} />

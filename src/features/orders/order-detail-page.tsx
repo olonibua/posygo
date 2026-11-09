@@ -118,7 +118,7 @@ export function OrderDetailPage({ orderId }: { orderId: string }) {
           {request.decisionNote ? <p className="mt-1 text-small">Hub: {request.decisionNote}</p> : null}
         </NotebookNote>
       ) : null}
-      <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="flex flex-col gap-5">
           <OrderLines order={data} showScans={false} />
           <OrderTimeline events={data.events} locale={locale} />

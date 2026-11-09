@@ -56,7 +56,7 @@ export function CountrySwitcher() {
   }
 
   return (
-    <div ref={panel} className="relative min-w-0">
+    <div ref={panel} className="relative shrink-0">
       <button
         type="button"
         aria-haspopup="menu"
@@ -64,18 +64,18 @@ export function CountrySwitcher() {
         aria-label={`Country: ${showingAll ? "all countries" : country.name}`}
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          "motion-press flex h-11 min-w-0 max-w-[260px] items-center gap-2 rounded-nav border-[1.5px] bg-paper px-3.5 text-small font-medium hover:border-ink",
+          "motion-press flex h-11 max-w-[260px] items-center gap-2 whitespace-nowrap rounded-nav border-[1.5px] bg-paper px-3.5 text-small font-medium hover:border-ink",
           open ? "border-ink" : "border-line-strong",
         )}
       >
         {showingAll ? (
           <span className="truncate">
-            All<span className="hidden sm:inline"> countries</span>
+            All<span className="hidden xl:inline"> countries</span>
           </span>
         ) : (
           <span className="flex min-w-0 items-center gap-1.5">
             <span aria-hidden>{countryFlag(country.code)}</span>
-            <span className="hidden truncate sm:inline">{country.name} ·</span>
+            <span className="hidden truncate xl:inline">{country.name} ·</span>
             <span>{country.currency}</span>
           </span>
         )}

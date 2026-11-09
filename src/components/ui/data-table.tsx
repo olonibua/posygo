@@ -22,41 +22,39 @@ interface DataTableProps<Row> {
 }
 
 export function DataTable<Row>({ columns, rows, rowKey, caption, empty, loading = false }: DataTableProps<Row>) {
+  const nothing = !loading && rows.length === 0;
   return (
-    <div className="motion-rise overflow-x-auto rounded-tile border border-line bg-paper" aria-busy={loading || undefined}>
-      <table className="w-full border-separate border-spacing-0 tabular-nums">
-        <caption className="sr-only">{caption}</caption>
-        <thead>
-          <tr>
-            {columns.map((column) => (
-              <th key={column.key} scope="col" className={cn("whitespace-nowrap bg-cocoa px-5 py-[15px] text-label uppercase text-on-ink", column.align === "right" ? "text-right" : "text-left")}>
-                {column.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="stagger">
-          {loading && rows.length === 0 ? (
-            <LoadingRows columns={columns.length} />
-          ) : rows.length === 0 ? (
+    <div className="motion-rise overflow-hidden rounded-tile border border-line bg-paper" aria-busy={loading || undefined}>
+      <div className="overflow-x-auto">
+        <table className="w-full border-separate border-spacing-0 tabular-nums">
+          <caption className="sr-only">{caption}</caption>
+          <thead>
             <tr>
-              <td colSpan={columns.length} className="px-5 py-12 text-center text-ink-soft">
-                {empty ?? "Nothing here yet."}
-              </td>
+              {columns.map((column) => (
+                <th key={column.key} scope="col" className={cn("whitespace-nowrap bg-cocoa px-5 py-[15px] text-label uppercase text-on-ink", column.align === "right" ? "text-right" : "text-left")}>
+                  {column.header}
+                </th>
+              ))}
             </tr>
-          ) : (
-            rows.map((row, index) => (
-              <tr key={rowKey(row)} className="motion-fade transition-colors duration-200 hover:bg-cream/60">
-                {columns.map((column) => (
-                  <td key={column.key} className={cn("px-5 py-[17px] text-body", index > 0 && "border-t border-line", column.align === "right" && "text-right", column.className)}>
-                    {column.render(row)}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="stagger">
+            {loading && rows.length === 0 ? (
+              <LoadingRows columns={columns.length} />
+            ) : nothing ? null : (
+              rows.map((row, index) => (
+                <tr key={rowKey(row)} className="motion-fade transition-colors duration-200 hover:bg-cream/60">
+                  {columns.map((column) => (
+                    <td key={column.key} className={cn("px-5 py-[17px] text-body", index > 0 && "border-t border-line", column.align === "right" && "text-right", column.className)}>
+                      {column.render(row)}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+      {nothing ? <div className="px-5 py-12 text-center text-ink-soft">{empty ?? "Nothing here yet."}</div> : null}
     </div>
   );
 }

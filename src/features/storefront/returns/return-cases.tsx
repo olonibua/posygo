@@ -28,7 +28,7 @@ function DecisionForm({ entry, audience }: { entry: StoreReturnCaseView; audienc
   return (
     <div className="flex flex-col gap-3 border-t border-line pt-4">
       <FormAlert message={formError(decide.error)} />
-      <div className="grid gap-3 sm:grid-cols-[180px_1fr]">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[180px_minmax(0,1fr)]">
         <Field label="Refund" hint={`Up to ${formatMoney(left, order.currency, locale)}${audience === "vendor" ? ", your share of the sale" : ""}`} error={fieldError(decide.error, "refundMinor")}>
           {({ id, describedBy, invalid }) => (
             <Input id={id} inputMode="decimal" aria-describedby={describedBy} aria-invalid={invalid} value={amount} onChange={(event) => setAmount(event.target.value)} />

@@ -45,7 +45,12 @@ export function useVerification() {
     onError: handleError,
   });
 
-  return { view, save, submit, errors, formError };
+  function flag(fieldErrors: FieldErrors) {
+    setErrors(fieldErrors);
+    setFormError("Some answers need attention.");
+  }
+
+  return { view, save, submit, errors, formError, flag };
 }
 
 export function errorFor(errors: FieldErrors, path: string): string | undefined {

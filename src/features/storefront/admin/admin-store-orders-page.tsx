@@ -41,7 +41,7 @@ function RefundForm({ order, locale }: { order: StorefrontOrderView; locale: str
     <div className="flex flex-col gap-3 border-t border-line pt-4">
       <p className="text-small font-medium">Refund the buyer</p>
       <FormAlert message={formError(refund.error)} />
-      <div className="grid gap-3 sm:grid-cols-[200px_1fr]">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[200px_minmax(0,1fr)]">
         <Field label="Amount" hint={`Up to ${formatMoney(left, order.currency, locale)}`} error={fieldError(refund.error, "amountMinor")}>
           {({ id, describedBy, invalid }) => (
             <Input id={id} inputMode="decimal" aria-describedby={describedBy} aria-invalid={invalid} value={amount} onChange={(event) => setAmount(event.target.value)} />

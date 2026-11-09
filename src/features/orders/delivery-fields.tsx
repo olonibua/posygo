@@ -115,7 +115,7 @@ export function DeliveryFields({ index, delivery, country, products, available, 
           </p>
         ) : null}
         {delivery.lines.map((line, lineIndex) => (
-          <div key={line.key} className="grid gap-3 sm:grid-cols-[1fr_120px_auto] sm:items-end">
+          <div key={line.key} className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_120px_auto] sm:items-end">
             <Field label={`Product ${lineIndex + 1}`}>
               {({ id }) => (
                 <Select id={id} value={line.productId} onChange={(event) => setLine(line.key, { productId: event.target.value })}>

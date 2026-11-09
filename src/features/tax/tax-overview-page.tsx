@@ -26,7 +26,7 @@ export function TaxOverviewPage() {
           ))}
         </section>
       ) : null}
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
         <Upcoming deadlines={data?.upcoming ?? []} loading={overview.isLoading} />
         <TaxCalendar deadlines={data?.upcoming ?? []} />
       </div>

@@ -55,7 +55,7 @@ export function ReportProblemForm({ subject, title, maxQuantity, onClose }: Repo
             </ChoiceChip>
           ))}
         </div>
-        <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
           <Field label="Units affected" hint={`Up to ${maxQuantity}.`} error={fieldError(report.error, "quantity")}>
             {({ id, describedBy, invalid }) => (
               <Input id={id} inputMode="numeric" aria-describedby={describedBy} aria-invalid={invalid} value={quantity} onChange={(event) => setQuantity(event.target.value.replace(/\D/g, ""))} />

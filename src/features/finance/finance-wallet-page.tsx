@@ -60,7 +60,7 @@ export function FinanceWalletPage({ walletId }: { walletId: string }) {
           dots={["lime"]}
         />
       </StatTileGrid>
-      <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
         <section aria-labelledby="ledger-heading" className="flex flex-col gap-3">
           <h2 id="ledger-heading" className="text-h3">
             Ledger

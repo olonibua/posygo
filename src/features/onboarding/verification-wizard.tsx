@@ -16,6 +16,7 @@ import { IDENTITY_STATUS_LABELS } from "@/features/identity/identity-state";
 import { countryName, HAZARD_LABELS, ORDER_BAND_LABELS, UNIT_BAND_LABELS, WIZARD_STEPS } from "./display";
 import { BusinessStep, ContactStep } from "./steps/business-steps";
 import { DocumentsStep, IdentityStep, OperationsStep } from "./steps/evidence-steps";
+import { stepErrors } from "./steps/step-check";
 import { patchForStep, valuesFrom, type WizardValues } from "./steps/wizard-values";
 import type { useVerification } from "./use-verification";
 
@@ -36,7 +37,13 @@ export function VerificationWizard({ view, state, initialStep = 0 }: { view: Ver
   const last = step === WIZARD_STEPS.length - 1;
 
   function saveAndContinue() {
-    state.save.mutate(patchForStep(step, values), {
+    const patch = patchForStep(step, values);
+    const errors = stepErrors(view.market, step, patch);
+    if (Object.keys(errors).length > 0) {
+      state.flag(errors);
+      return;
+    }
+    state.save.mutate(patch, {
       onSuccess: (next) => {
         const saved = { ...valuesFrom(next.draft), documents: values.documents };
         draft.settle(saved);
@@ -47,7 +54,7 @@ export function VerificationWizard({ view, state, initialStep = 0 }: { view: Ver
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)]">
       <Paper className="h-fit px-6 py-6">
         <Stepper steps={WIZARD_STEPS} current={step} />
       </Paper>

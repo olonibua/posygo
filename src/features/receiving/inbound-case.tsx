@@ -90,7 +90,7 @@ export function InboundCase({ inboundId }: { inboundId: string }) {
           onSubmit={(input) => receive.mutate(input, { onSuccess: () => setPending(null) })}
         />
       ) : null}
-      <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="flex flex-col gap-5">
           <InboundLinesTable inbound={inbound} />
           {inbound.receivingNote ? (

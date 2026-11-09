@@ -89,8 +89,8 @@ export function WalletPage() {
         <StatTile tone="yellow" label="Status" value={status.label} note={status.note} dots={["teal"]} />
         <StatTile tone="pink" label="Top-ups" value={paidCount ?? 0} note="Paid by card" dots={["lime", "orange"]} />
       </StatTileGrid>
-      <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
-        <div className="flex flex-col gap-5">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="flex min-w-0 flex-col gap-5">
           <section aria-labelledby="activity-heading" className="flex flex-col gap-3">
             <h2 id="activity-heading" className="text-h3">
               Activity
@@ -99,7 +99,7 @@ export function WalletPage() {
           </section>
           <TopUpHistory topUps={topUps.data ?? []} locale={locale} />
         </div>
-        <div className="flex flex-col gap-5">
+        <div className="flex min-w-0 flex-col gap-5">
           {canManage ? <TopUpCard currency={data.currency} locale={locale} disabled={data.status === "CLOSED" || data.status === "FROZEN"} /> : null}
           {canManage ? <AlertSettings currency={data.currency} current={data.lowBalanceThresholdMinor} /> : null}
           {fees.data ? <FeeSummary schedule={fees.data.schedule} currency={fees.data.currency} locale={locale} /> : null}

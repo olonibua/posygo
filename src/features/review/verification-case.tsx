@@ -92,7 +92,7 @@ export function VerificationCase({ vendorId }: { vendorId: string }) {
         action={<StatusPill tone={VERIFICATION_STATUS_DISPLAY[data.status].tone}>{VERIFICATION_STATUS_DISPLAY[data.status].label}</StatusPill>}
       />
       <FormAlert message={[reveal.error, openDocument.error].find((error) => error instanceof ApiError)?.message ?? null} />
-      <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="flex flex-col gap-5">
           {sections.map(([title, rows]) => (
             <Paper key={title} className="px-6 py-4">

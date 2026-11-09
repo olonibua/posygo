@@ -81,7 +81,7 @@ function Instructions({ entry, locale }: { entry: VendorReturnView; locale: stri
       {arrived.map((line) => {
         const split = splits[line.id]!;
         return (
-          <fieldset key={line.id} className="grid gap-3 sm:grid-cols-[1fr_repeat(3,110px)] sm:items-end">
+          <fieldset key={line.id} className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_repeat(3,110px)] sm:items-end">
             <legend className="sr-only">{line.productName}</legend>
             <span className="text-small">
               <span className="block font-medium">{line.productName}</span>
