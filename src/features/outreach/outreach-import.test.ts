@@ -25,7 +25,15 @@ describe("outreach import", () => {
   });
 
   it("finds the header row below a title, and keeps both note columns", () => {
-    const text = ["Posygo partner leads", "Edit Status as you go.", "", "Country\tBusiness\tWhy they fit\tNotes", "Canada\tBeta Prep\tStores seller stock.\tCalled once.", "", "Germany\tASAP Prep\t\t"].join("\n");
+    const text = [
+      "Posygo partner leads",
+      "Edit Status as you go.",
+      "",
+      "Country\tBusiness\tWhy they fit\tNotes",
+      "Canada\tBeta Prep\tStores seller stock.\tCalled once.",
+      "",
+      "Germany\tASAP Prep\t\t",
+    ].join("\n");
     const { contacts, problems } = parseContacts(text);
     expect(problems).toEqual([]);
     expect(contacts.map((contact) => [contact.business, contact.notes])).toEqual([

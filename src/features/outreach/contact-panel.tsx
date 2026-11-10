@@ -5,10 +5,10 @@ import { type ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/ui/chip";
-import { Field, FormAlert, Select, Textarea } from "@/components/ui/form-controls";
+import { Field, FormAlert, Input, Select, Textarea } from "@/components/ui/form-controls";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Paper, Stamp } from "@/components/ui/surfaces";
-import { formError } from "@/features/receiving/api-errors";
+import { fieldError, formError } from "@/features/receiving/api-errors";
 import { formatDateTime } from "@/lib/format";
 import { toast } from "@/lib/toast/toast-store";
 
@@ -17,11 +17,28 @@ import { OUTREACH_KIND_LABELS, OUTREACH_STATUS_LABELS } from "./outreach-display
 
 const LOCALE = "en-GB";
 
+const DETAILS = [
+  { key: "contactName", label: "Contact name", type: "text" },
+  { key: "email", label: "Email", type: "email" },
+  { key: "phone", label: "Phone", type: "tel" },
+  { key: "city", label: "City", type: "text" },
+] as const;
+
+type DetailKey = (typeof DETAILS)[number]["key"];
+
 export function ContactPanel({ id, onClose }: { id: string; onClose: () => void }) {
   const contact = useOutreachContact(id);
   return (
     <Paper className="flex flex-col gap-4 px-6 py-6">
-      {contact.data ? <ContactDetail key={contact.data.status + (contact.data.notes ?? "")} contact={contact.data} onClose={onClose} /> : <Skeleton className="h-[320px] w-full" />}
+      {contact.data ? (
+        <ContactDetail
+          key={[contact.data.status, contact.data.notes, contact.data.contactName, contact.data.email, contact.data.phone, contact.data.city].join("|")}
+          contact={contact.data}
+          onClose={onClose}
+        />
+      ) : (
+        <Skeleton className="h-[320px] w-full" />
+      )}
     </Paper>
   );
 }
@@ -29,13 +46,15 @@ export function ContactPanel({ id, onClose }: { id: string; onClose: () => void 
 function ContactDetail({ contact, onClose }: { contact: OutreachContactDetailView; onClose: () => void }) {
   const [status, setStatus] = useState<OutreachStatus>(contact.status);
   const [notes, setNotes] = useState(contact.notes ?? "");
+  const [details, setDetails] = useState<Record<DetailKey, string>>({ contactName: contact.contactName ?? "", email: contact.email ?? "", phone: contact.phone ?? "", city: contact.city ?? "" });
   const [removing, setRemoving] = useState(false);
   const update = useUpdateContact(contact.id);
   const remove = useRemoveContact(contact.id);
   const unsubscribed = contact.status === "UNSUBSCRIBED";
 
   function save() {
-    update.mutate({ ...(unsubscribed ? {} : { status: status as Exclude<OutreachStatus, "UNSUBSCRIBED"> }), notes }, { onSuccess: () => toast.success("Saved", contact.business) });
+    const changed = Object.fromEntries(DETAILS.filter(({ key }) => details[key].trim() !== (contact[key] ?? "")).map(({ key }) => [key, details[key].trim()]));
+    update.mutate({ ...changed, ...(unsubscribed ? {} : { status: status as Exclude<OutreachStatus, "UNSUBSCRIBED"> }), notes }, { onSuccess: () => toast.success("Saved", contact.business) });
   }
 
   return (
@@ -51,9 +70,6 @@ function ContactDetail({ contact, onClose }: { contact: OutreachContactDetailVie
         </Button>
       </div>
       <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1 text-small">
-        {contact.contactName ? <Row label="Contact" value={contact.contactName} /> : null}
-        <Row label="Email" value={contact.email ?? "None"} />
-        {contact.phone ? <Row label="Phone" value={contact.phone} /> : null}
         {contact.website ? (
           <Row
             label="Website"
@@ -76,6 +92,13 @@ function ContactDetail({ contact, onClose }: { contact: OutreachContactDetailVie
         ) : null}
       </dl>
       <FormAlert message={formError(update.error ?? remove.error)} />
+      <div className="grid gap-3 sm:grid-cols-2">
+        {DETAILS.map(({ key, label, type }) => (
+          <Field key={key} label={label} error={fieldError(update.error, key)}>
+            {({ id }) => <Input id={id} type={type} value={details[key]} onChange={(event) => setDetails((current) => ({ ...current, [key]: event.target.value }))} />}
+          </Field>
+        ))}
+      </div>
       {unsubscribed ? (
         <StatusPill tone="pink">Asked not to be emailed</StatusPill>
       ) : (
@@ -91,9 +114,7 @@ function ContactDetail({ contact, onClose }: { contact: OutreachContactDetailVie
           )}
         </Field>
       )}
-      <Field label="Notes">
-        {({ id }) => <Textarea id={id} maxLength={1000} value={notes} onChange={(event) => setNotes(event.target.value)} className="min-h-[80px]" />}
-      </Field>
+      <Field label="Notes">{({ id }) => <Textarea id={id} maxLength={1000} value={notes} onChange={(event) => setNotes(event.target.value)} className="min-h-[80px]" />}</Field>
       <div className="flex flex-wrap gap-3">
         <Button variant="yellow" loading={update.isPending} onClick={save}>
           Save

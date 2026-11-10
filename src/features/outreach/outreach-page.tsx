@@ -75,16 +75,8 @@ export function OutreachPage() {
     },
     { key: "where", header: "Where", render: (contact) => <span className="text-small">{[contact.city, contact.country].filter(Boolean).join(", ")}</span> },
     { key: "email", header: "Email", render: (contact) => <span className="text-small">{contact.email ?? <span className="text-ink-faint">No email</span>}</span> },
-    {
-      key: "status",
-      header: "Status",
-      render: (contact) => <StatusPill tone={OUTREACH_STATUS_LABELS[contact.status].tone}>{OUTREACH_STATUS_LABELS[contact.status].label}</StatusPill>,
-    },
-    {
-      key: "last",
-      header: "Last emailed",
-      render: (contact) => <span className="text-small text-ink-soft">{contact.lastMessagedAt ? formatDate(contact.lastMessagedAt, "en-GB") : "Never"}</span>,
-    },
+    { key: "status", header: "Status", render: (contact) => <StatusPill tone={OUTREACH_STATUS_LABELS[contact.status].tone}>{OUTREACH_STATUS_LABELS[contact.status].label}</StatusPill> },
+    { key: "last", header: "Last emailed", render: (contact) => <span className="text-small text-ink-soft">{contact.lastMessagedAt ? formatDate(contact.lastMessagedAt, "en-GB") : "Never"}</span> },
   ];
 
   return (
@@ -104,7 +96,9 @@ export function OutreachPage() {
           </div>
         }
       />
-      {panel === "add" || panel === "import" ? <Paper className="px-6 py-6">{panel === "add" ? <ContactForm onDone={() => setPanel(null)} /> : <ImportForm onDone={() => setPanel(null)} />}</Paper> : null}
+      {panel === "add" || panel === "import" ? (
+        <Paper className="px-6 py-6">{panel === "add" ? <ContactForm onDone={() => setPanel(null)} /> : <ImportForm onDone={() => setPanel(null)} />}</Paper>
+      ) : null}
       <div className="flex flex-wrap items-end gap-3">
         <div className="w-full sm:w-[200px]">
           <Field label="Status">
