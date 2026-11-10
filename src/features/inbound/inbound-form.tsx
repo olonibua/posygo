@@ -26,7 +26,7 @@ export const INBOUND_HINTS = {
   boxes: {
     id: "inbound-boxes",
     title: "Why count boxes?",
-    text: "The hub checks in and stores every box separately, and storage is charged per box. Tell us exactly how many of each size are coming.",
+    text: "Storage is charged per box, so pick the sizes you need. Sending your own boxes? Count them. Sending small packets? Choose the Posygo boxes you want us to pack them into. It costs the same either way. Once a box is empty we stop charging for it, and the hub repacks your stock into fewer boxes as it sells.",
   },
 } as const;
 
@@ -99,7 +99,11 @@ export function InboundForm({ inbound, draftKey, onSave }: InboundFormProps) {
       <Section title="What's inside" lead="Declare every product and how many units. The hub counts against this list.">
         <LineFields {...fieldProps} products={products.data ?? []} />
       </Section>
-      <Section title="Boxes" lead="How many boxes of each size are coming." hint={INBOUND_HINTS.boxes}>
+      <Section
+        title="Boxes"
+        lead={values.shippingMode === "POSYGO_BOXES" ? "Which Posygo boxes should we pack your packets into? Each one is priced like a box you send yourself." : "How many boxes of each size are coming."}
+        hint={INBOUND_HINTS.boxes}
+      >
         <BoxFields {...fieldProps} />
       </Section>
       <Section title="Anything else?">

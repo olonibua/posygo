@@ -20,6 +20,7 @@ import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { formatDate } from "@/lib/format";
 
 import { LotHistory } from "./lot-history";
+import { StorageBoxes } from "./storage-boxes";
 
 export const LOTS_KEY = ["vendor", "inventory", "lots"] as const;
 
@@ -121,6 +122,7 @@ export function InventoryPage() {
         rowKey={(row) => row.id}
         empty={lots.isLoading ? "Loading stock…" : <EmptyState title="No stock yet" body="Stock appears here once the hub has counted your first shipment." />}
       />
+      <StorageBoxes />
       <HubSignals countryCode={user.countryCode} />
       <section aria-labelledby="movements-heading" className="flex flex-col gap-3">
         <h2 id="movements-heading" className="text-h3">

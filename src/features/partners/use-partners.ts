@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/api/client";
 import { toast } from "@/lib/toast/toast-store";
 
-const ADMIN_KEY = ["admin", "partners"] as const;
+export const ADMIN_KEY = ["admin", "partners"] as const;
 const PORTAL_KEY = ["partner"] as const;
 
 type Method = "POST" | "PUT" | "DELETE";

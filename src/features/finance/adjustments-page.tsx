@@ -29,7 +29,16 @@ export function AdjustmentsPage() {
 
   const columns: Column<AdjustmentView>[] = [
     { key: "when", header: "Asked", render: (row) => <span className="whitespace-nowrap text-ink-soft">{formatDateTime(row.createdAt, LOCALE)}</span> },
-    { key: "vendor", header: "Vendor", render: (row) => <span className="font-medium">{row.businessName}</span> },
+    {
+      key: "account",
+      header: "Account",
+      render: (row) => (
+        <span>
+          <span className="block font-medium">{row.businessName}</span>
+          <span className="text-meta text-ink-faint">{row.accountKind === "PARTNER" ? "Partner earnings" : "Vendor wallet"}</span>
+        </span>
+      ),
+    },
     {
       key: "amount",
       header: "Amount",

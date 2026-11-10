@@ -30,6 +30,14 @@ export function useRequestAdjustment(walletId: string) {
   return useFinanceMutation((input: RequestAdjustmentInput) => apiRequest<AdjustmentView>(`/v1/admin/finance/wallets/${walletId}/adjustments`, { method: "POST", body: input }));
 }
 
+export function usePartnerAdjustments(partnerId: string) {
+  return useQuery({ queryKey: [...FINANCE_KEY, "adjustments", "partner", partnerId], queryFn: () => apiRequest<AdjustmentView[]>(`/v1/admin/finance/adjustments?partnerId=${partnerId}`) });
+}
+
+export function useRequestPartnerAdjustment(partnerId: string) {
+  return useFinanceMutation((input: RequestAdjustmentInput) => apiRequest<AdjustmentView>(`/v1/admin/finance/partners/${partnerId}/adjustments`, { method: "POST", body: input }));
+}
+
 export function useDecideAdjustment() {
   return useFinanceMutation((input: { id: string; approve: boolean; note: string }) =>
     apiRequest<AdjustmentView>(`/v1/admin/finance/adjustments/${input.id}/decision`, { method: "POST", body: { approve: input.approve, note: input.note } }),

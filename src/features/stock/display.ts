@@ -1,6 +1,7 @@
 import type { InboundAction, InboundStatus, LotCondition, MovementType, ShippingMode, StorageTier } from "@/shared";
 
 import type { Tone } from "@/components/ui/tone";
+import { BRAND } from "@/lib/brand";
 
 export const INBOUND_STATUS_DISPLAY: Record<InboundStatus, { label: string; tone: Tone }> = {
   DRAFT: { label: "Draft", tone: "yellow" },
@@ -35,7 +36,8 @@ export const STORAGE_TIER_LABELS: Record<StorageTier, { label: string; hint: str
 };
 
 export const SHIPPING_MODE_LABELS: Record<ShippingMode, { label: string; hint: string }> = {
-  LOOSE: { label: "Loose boxes", hint: "Parcels sent by courier" },
+  LOOSE: { label: "In your own boxes", hint: "We store your boxes as they arrive" },
+  POSYGO_BOXES: { label: "Small packets", hint: `Bags or packets we put in ${BRAND.name} boxes for you` },
   PALLET: { label: "Pallets", hint: "Freight on one or more pallets" },
 };
 

@@ -13,6 +13,7 @@ import { formatDateTime, localeFor } from "@/lib/format";
 import { HEARD_FROM_LABELS } from "../partner-display";
 import { PartnerStatusNote, ReadinessList } from "../partner-parts";
 import { usePartnerCase } from "../use-partners";
+import { EarningsAdjustmentsPanel } from "./case-adjustments";
 import { DepositPanel, EarningsPanel, PayoutAccountPanel } from "./case-finance";
 import { ProfileChangeReview } from "./case-profile-change";
 import { ChecksReview, InsuranceReview } from "./case-review";
@@ -93,6 +94,7 @@ export function PartnerCasePage({ partnerId }: { partnerId: string }) {
             <DepositPanel partner={partner} locale={locale} />
           </div>
           {operating ? <EarningsPanel partner={partner} locale={locale} /> : null}
+          {operating ? <EarningsAdjustmentsPanel partner={partner} locale={locale} canAdjust={hasPermission(user.role, "finance.adjust")} /> : null}
         </>
       ) : null}
     </div>

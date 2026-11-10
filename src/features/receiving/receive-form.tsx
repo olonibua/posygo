@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FormAlert, Input, Textarea } from "@/components/ui/form-controls";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { STORAGE_TIER_LABELS } from "@/features/stock/display";
+import { BRAND } from "@/lib/brand";
 
 import { fieldError, formError } from "./api-errors";
 import { PhotoCollector } from "./photo-collector";
@@ -75,7 +76,10 @@ export function ReceiveForm({
     <form noValidate onSubmit={submit} className="flex flex-col gap-5">
       <FormAlert message={problem ?? formError(error)} />
       <Paper className="flex flex-col gap-4 px-6 py-5">
-        <Stamp>Boxes counted</Stamp>
+        <Stamp>{inbound.shippingMode === "POSYGO_BOXES" ? `${BRAND.name} boxes used` : "Boxes counted"}</Stamp>
+        {inbound.shippingMode === "POSYGO_BOXES" ? (
+          <p className="text-small text-ink-soft">This seller sent small packets. Pack them into {BRAND.name} boxes, using as few as fit, and count the boxes you used.</p>
+        ) : null}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
           {STORAGE_TIERS.map((tier) => (
             <Field key={tier} label={STORAGE_TIER_LABELS[tier].label}>

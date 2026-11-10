@@ -15,6 +15,7 @@ import { useCurrentUser } from "@/lib/auth/use-current-user";
 
 import { CustodyHistory } from "./custody-history";
 import { PlaceLotControl } from "./place-lot-control";
+import { SellerBoxes } from "./seller-boxes";
 import { useWarehouseLots } from "./use-lots";
 import { useLocations, useWarehouses } from "./use-warehouses";
 
@@ -100,6 +101,7 @@ export function StockPage() {
         loading={lots.isLoading}
         empty={!warehouseId ? "Choose a warehouse to see its stock." : <EmptyState title="All put away" body="Lots appear here as soon as a shipment is counted." />}
       />
+      {warehouseId ? <SellerBoxes warehouseId={warehouseId} canRepack={canPlace} /> : null}
     </div>
   );
 }
