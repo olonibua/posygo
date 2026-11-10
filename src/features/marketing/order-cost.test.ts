@@ -15,13 +15,7 @@ const prices = (countryCode: string): PublicPriceListView => ({
 describe("order cost", () => {
   it("adds packing to postage with our shipping markup", () => {
     const cost = orderCost(prices("GB"))!;
-    expect(cost).toMatchObject({ currency: "GBP", packingMinor: 299, postageMinor: 413, totalMinor: 712, extraItemMinor: 99, packingCapMinor: 1099, firstShipmentFree: true });
-    expect(cost.storage.map((row) => [row.tier, row.monthlyMinor, row.stockingMinor])).toEqual([
-      ["SMALL", 900, 1200],
-      ["MEDIUM", 1400, 2200],
-      ["LARGE", 1800, 4000],
-      ["X_LARGE", 2500, 6000],
-    ]);
+    expect(cost).toMatchObject({ currency: "GBP", packingMinor: 299, postageMinor: 413, totalMinor: 712, extraItemMinor: 99, packingCapMinor: 1099 });
   });
 
   it("prices postage for each country we know, and nothing for others", () => {

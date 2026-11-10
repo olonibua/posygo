@@ -1,4 +1,4 @@
-import type { PublicPriceListView, StorageTier } from "@/shared";
+import type { PublicPriceListView } from "@/shared";
 
 export const POSTAGE_FROM_MINOR: Readonly<Record<string, { minor: number; service: string }>> = {
   CA: { minor: 1073, service: "Canada Post Xpresspost, 1 kg, nearby addresses" },
@@ -8,8 +8,6 @@ export const POSTAGE_FROM_MINOR: Readonly<Record<string, { minor: number; servic
 
 export const COURIER_FROM_HOME: Readonly<Record<string, { currency: string; fromMinor: number }>> = { NG: { currency: "NGN", fromMinor: 6_500_000 } };
 
-const BOX_TIERS = ["SMALL", "MEDIUM", "LARGE", "X_LARGE"] as const satisfies readonly StorageTier[];
-
 export interface OrderCost {
   currency: string;
   packingMinor: number;
@@ -18,8 +16,6 @@ export interface OrderCost {
   postageMinor: number;
   postageService: string;
   totalMinor: number;
-  storage: { tier: (typeof BOX_TIERS)[number]; monthlyMinor: number; stockingMinor: number | null }[];
-  firstShipmentFree: boolean;
 }
 
 export function orderCost(prices: PublicPriceListView): OrderCost | null {
@@ -27,13 +23,8 @@ export function orderCost(prices: PublicPriceListView): OrderCost | null {
   if (!postage) {
     return null;
   }
-  const { fulfilment, shippingMarkupBps, monthlyStorage, onboarding, firstShipmentWaivesStocking } = prices.schedule;
+  const { fulfilment, shippingMarkupBps } = prices.schedule;
   const postageMinor = Math.round((postage.minor * (10_000 + shippingMarkupBps)) / 10_000);
-  const storage = BOX_TIERS.flatMap((tier) => {
-    const monthlyMinor = monthlyStorage[tier];
-    const rate = onboarding[tier];
-    return monthlyMinor === null ? [] : [{ tier, monthlyMinor, stockingMinor: rate.negotiated ? null : rate.stockingMinor }];
-  });
   return {
     currency: prices.currency,
     packingMinor: fulfilment.baseMinor,
@@ -42,8 +33,6 @@ export function orderCost(prices: PublicPriceListView): OrderCost | null {
     postageMinor,
     postageService: postage.service,
     totalMinor: fulfilment.baseMinor + postageMinor,
-    storage,
-    firstShipmentFree: firstShipmentWaivesStocking,
   };
 }
 
