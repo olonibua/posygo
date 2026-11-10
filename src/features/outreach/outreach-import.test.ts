@@ -24,8 +24,18 @@ describe("outreach import", () => {
     expect(problems).toEqual(["Row 3 is missing a business or country, so it was left out."]);
   });
 
+  it("finds the header row below a title, and keeps both note columns", () => {
+    const text = ["Posygo partner leads", "Edit Status as you go.", "", "Country\tBusiness\tWhy they fit\tNotes", "Canada\tBeta Prep\tStores seller stock.\tCalled once.", "", "Germany\tASAP Prep\t\t"].join("\n");
+    const { contacts, problems } = parseContacts(text);
+    expect(problems).toEqual([]);
+    expect(contacts.map((contact) => [contact.business, contact.notes])).toEqual([
+      ["Beta Prep", "Stores seller stock. Called once."],
+      ["ASAP Prep", undefined],
+    ]);
+  });
+
   it("asks for a header with business and country", () => {
-    expect(parseContacts("name,email\nA,a@b.test").problems).toEqual(["The header row needs at least a Business and a Country column."]);
+    expect(parseContacts("name,email\nA,a@b.test").problems).toEqual(["Include the header row with at least a Business and a Country column."]);
   });
 
   it("works out the type from everyday words", () => {

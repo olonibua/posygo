@@ -67,32 +67,48 @@ export interface ParsedImport {
   problems: string[];
 }
 
-export function parseContacts(text: string): ParsedImport {
-  const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
-  if (lines.length < 2) {
-    return { contacts: [], problems: ["Paste a header row and at least one contact."] };
+const NO_HEADER = "Include the header row with at least a Business and a Country column.";
+
+function headerFields(row: readonly string[]): (Field | null)[] | null {
+  const fields = row.map(fieldFor);
+  return fields.includes("business") && fields.includes("country") ? fields : null;
+}
+
+function contactFrom(fields: readonly (Field | null)[], cells: readonly string[]): Partial<Record<Field, string>> {
+  const row: Partial<Record<Field, string>> = {};
+  fields.forEach((field, column) => {
+    const value = cells[column]?.trim();
+    if (field && value) {
+      row[field] = field === "notes" && row.notes ? `${row.notes} ${value}` : value;
+    }
+  });
+  return row;
+}
+
+export function parseRows(rows: readonly (readonly string[])[]): ParsedImport {
+  const headerAt = rows.findIndex((row) => headerFields(row) !== null);
+  if (headerAt === -1) {
+    return { contacts: [], problems: [NO_HEADER] };
   }
-  const separator = lines[0]!.includes("\t") ? "\t" : ",";
-  const fields = splitLine(lines[0]!, separator).map(fieldFor);
-  if (!fields.includes("business") || !fields.includes("country")) {
-    return { contacts: [], problems: ["The header row needs at least a Business and a Country column."] };
-  }
+  const fields = headerFields(rows[headerAt]!)!;
   const contacts: OutreachContactInput[] = [];
   const problems: string[] = [];
-  lines.slice(1).forEach((line, index) => {
-    const cells = splitLine(line, separator);
-    const row: Partial<Record<Field, string>> = {};
-    fields.forEach((field, column) => {
-      const value = cells[column]?.trim();
-      if (field && value) {
-        row[field] = value;
-      }
-    });
+  rows.slice(headerAt + 1).forEach((cells, index) => {
+    if (cells.every((cell) => cell.trim() === "")) {
+      return;
+    }
+    const row = contactFrom(fields, cells);
     if (!row.business || !row.country) {
-      problems.push(`Row ${index + 2} is missing a business or country, so it was left out.`);
+      problems.push(`Row ${headerAt + index + 2} is missing a business or country, so it was left out.`);
       return;
     }
     contacts.push({ ...row, business: row.business, country: row.country, kind: kindFrom(row.kind ?? "") } as OutreachContactInput);
   });
   return { contacts, problems };
+}
+
+export function parseContacts(text: string): ParsedImport {
+  const lines = text.split(/\r?\n/);
+  const separator = lines.some((line) => line.includes("\t")) ? "\t" : ",";
+  return parseRows(lines.map((line) => splitLine(line, separator)));
 }
