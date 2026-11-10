@@ -1,4 +1,4 @@
-import { type FeeSchedule, feeScheduleSchema, partnerRates, referralRates, shoppingRates, STORAGE_TIERS, type StorageTier, storefrontRates } from "@/shared";
+import { boxSupplyRates, type BoxSupplyRates, type FeeSchedule, feeScheduleSchema, partnerRates, referralRates, shoppingRates, STORAGE_TIERS, type StorageTier, storefrontRates } from "@/shared";
 
 import { STORAGE_TIER_LABELS } from "@/features/stock/display";
 
@@ -11,8 +11,12 @@ export interface TierDraft {
   monthly: string;
 }
 
+type SuppliedTier = keyof BoxSupplyRates;
+export const SUPPLIED_TIERS: readonly SuppliedTier[] = ["SMALL", "MEDIUM", "LARGE", "X_LARGE"];
+
 export interface FeeDraft {
   tiers: Record<StorageTier, TierDraft>;
+  boxSupply: Record<SuppliedTier, string>;
   base: string;
   perUnit: string;
   max: string;
@@ -59,8 +63,10 @@ export function draftFrom(schedule: FeeSchedule, currency: string): FeeDraft {
       ];
     }),
   ) as Record<StorageTier, TierDraft>;
+  const supply = boxSupplyRates(schedule);
   return {
     tiers,
+    boxSupply: Object.fromEntries(SUPPLIED_TIERS.map((tier) => [tier, major(supply[tier])])) as Record<SuppliedTier, string>,
     base: major(schedule.fulfilment.baseMinor),
     perUnit: major(schedule.fulfilment.perAdditionalUnitMinor),
     max: major(schedule.fulfilment.maxMinor),
@@ -151,6 +157,7 @@ export function scheduleFrom(draft: FeeDraft, currency: string): DraftResult {
       monthlyRewardsPerReferrer: number(draft.referralMonthlyCap, "referrals per month", 1),
     },
     shopping: { commissionBps: number(draft.shoppingCommissionPercent, "shopping fee", 100), minimumFeeMinor: minor(draft.shoppingMinimumFee, "shopping minimum fee") },
+    boxSupply: Object.fromEntries(SUPPLIED_TIERS.map((tier) => [tier, minor(draft.boxSupply[tier], `${STORAGE_TIER_LABELS[tier].label} box`)])),
   };
   if (problems.length > 0) {
     return { ok: false, message: `Check these amounts: ${problems.join(", ").toLowerCase()}.` };

@@ -24,6 +24,7 @@ const CORE_PAGES: readonly SitePage[] = [
   { path: "/partners/earnings", title: "Partner earnings", summary: "What partners earn.", priority: 0.2 },
   { path: "/guides", title: "Guides", summary: "Guides to selling abroad and getting orders to customers fast.", priority: 0.6 },
   { path: "/track", title: "Track a parcel", summary: "Track an order sent by Posygo.", priority: 0.4 },
+  { path: "/contact", title: "Contact", summary: "How to reach the Posygo team.", priority: 0.4 },
   { path: "/legal/terms", title: "Terms of service", summary: "Terms of service.", priority: 0.2 },
   { path: "/legal/privacy", title: "Privacy policy", summary: "Privacy policy.", priority: 0.2 },
 ];

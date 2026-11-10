@@ -9,8 +9,9 @@ import { Field, FormAlert, Input, Textarea } from "@/components/ui/form-controls
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { STORAGE_TIER_LABELS } from "@/features/stock/display";
 import { errorMessage } from "@/features/receiving/api-errors";
+import { BRAND } from "@/lib/brand";
 
-import { draftFrom, type FeeDraft, scheduleFrom, type TierDraft } from "./fee-draft";
+import { draftFrom, type FeeDraft, scheduleFrom, SUPPLIED_TIERS, type TierDraft } from "./fee-draft";
 import { FeeGrowthFields } from "./fee-growth-fields";
 import { MoneyField } from "./money-field";
 import { currencySymbol } from "./money-input";
@@ -116,6 +117,15 @@ export function FeeScheduleForm({ base, currency, busy, error, onCancel, onPropo
             </tbody>
           </table>
           <p className="text-meta text-ink-faint">Leave “Each month” empty to price that size by quote.</p>
+        </div>
+        <div className="flex flex-col gap-3">
+          <p className="text-small font-medium">{BRAND.name} box prices</p>
+          <p className="text-meta text-ink-faint">Charged once per box when a seller sends small packets for the hub to box up. It pays the hub for the box. Storage is charged on top, like any box.</p>
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+            {SUPPLIED_TIERS.map((tier) => (
+              <MoneyField key={tier} label={STORAGE_TIER_LABELS[tier].label} currency={currency} value={draft.boxSupply[tier]} onChange={(value) => set({ boxSupply: { ...draft.boxSupply, [tier]: value } })} />
+            ))}
+          </div>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           <MoneyField label="Packing, first unit" currency={currency} value={draft.base} onChange={(base) => set({ base })} />

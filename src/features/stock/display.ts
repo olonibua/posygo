@@ -28,10 +28,10 @@ export const INBOUND_ACTION_LABELS: Record<InboundAction, string> = {
 };
 
 export const STORAGE_TIER_LABELS: Record<StorageTier, { label: string; hint: string }> = {
-  SMALL: { label: "Small", hint: "Up to a shoebox" },
-  MEDIUM: { label: "Medium", hint: "Up to a moving box" },
-  LARGE: { label: "Large", hint: "Up to a wardrobe box" },
-  X_LARGE: { label: "Extra large", hint: "Bulky or oversized" },
+  SMALL: { label: "Small", hint: "Up to 31 × 23 × 23 cm" },
+  MEDIUM: { label: "Medium", hint: "Up to 46 × 31 × 31 cm" },
+  LARGE: { label: "Large", hint: "Up to 46 × 46 × 46 cm" },
+  X_LARGE: { label: "Extra large", hint: "Up to 61 × 46 × 46 cm" },
   PALLET: { label: "Pallet", hint: "A full pallet" },
 };
 

@@ -132,6 +132,18 @@ export const GUIDE_KNOWLEDGE = describePage({
   ],
 });
 
+export const CONTACT_KNOWLEDGE = describePage({
+  route: "/contact",
+  title: "Contact",
+  purpose: "How to reach our team: by email, from your account if you already sell with us, or by tracking a parcel.",
+  steps: ["Email us about storing stock, prices or countries.", "If you already sell with us, sign in and message us from your account.", "Waiting for a parcel? Track it with the number from your shipping email."],
+  fields: {},
+  related: [
+    { href: "/login", label: "Sign in" },
+    { href: "/track", label: "Track a parcel" },
+  ],
+});
+
 export const LEGAL_KNOWLEDGE = describePage({
   route: "/legal/[document]",
   title: "Legal document",

@@ -8,7 +8,7 @@ const SHIPMENT: Omit<PageKnowledgeOf<InboundInput>, "route"> = {
   purpose: "Tell us what stock you're sending to the country you've chosen at the top of the page, so every unit can be counted against your list when it arrives.",
   steps: [
     "Check the country at the top of the page. The stock is kept there and can only be sent to customers in that country.",
-    "Say how it's travelling: loose boxes by courier, or pallets.",
+    "Say how it's travelling: in your own boxes, as small packets we put in Posygo boxes, or on pallets.",
     "Pick the date you expect it to arrive, and add the carrier and tracking number if you have them.",
     "List every product and how many units of each are coming.",
     "Count your boxes by size. Each box is stored and charged on its own.",
@@ -16,7 +16,16 @@ const SHIPMENT: Omit<PageKnowledgeOf<InboundInput>, "route"> = {
   ],
   fields: {
     warehouseId: { labels: [], meaning: "The hub that stores this stock and sends your orders. Hubs are named by city, with the area added when a city has more than one. Pick the one closest to most of your customers. You can send stock to more than one hub." },
-    shippingMode: { labels: ["How is it travelling?"], meaning: "Loose boxes are parcels sent by courier. Pallets are freight on one or more pallets. It changes which box sizes you can declare." },
+    shippingMode: {
+      labels: ["How is it travelling?"],
+      meaning:
+        "In your own boxes: the hub stores your boxes as they arrive. Small packets: you send bags or packets and the hub packs them into Posygo boxes you pay for once. Pallets: freight on one or more pallets. Either way you pay for the space each box takes.",
+    },
+    intoExistingBoxes: {
+      labels: ["Put it in my existing boxes"],
+      meaning:
+        "Tick this when your boxes at this hub have room for this shipment. You still choose a box size in case it doesn't fit, and pay for it now. If the hub fits everything into your existing boxes, that box is refunded in full when the shipment is received.",
+    },
     expectedArrivalDate: {
       labels: ["Expected arrival"],
       meaning: "The day you expect the delivery to reach the hub, so they can plan space and staff.",

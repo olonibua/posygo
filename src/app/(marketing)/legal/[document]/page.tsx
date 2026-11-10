@@ -10,6 +10,7 @@ import { AgreementBody } from "@/features/agreements/agreement-body";
 import { fetchLiveCountries } from "@/features/marketing/live-countries";
 import { fetchPublic } from "@/lib/api/public-server";
 import { cn } from "@/lib/cn";
+import { BRAND } from "@/lib/brand";
 import { formatDate } from "@/lib/format";
 import { publicPage } from "@/lib/site";
 
@@ -70,6 +71,9 @@ export default async function LegalPage({ params, searchParams }: { params: Prom
             <AgreementBody body={published.body} />
           </Paper>
         ) : null}
+        <p className="max-w-[860px] text-small text-ink-soft">
+          Questions about this document or your personal data? Email <a href={`mailto:${BRAND.contactEmail}`}>{BRAND.contactEmail}</a>. {BRAND.company.legalName}, {BRAND.company.registeredOffice}.
+        </p>
       </main>
       <MarketingFooter />
     </>

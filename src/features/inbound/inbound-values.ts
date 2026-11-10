@@ -8,6 +8,7 @@ export interface LineRow {
 export interface InboundValues {
   warehouseId: string;
   shippingMode: ShippingMode;
+  intoExistingBoxes: boolean;
   expectedArrivalDate: string;
   carrier: string;
   trackingNumber: string;
@@ -23,13 +24,14 @@ export function tiersFor(mode: ShippingMode): readonly StorageTier[] {
 }
 
 export function emptyInbound(today: string): InboundValues {
-  return { warehouseId: "", shippingMode: "LOOSE", expectedArrivalDate: today, carrier: "", trackingNumber: "", boxCounts: { ...NO_BOXES }, lines: [{ productId: "", quantity: "" }], notes: "" };
+  return { warehouseId: "", shippingMode: "LOOSE", intoExistingBoxes: false, expectedArrivalDate: today, carrier: "", trackingNumber: "", boxCounts: { ...NO_BOXES }, lines: [{ productId: "", quantity: "" }], notes: "" };
 }
 
 export function inboundToValues(inbound: InboundDetailView): InboundValues {
   return {
     warehouseId: inbound.warehouseId,
     shippingMode: inbound.shippingMode,
+    intoExistingBoxes: inbound.intoExistingBoxes,
     expectedArrivalDate: inbound.expectedArrivalDate,
     carrier: inbound.carrier ?? "",
     trackingNumber: inbound.trackingNumber ?? "",
@@ -53,6 +55,7 @@ export function valuesToInput(values: InboundValues): InboundInput {
   return {
     warehouseId: optional(values.warehouseId ?? ""),
     shippingMode: values.shippingMode,
+    intoExistingBoxes: values.shippingMode !== "PALLET" && values.intoExistingBoxes,
     expectedArrivalDate: values.expectedArrivalDate,
     carrier: optional(values.carrier),
     trackingNumber: optional(values.trackingNumber),

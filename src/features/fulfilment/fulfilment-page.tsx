@@ -17,6 +17,7 @@ import { errorMessage } from "@/features/receiving/api-errors";
 import { useCurrentUser } from "@/lib/auth/use-current-user";
 import { localeFor } from "@/lib/format";
 
+import { BoxCheckPrompt } from "./box-check-prompt";
 import { LabelCard } from "./label-card";
 import { PackForm } from "./pack-form";
 import { RatesPanel } from "./rates-panel";
@@ -42,6 +43,7 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
   const remaining = data.lines.reduce((total, line) => total + line.quantity - line.scannedQuantity, 0);
   const canDecide = hasPermission(user.role, "orders.cancel") && data.cancellation?.status === "PENDING";
   const showRates = data.actions.includes("FETCH_RATES") || data.actions.includes("SELECT_RATE");
+  const askForBoxPhoto = Boolean(user.partnerId) && hasPermission(user.role, "inventory.place") && Boolean(data.label) && !data.actions.includes("HAND_OFF") && data.status !== "CANCELLED";
   const viewOnly = !hasPermission(user.role, "orders.fulfil") && !data.label && data.status !== "CANCELLED";
   const busy = act.isPending;
 
@@ -150,6 +152,7 @@ export function FulfilmentPage({ orderId }: { orderId: string }) {
             onHandOff={data.actions.includes("HAND_OFF") ? (photoFileIds, sealNumber) => act.mutate({ action: "HAND_OFF", photoFileIds, sealNumber }) : undefined}
             onAddPhotos={(fileIds) => addPhotos.mutate(fileIds)}
           />
+          {askForBoxPhoto ? <BoxCheckPrompt orderId={data.id} vendorId={data.vendorId} warehouseId={data.warehouseId} businessName={data.businessName} /> : null}
           <TrackingCard
             order={data}
             locale={locale}

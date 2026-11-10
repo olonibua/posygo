@@ -7,6 +7,7 @@ export const BRAND = {
   vendorPortalLabel: "Vendor portal",
   adminConsoleLabel: "Platform console",
   supportPromise: "Our team answers within one working day.",
+  contactEmail: "hello@posygo.com",
   company: {
     legalName: "Posygo Ltd",
     number: "17557238",

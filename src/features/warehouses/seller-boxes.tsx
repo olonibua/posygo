@@ -10,10 +10,13 @@ import { Field, FormAlert, Input, Textarea } from "@/components/ui/form-controls
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { fieldError, formError } from "@/features/receiving/api-errors";
 import { PhotoCollector } from "@/features/receiving/photo-collector";
+import { BoxCheckSummary } from "@/features/stock/box-check-summary";
 import { STORAGE_TIER_LABELS } from "@/features/stock/display";
 import { apiRequest } from "@/lib/api/client";
 import { formatMoney } from "@/lib/format";
 import { toast } from "@/lib/toast/toast-store";
+
+import { BoxCheckForm, hubBoxesKey } from "./box-check-form";
 
 const LOCALE = "en-GB";
 const BOX_TIERS = STORAGE_TIERS.filter((tier) => tier !== "PALLET");
@@ -23,9 +26,10 @@ function summary(vendor: RepackCandidateView): string {
 }
 
 export function SellerBoxes({ warehouseId, canRepack }: { warehouseId: string; canRepack: boolean }) {
-  const key = ["warehouse", warehouseId, "boxes"];
+  const key = hubBoxesKey(warehouseId);
   const boxes = useQuery({ queryKey: key, queryFn: () => apiRequest<HubRepackListView>(`/v1/warehouse/warehouses/${warehouseId}/boxes`) });
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState<{ vendorId: string; form: "repack" | "check" } | null>(null);
+  const toggle = (vendorId: string, form: "repack" | "check") => setOpen(open?.vendorId === vendorId && open.form === form ? null : { vendorId, form });
   const data = boxes.data;
   if (!data || data.vendors.length === 0) {
     return null;
@@ -52,13 +56,26 @@ export function SellerBoxes({ warehouseId, canRepack }: { warehouseId: string; c
               <div className="flex shrink-0 items-center gap-2">
                 {vendor.worthRepacking ? <StatusPill tone="yellow">Worth repacking</StatusPill> : null}
                 {canRepack ? (
-                  <Button variant="ghost" aria-expanded={open === vendor.vendorId} onClick={() => setOpen(open === vendor.vendorId ? null : vendor.vendorId)}>
-                    Repack
-                  </Button>
+                  <>
+                    <Button variant="ghost" aria-expanded={open?.vendorId === vendor.vendorId && open.form === "check"} onClick={() => toggle(vendor.vendorId, "check")}>
+                      Add photo
+                    </Button>
+                    <Button variant="ghost" aria-expanded={open?.vendorId === vendor.vendorId && open.form === "repack"} onClick={() => toggle(vendor.vendorId, "repack")}>
+                      Repack
+                    </Button>
+                  </>
                 ) : null}
               </div>
             </div>
-            {open === vendor.vendorId ? (
+            <div className="mt-3 border-t border-line pt-3">
+              <BoxCheckSummary check={vendor.latestCheck} photoPath={(fileId) => `/v1/warehouse/warehouses/${warehouseId}/boxes/photos/${fileId}`} />
+            </div>
+            {open?.vendorId === vendor.vendorId && open.form === "check" ? (
+              <div className="mt-4 border-t border-line pt-4">
+                <BoxCheckForm warehouseId={warehouseId} vendorId={vendor.vendorId} businessName={vendor.businessName} onDone={() => setOpen(null)} />
+              </div>
+            ) : null}
+            {open?.vendorId === vendor.vendorId && open.form === "repack" ? (
               <RepackForm warehouseId={warehouseId} vendor={vendor} currency={data.currency} monthly={data.monthlyRates} queryKey={key} onDone={() => setOpen(null)} />
             ) : null}
           </Paper>

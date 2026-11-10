@@ -9,6 +9,7 @@ import { Paper, Stamp } from "@/components/ui/surfaces";
 import { useVendorWallet } from "@/features/finance/use-vendor-wallet";
 import { errorMessage } from "@/features/receiving/api-errors";
 import { apiRequest } from "@/lib/api/client";
+import { BRAND } from "@/lib/brand";
 import { formatDate, formatMoney } from "@/lib/format";
 
 function Row({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
@@ -23,7 +24,7 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
 const CHARGES_HINT = {
   id: "inbound-charges",
   title: "What you're paying for",
-  text: "Stocking pays the hub to check in, count and shelve each box, and the first month of storage is paid upfront. After that, storage is charged per box every 30 days. Packing, delivery and returns are charged when orders go out. Your first shipment's stocking is free.",
+  text: "You pay for the space each box takes. Stocking pays the hub to check in, count and shelve each box, and the first month of storage is paid upfront. After that, storage is charged per box every 30 days until the box is empty. Sending small packets? Each box we supply has a one-off price on top. Your first shipment's stocking is free.",
 };
 
 function useEstimate(inbound: InboundDetailView) {
@@ -55,6 +56,7 @@ export function InboundChargesCard({ inbound, locale }: { inbound: InboundDetail
           <dl className="mt-3 text-small">
             <Row label="Stocking" value={money(quote.stockingMinor)} />
             <Row label="First month of storage" value={money(quote.storageMinor)} />
+            {quote.boxesMinor > 0 ? <Row label={`${BRAND.name} boxes`} value={money(quote.boxesMinor)} /> : null}
             {quote.waivedMinor > 0 ? <Row label="First shipment, stocking waived" value={`−${money(quote.waivedMinor)}`} /> : null}
             <Row label="Taken from your wallet" value={money(quote.totalMinor)} strong />
           </dl>

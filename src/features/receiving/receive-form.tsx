@@ -80,9 +80,15 @@ export function ReceiveForm({
         {inbound.shippingMode === "POSYGO_BOXES" ? (
           <p className="text-small text-ink-soft">This seller sent small packets. Pack them into {BRAND.name} boxes, using as few as fit, and count the boxes you used.</p>
         ) : null}
+        <p className="text-meta text-ink-faint">Count each box in the smallest size it fits. Measure the outside; any side can be the length.</p>
+        {inbound.intoExistingBoxes ? (
+          <p className="text-small text-ink-soft">
+            The seller asked for this stock to go into their boxes already here. If it all fits, leave every count at 0 and they get their box fee back. If it doesn&apos;t fit, count the new boxes you used.
+          </p>
+        ) : null}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
           {STORAGE_TIERS.map((tier) => (
-            <Field key={tier} label={STORAGE_TIER_LABELS[tier].label}>
+            <Field key={tier} label={STORAGE_TIER_LABELS[tier].label} hint={STORAGE_TIER_LABELS[tier].hint}>
               {({ id }) => (
                 <Input id={id} type="number" min={0} max={500} inputMode="numeric" value={boxes[tier]} onChange={(event) => setBoxes((current) => ({ ...current, [tier]: event.target.value }))} />
               )}

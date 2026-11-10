@@ -18,6 +18,7 @@ const FOOTER_LINKS = [
   { href: "/guides", label: "Guides" },
   { href: "/track", label: "Track a parcel" },
   { href: "/partners", label: "Partners" },
+  { href: "/contact", label: "Contact" },
   { href: "/legal/terms", label: "Terms" },
   { href: "/legal/privacy", label: "Privacy" },
 ];

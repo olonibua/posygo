@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { useCountryScope } from "@/features/seller-countries/selected-country";
+import { BoxCheckSummary } from "@/features/stock/box-check-summary";
 import { STORAGE_TIER_LABELS } from "@/features/stock/display";
 import { apiRequest } from "@/lib/api/client";
 import { BRAND } from "@/lib/brand";
@@ -19,9 +20,19 @@ function boxLine(group: BoxGroupView): string {
   return `${group.count} ${size} ${group.count === 1 ? "box" : "boxes"} (${parts})`;
 }
 
-export function StorageBoxes() {
+export const VENDOR_BOXES_KEY = ["vendor", "inventory", "boxes"] as const;
+
+export function vendorBoxPhotoPath(fileId: string): string {
+  return `/v1/vendor/inventory/boxes/photos/${fileId}`;
+}
+
+export function useVendorBoxes() {
   const { code, ready, path } = useCountryScope();
-  const boxes = useQuery({ queryKey: ["vendor", "inventory", "boxes", code], queryFn: () => apiRequest<VendorBoxesView>(path("/v1/vendor/inventory/boxes")), enabled: ready });
+  return useQuery({ queryKey: [...VENDOR_BOXES_KEY, code], queryFn: () => apiRequest<VendorBoxesView>(path("/v1/vendor/inventory/boxes")), enabled: ready });
+}
+
+export function StorageBoxes() {
+  const boxes = useVendorBoxes();
   const data = boxes.data;
   if (!data) {
     return null;
@@ -51,6 +62,9 @@ export function StorageBoxes() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-3 border-t border-line pt-3">
+                <BoxCheckSummary check={hub.latestCheck} photoPath={vendorBoxPhotoPath} />
+              </div>
               <p className="mt-3 border-t border-line pt-3 text-meta text-ink-faint">
                 {hub.unitsStored} units stored · {formatMoney(hub.monthlyMinor, data.currency, LOCALE)} a month
                 {hub.nextChargeOn ? ` · next charge ${formatDate(hub.nextChargeOn, LOCALE)}` : ""}

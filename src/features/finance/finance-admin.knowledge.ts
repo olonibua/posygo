@@ -142,6 +142,10 @@ export const FEES_KNOWLEDGE = describePage<ProposeFeeScheduleInput & FeeSchedule
       meaning: "The wallet credit given to a vendor who refers a business and to the new vendor, once the new vendor's first stock arrives, and how many rewards one referrer can get each month.",
       mistakes: ["Up to 100 rewards per referrer each month."],
     },
+    boxSupply: {
+      labels: ["Posygo box prices"],
+      meaning: "What a seller pays for each box the hub supplies when they send small packets instead of their own boxes. It goes to the hub to buy the boxes. Storage is charged on top, the same as any box.",
+    },
     shopping: {
       labels: ["Personal shopping", "Our fee (%)", "Smallest fee"],
       meaning: "What we charge on personal shopping requests: a percentage of the goods' price, or the smallest fee when the percentage comes to less.",

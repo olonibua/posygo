@@ -10,9 +10,11 @@ import { HintButton, StepHint } from "@/components/ui/step-hint";
 import { Field, FormAlert, Textarea } from "@/components/ui/form-controls";
 import { Paper, Stamp } from "@/components/ui/surfaces";
 import { useFormErrors } from "@/features/catalogue/form-errors";
+import { BoxGuide } from "@/features/stock/box-guide";
 import { apiRequest } from "@/lib/api/client";
 import { useFormDraft } from "@/lib/drafts/use-form-draft";
 
+import { ExistingBoxesOption } from "./existing-boxes-option";
 import { HubPicker } from "./hub-picker";
 import { BoxFields, LineFields, TravelFields } from "./inbound-fields";
 import { emptyInbound, inboundToValues, type InboundValues, valuesToInput } from "./inbound-values";
@@ -66,6 +68,7 @@ export function InboundForm({ inbound, draftKey, onSave }: InboundFormProps) {
   const [values, setValues] = useState<InboundValues>(() => (inbound ? inboundToValues(inbound) : emptyInbound(todayIso())));
   const draft = useFormDraft({ key: draftKey ?? null, values, onRestore: setValues });
   const [saving, setSaving] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
   const { formError, capture, reset, errorFor } = useFormErrors();
   const products = useQuery({ queryKey: ["vendor", "products", "list", "ACTIVE"], queryFn: () => apiRequest<ProductView[]>("/v1/vendor/products?status=ACTIVE") });
   const set = (patch: Partial<InboundValues>) => setValues((current) => ({ ...current, ...patch }));
@@ -104,7 +107,14 @@ export function InboundForm({ inbound, draftKey, onSave }: InboundFormProps) {
         lead={values.shippingMode === "POSYGO_BOXES" ? "Which Posygo boxes should we pack your packets into? Each one is priced like a box you send yourself." : "How many boxes of each size are coming."}
         hint={INBOUND_HINTS.boxes}
       >
+        <ExistingBoxesOption {...fieldProps} />
         <BoxFields {...fieldProps} />
+        <div>
+          <Button type="button" variant="ghost" aria-expanded={guideOpen} onClick={() => setGuideOpen((open) => !open)}>
+            {guideOpen ? "Hide box sizes" : "Which size do I need?"}
+          </Button>
+        </div>
+        {guideOpen ? <BoxGuide /> : null}
       </Section>
       <Section title="Anything else?">
         <Field label="Notes for the hub" hint="Optional. Fragile items, unusual packaging, that sort of thing." error={errorFor("notes")}>
