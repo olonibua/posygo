@@ -1,6 +1,4 @@
-import { ButtonLink } from "@/components/ui/button";
 import { DotList, type DotListItem, FeatureCard } from "@/components/ui/feature-card";
-import { PlanCard } from "@/components/ui/plan-card";
 import { NotebookNote, Stamp } from "@/components/ui/surfaces";
 
 const ARRIVALS: readonly DotListItem[] = [
@@ -32,57 +30,6 @@ export function FeatureSection() {
               </NotebookNote>
             </div>
           }
-        />
-      </div>
-    </section>
-  );
-}
-
-export function AudienceSection() {
-  return (
-    <section id="who-its-for" className="pt-24 text-center sm:pt-[120px]">
-      <Stamp>Who it’s for</Stamp>
-      <h2 className="mx-auto mt-3.5 max-w-[820px] text-[44px] font-medium leading-[46px] tracking-[-1.8px] md:text-display">Built for every kind of seller</h2>
-      <div className="mt-[54px] grid gap-6 md:grid-cols-3">
-        <PlanCard
-          tone="yellow"
-          title="Sellers"
-          line="Start in the country you know."
-          headline="1"
-          headlineNote="country to start"
-          action={<ButtonLink href="/signup">Start selling</ButtonLink>}
-          points={[
-            { text: "Verified once, in your own country", dot: "orange" },
-            { text: "Stock counted and photographed on arrival", dot: "sky" },
-            { text: "Fees in your local currency", dot: "pink" },
-          ]}
-        />
-        <PlanCard
-          tone="lime"
-          title="Growing brands"
-          line="Sell in more countries."
-          headline="Every"
-          headlineNote="country you add"
-          sticker="/brand/badge-scallop-sky.svg"
-          action={<ButtonLink href="/signup">Start selling</ButtonLink>}
-          points={[
-            { text: "Stock in every country you sell in", dot: "orange" },
-            { text: "A wallet in each country's currency", dot: "sky" },
-            { text: "Invite your team to help", dot: "magenta" },
-          ]}
-        />
-        <PlanCard
-          tone="sky"
-          title="No website yet"
-          line="Sell from your own Posygo shop."
-          headline="1"
-          headlineNote="link to share with buyers"
-          action={<ButtonLink href="/signup">Open your shop</ButtonLink>}
-          points={[
-            { text: "Your products on your own shop page", dot: "orange" },
-            { text: "Payments taken for you", dot: "lime" },
-            { text: "Orders go straight to packing", dot: "pink" },
-          ]}
         />
       </div>
     </section>

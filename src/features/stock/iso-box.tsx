@@ -30,9 +30,36 @@ function cuboid(at: Point, size: Point, origin: { x: number; y: number }, colour
   const [dx, dy, dz] = size;
   return (
     <g key={key}>
-      {face([[x, y + dy, z], [x + dx, y + dy, z], [x + dx, y + dy, z + dz], [x, y + dy, z + dz]], origin, colours.left)}
-      {face([[x + dx, y, z], [x + dx, y + dy, z], [x + dx, y + dy, z + dz], [x + dx, y, z + dz]], origin, colours.right)}
-      {face([[x, y, z + dz], [x + dx, y, z + dz], [x + dx, y + dy, z + dz], [x, y + dy, z + dz]], origin, colours.top)}
+      {face(
+        [
+          [x, y + dy, z],
+          [x + dx, y + dy, z],
+          [x + dx, y + dy, z + dz],
+          [x, y + dy, z + dz],
+        ],
+        origin,
+        colours.left,
+      )}
+      {face(
+        [
+          [x + dx, y, z],
+          [x + dx, y + dy, z],
+          [x + dx, y + dy, z + dz],
+          [x + dx, y, z + dz],
+        ],
+        origin,
+        colours.right,
+      )}
+      {face(
+        [
+          [x, y, z + dz],
+          [x + dx, y, z + dz],
+          [x + dx, y + dy, z + dz],
+          [x, y + dy, z + dz],
+        ],
+        origin,
+        colours.top,
+      )}
     </g>
   );
 }
@@ -44,7 +71,12 @@ function cylinder(centre: Point, diameter: number, height: number, origin: { x: 
   const [topX, topY] = project([centre[0], centre[1], centre[2] + height], origin);
   return (
     <>
-      <path d={`M${bottomX - radiusX},${bottomY} A${radiusX},${radiusY} 0 0 0 ${bottomX + radiusX},${bottomY} L${topX + radiusX},${topY} L${topX - radiusX},${topY} Z`} fill={colours.body} stroke={colours.line} strokeWidth={0.6} />
+      <path
+        d={`M${bottomX - radiusX},${bottomY} A${radiusX},${radiusY} 0 0 0 ${bottomX + radiusX},${bottomY} L${topX + radiusX},${topY} L${topX - radiusX},${topY} Z`}
+        fill={colours.body}
+        stroke={colours.line}
+        strokeWidth={0.6}
+      />
       <ellipse cx={topX} cy={topY} rx={radiusX} ry={radiusY} fill={colours.top} stroke={colours.line} strokeWidth={0.6} />
     </>
   );
@@ -99,10 +131,7 @@ function Dimension({ from, to, shift, text, origin }: { from: Point; to: Point; 
 
 export function IsoBox({ entry, contents, label }: { entry: BoxGuideEntry; contents: BoxContents; label: string }) {
   const [length, width, height] = entry.maxMm;
-  const view = {
-    width: (LARGEST.length + LARGEST.width) * COS * SCALE + MARGIN * 2,
-    height: ((LARGEST.length + LARGEST.width) * SIN + LARGEST.height * 1.45) * SCALE + MARGIN,
-  };
+  const view = { width: (LARGEST.length + LARGEST.width) * COS * SCALE + MARGIN * 2, height: ((LARGEST.length + LARGEST.width) * SIN + LARGEST.height * 1.45) * SCALE + MARGIN };
   const origin = { x: round((view.width - (length + width) * COS * SCALE) / 2 + width * COS * SCALE), y: round(view.height - MARGIN * 1.1 - (length + width) * SIN * SCALE) };
   const flap = { left: width * 0.5, back: length * 0.4 };
   return (
@@ -112,14 +141,79 @@ export function IsoBox({ entry, contents, label }: { entry: BoxGuideEntry; conte
           <path d="M0,1 L9,5 L0,9 Z" fill="var(--danger, #d1462f)" />
         </marker>
       </defs>
-      {face([[0, 0, 0], [length, 0, 0], [length, width, 0], [0, width, 0]], origin, "#a9824a")}
-      {face([[0, 0, 0], [0, width, 0], [0, width, height], [0, 0, height]], origin, "#b98f55")}
-      {face([[0, 0, 0], [length, 0, 0], [length, 0, height], [0, 0, height]], origin, "#c49a5e")}
-      {face([[0, 0, height], [0, width, height], [0, width * 0.98, height + flap.left], [0, width * 0.02, height + flap.left]], origin, "#d2a96c")}
-      {face([[0, 0, height], [length, 0, height], [length * 0.98, 0, height + flap.back], [length * 0.02, 0, height + flap.back]], origin, "#d8b175")}
+      {face(
+        [
+          [0, 0, 0],
+          [length, 0, 0],
+          [length, width, 0],
+          [0, width, 0],
+        ],
+        origin,
+        "#a9824a",
+      )}
+      {face(
+        [
+          [0, 0, 0],
+          [0, width, 0],
+          [0, width, height],
+          [0, 0, height],
+        ],
+        origin,
+        "#b98f55",
+      )}
+      {face(
+        [
+          [0, 0, 0],
+          [length, 0, 0],
+          [length, 0, height],
+          [0, 0, height],
+        ],
+        origin,
+        "#c49a5e",
+      )}
+      {face(
+        [
+          [0, 0, height],
+          [0, width, height],
+          [0, width * 0.98, height + flap.left],
+          [0, width * 0.02, height + flap.left],
+        ],
+        origin,
+        "#d2a96c",
+      )}
+      {face(
+        [
+          [0, 0, height],
+          [length, 0, height],
+          [length * 0.98, 0, height + flap.back],
+          [length * 0.02, 0, height + flap.back],
+        ],
+        origin,
+        "#d8b175",
+      )}
       {contentsOf(entry, contents, origin)}
-      {face([[length, 0, 0], [length, width, 0], [length, width, height], [length, 0, height]], origin, "#d9b47c", 0.42)}
-      {face([[0, width, 0], [length, width, 0], [length, width, height], [0, width, height]], origin, "#e3bf88", 0.42)}
+      {face(
+        [
+          [length, 0, 0],
+          [length, width, 0],
+          [length, width, height],
+          [length, 0, height],
+        ],
+        origin,
+        "#d9b47c",
+        0.42,
+      )}
+      {face(
+        [
+          [0, width, 0],
+          [length, width, 0],
+          [length, width, height],
+          [0, width, height],
+        ],
+        origin,
+        "#e3bf88",
+        0.42,
+      )}
       <Dimension from={[0, width, 0]} to={[length, width, 0]} shift={[-16, 30]} text={`${length / 10} cm`} origin={origin} />
       <Dimension from={[length, width, 0]} to={[length, 0, 0]} shift={[16, 30]} text={`${width / 10} cm`} origin={origin} />
       <Dimension from={[length, 0, 0]} to={[length, 0, height]} shift={[34, 0]} text={`${height / 10} cm`} origin={origin} />
