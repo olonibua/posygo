@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { CodeInput, Field, FormAlert, Input, PasswordInput } from "@/components/ui/form-controls";
+import { trackPixel } from "@/lib/analytics/meta-pixel";
 import { apiRequest } from "@/lib/api/client";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useSkipEmailCheck, useTestShortcuts } from "@/lib/auth/test-shortcuts";
@@ -30,6 +31,7 @@ export function VerifyEmailForm({ email = "", password }: { email?: string; pass
     setFormError(null);
     try {
       const result = await apiRequest<AuthenticatedResult>("/v1/auth/verify-email", { method: "POST", body: values, authenticated: false });
+      trackPixel("CompleteRegistration", { content_name: "seller_signup" });
       signIn(result);
       router.replace(homeFor(result.user));
     } catch (error) {

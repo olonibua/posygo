@@ -3,6 +3,7 @@ import { NotebookNote, Sticker } from "@/components/ui/surfaces";
 import { cn } from "@/lib/cn";
 
 import { PeekFeed } from "./peek-feed";
+import { WhatsAppButton } from "./whatsapp-button";
 
 const PEEK_NAV = [
   { label: "Overview", dot: "bg-orange", active: true },
@@ -36,9 +37,7 @@ export function Hero() {
           <ButtonLink href="/signup" variant="yellow" size="lg">
             Start selling →
           </ButtonLink>
-          <ButtonLink href="/#how-it-works" variant="ghost" size="lg">
-            See how it works
-          </ButtonLink>
+          <WhatsAppButton />
         </div>
       </div>
       <ProductPeek />

@@ -59,7 +59,7 @@ export function AcceptInvitationForm() {
           <b className="font-medium text-ink">{preview.businessName}</b> invited <b className="font-medium text-ink">{preview.email}</b>. Choose a password to join.
         </p>
       ) : null}
-      <Field label="Password" hint="At least 12 characters.">
+      <Field label="Password" hint="At least 8 characters.">
         {({ id, describedBy }) => (
           <PasswordInput id={id} autoComplete="new-password" aria-describedby={describedBy} value={password} onChange={(event) => setPassword(event.target.value)} disabled={!preview} />
         )}

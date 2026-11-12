@@ -4,15 +4,16 @@ const API_ORIGIN = new URL(process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:
 const API_SOCKET_ORIGIN = API_ORIGIN.replace(/^http/, "ws");
 const STORAGE_ORIGIN = process.env.NEXT_PUBLIC_STORAGE_ORIGIN ? new URL(process.env.NEXT_PUBLIC_STORAGE_ORIGIN).origin : "";
 const DEVELOPMENT = process.env.NODE_ENV !== "production";
+const META_ORIGINS = "https://connect.facebook.net https://www.facebook.com";
 
 export function buildContentSecurityPolicy(nonce: string): string {
   return [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${DEVELOPMENT ? " 'unsafe-eval'" : ""}`,
     `style-src 'self'${DEVELOPMENT ? " 'unsafe-inline'" : ` 'nonce-${nonce}'`}`,
-    `img-src 'self' data: blob: ${API_ORIGIN}${STORAGE_ORIGIN ? ` ${STORAGE_ORIGIN}` : ""}`,
+    `img-src 'self' data: blob: ${API_ORIGIN}${STORAGE_ORIGIN ? ` ${STORAGE_ORIGIN}` : ""} https://www.facebook.com`,
     "font-src 'self'",
-    `connect-src 'self' ${API_ORIGIN} ${API_SOCKET_ORIGIN}${STORAGE_ORIGIN ? ` ${STORAGE_ORIGIN}` : ""}${DEVELOPMENT ? " ws:" : ""}`,
+    `connect-src 'self' ${API_ORIGIN} ${API_SOCKET_ORIGIN}${STORAGE_ORIGIN ? ` ${STORAGE_ORIGIN}` : ""} ${META_ORIGINS}${DEVELOPMENT ? " ws:" : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

@@ -9,7 +9,7 @@ export const SIGNUP_KNOWLEDGE = describePage<SignupInput>({
   steps: [
     "Enter your business name.",
     "Pick every country you sell in. The first one you pick is your home country.",
-    "Add your work email and a password.",
+    "Add your email and a password.",
     "Accept the terms and create your account.",
     "Type the code we email you to confirm your address.",
   ],
@@ -21,10 +21,10 @@ export const SIGNUP_KNOWLEDGE = describePage<SignupInput>({
         "The countries where we'll keep your stock. Orders in each country are sent from stock in that same country, so pick every country you sell in from the drop-down; each one is added to the list and the cross removes it. Your first pick is your home country, used for your business checks and the activation fee. You can add more later in Settings.",
       mistakes: ["Pick at least one country.", "Only countries that are open are listed. If none show, we haven't opened yet."],
     },
-    email: { labels: ["Work email"], meaning: "The email you'll sign in with. We send a code to confirm it." },
+    email: { labels: ["Email"], meaning: "The email you'll sign in with. We send a code to confirm it." },
     password: {
       labels: ["Password"],
-      meaning: "At least 12 characters. A short sentence you'll remember works well.",
+      meaning: "At least 8 characters. Something you'll remember that isn't used elsewhere.",
       mistakes: ["Passwords that have appeared in known data leaks aren't accepted."],
     },
     acceptTerms: { labels: [/^I agree/], meaning: "Confirms you accept the terms of service and the privacy policy." },

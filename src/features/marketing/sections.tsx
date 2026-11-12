@@ -8,6 +8,7 @@ import type { Tone } from "@/components/ui/tone";
 import { formatMoney, localeFor } from "@/lib/format";
 
 import { countryPath } from "./markets";
+import { WhatsAppButton } from "./whatsapp-button";
 
 const TRUST_POINTS: ReadonlyArray<{ title: string; body: string; tone: Tone }> = [
   { title: "Delivered in days", body: "Orders go out from the country your customer is in.", tone: "sky" },
@@ -76,7 +77,8 @@ export function TrustBand() {
         </h2>
         <div className="relative">
           <p className="mb-[22px] text-[17px] leading-[26px] text-on-ink-soft">
-            Every unit is counted when it arrives and checked again with surprise stock counts. Every parcel is photographed before it goes, and if anything is lost or damaged, approved claims are credited to your wallet.
+            Every unit is counted when it arrives and checked again with surprise stock counts. Every parcel is photographed before it goes, and if anything is lost or damaged, approved claims are
+            credited to your wallet.
           </p>
           <div className="stagger flex flex-wrap gap-2.5">
             {SAFEGUARDS.map((item) => (
@@ -145,9 +147,12 @@ export function ClosingBand() {
       <Sticker src="/brand/sticker-flower-blue.svg" className="bottom-[30px] right-[170px] hidden w-[130px] md:block" />
       <h2 className="mx-auto max-w-[760px] text-[44px] font-medium leading-[46px] tracking-[-1.8px] md:text-display">Make room for your next market.</h2>
       <p className="mb-[30px] mt-5 text-lead text-ink-soft">Start with one shipment. See where it takes you.</p>
-      <ButtonLink href="/signup" variant="primary" size="lg">
-        Create your account ↗
-      </ButtonLink>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <ButtonLink href="/signup" variant="primary" size="lg">
+          Create your account ↗
+        </ButtonLink>
+        <WhatsAppButton>Ask us on WhatsApp</WhatsAppButton>
+      </div>
     </div>
   );
 }

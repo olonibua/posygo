@@ -6,8 +6,8 @@ const INVITE_TOKEN = { labels: [], meaning: "The invitation from your email link
 
 const NEW_PASSWORD = {
   labels: ["Password"],
-  meaning: "The password you'll sign in with from now on. At least 12 characters; a short sentence you'll remember works well.",
-  mistakes: ["Fewer than 12 characters isn't accepted.", "The box stays locked until the invitation has been checked."],
+  meaning: "The password you'll sign in with from now on. At least 8 characters; something you'll remember that isn't used elsewhere.",
+  mistakes: ["Fewer than 8 characters isn't accepted.", "The box stays locked until the invitation has been checked."],
 };
 
 export const LOGIN_KNOWLEDGE = describePage<LoginInput & MfaChallengeInput>({
@@ -68,7 +68,11 @@ export const RESET_PASSWORD_KNOWLEDGE = describePage<ResetPasswordInput & { conf
   steps: ["Open this page from the reset link in your email.", "Type your new password.", "Type it again to confirm it.", "Save, then sign in with the new password."],
   fields: {
     token: { labels: [], meaning: "The reset code from your email link. It's read from the link automatically.", mistakes: ["If the link has expired or was already used, ask for a new one."] },
-    password: { labels: ["New password"], meaning: "Your new password. At least 12 characters; a short sentence you'll remember works well.", mistakes: ["Fewer than 12 characters isn't accepted."] },
+    password: {
+      labels: ["New password"],
+      meaning: "Your new password. At least 8 characters; something you'll remember that isn't used elsewhere.",
+      mistakes: ["Fewer than 8 characters isn't accepted."],
+    },
     confirm: { labels: ["Confirm new password"], meaning: "The same new password again, to catch typing mistakes.", mistakes: ["Both boxes must match exactly."] },
   },
   related: [

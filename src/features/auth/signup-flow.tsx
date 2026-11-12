@@ -1,14 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AuthHeading, AuthShell, SIGNUP_STEPS } from "@/components/layout/auth-shell";
+import { trackPixel } from "@/lib/analytics/meta-pixel";
+
+import { WhatsAppTextLink } from "@/features/marketing/whatsapp-button";
 
 import { SignupForm } from "./signup-form";
 import { VerifyEmailForm } from "./verify-email-form";
 
 export function SignupFlow() {
   const [credentials, setCredentials] = useState<{ email: string; password: string } | null>(null);
+
+  useEffect(() => trackPixel("ViewContent", { content_name: "seller_signup" }), []);
+
+  function accountCreated(created: { email: string; password: string }) {
+    trackPixel("Lead", { content_name: "seller_signup" });
+    setCredentials(created);
+  }
   const railTitle = (
     <>
       Your stock.
@@ -51,8 +61,15 @@ export function SignupFlow() {
       steps={SIGNUP_STEPS}
       currentStep={0}
     >
-      <AuthHeading title="Create your account" lead="Tell us who you are and where you want to store stock. You can add more countries later." />
-      <SignupForm onSubmitted={setCredentials} />
+      <AuthHeading
+        title="Create your account"
+        lead={
+          <>
+            Tell us who you are and where you want to store stock. You can add more countries later. Questions first? <WhatsAppTextLink>Chat with us on WhatsApp</WhatsAppTextLink>.
+          </>
+        }
+      />
+      <SignupForm onSubmitted={accountCreated} />
     </AuthShell>
   );
 }

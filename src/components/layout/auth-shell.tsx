@@ -5,6 +5,7 @@ import { Logo } from "@/components/brand/logo";
 import { type Step, Stepper } from "@/components/ui/stepper";
 import { NotebookNote, Stamp, Sticker } from "@/components/ui/surfaces";
 import { cn } from "@/lib/cn";
+import { AdTracking } from "@/features/marketing/ad-tracking";
 
 interface AuthShellProps {
   railStamp: string;
@@ -40,6 +41,7 @@ export function AuthShell({ railStamp, railTitle, railNote, steps, currentStep =
           <div className="motion-rise w-full max-w-[560px] [--i:2]">{children}</div>
         </main>
       </div>
+      <AdTracking />
     </div>
   );
 }

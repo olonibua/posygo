@@ -60,7 +60,7 @@ export function AcceptStaffInvitationForm() {
     <form noValidate onSubmit={(event) => void onSubmit(event)} className="flex flex-col gap-5">
       <InvitationHeading preview={preview} />
       <FormAlert message={error} />
-      <Field label="Password" hint="At least 12 characters.">
+      <Field label="Password" hint="At least 8 characters.">
         {({ id, describedBy }) => (
           <PasswordInput id={id} autoComplete="new-password" aria-describedby={describedBy} value={password} onChange={(event) => setPassword(event.target.value)} disabled={!preview} />
         )}

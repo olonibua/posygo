@@ -55,7 +55,7 @@ export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email
           </p>
         ) : null}
       </fieldset>
-      <Field label="Work email" error={errors.email?.message}>
+      <Field label="Email" error={errors.email?.message}>
         {({ id, describedBy, invalid }) => <Input id={id} type="email" autoComplete="email" aria-describedby={describedBy} aria-invalid={invalid} {...register("email")} />}
       </Field>
       <Field
@@ -67,7 +67,7 @@ export function SignupForm({ onSubmitted }: { onSubmitted: (credentials: { email
           <Input id={id} autoComplete="off" className="uppercase" maxLength={40} aria-describedby={describedBy} aria-invalid={invalid} {...register("referralCode")} />
         )}
       </Field>
-      <Field label="Password" hint="At least 12 characters. A short sentence works well." error={errors.password?.message}>
+      <Field label="Password" hint="At least 8 characters." error={errors.password?.message}>
         {({ id, describedBy, invalid }) => <PasswordInput id={id} autoComplete="new-password" aria-describedby={describedBy} aria-invalid={invalid} {...register("password")} />}
       </Field>
       <Checkbox

@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { Logo } from "@/components/brand/logo";
+import { AdTracking } from "@/features/marketing/ad-tracking";
+import { WhatsAppTextLink } from "@/features/marketing/whatsapp-button";
 import { BRAND } from "@/lib/brand";
 import { FEATURES } from "@/lib/features";
 
@@ -30,6 +32,7 @@ export function MarketingHeader() {
         <Logo />
         <MarketingNav links={LINKS} />
       </nav>
+      <AdTracking />
     </div>
   );
 }
@@ -46,6 +49,7 @@ export function MarketingFooter() {
                 {link.label}
               </Link>
             ))}
+            <WhatsAppTextLink className="text-ink-soft no-underline hover:underline">WhatsApp {BRAND.whatsapp.display}</WhatsAppTextLink>
           </nav>
           <span>
             © {new Date().getFullYear()} {BRAND.company.legalName}

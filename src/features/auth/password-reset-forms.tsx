@@ -85,7 +85,7 @@ export function ResetPasswordForm() {
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
       <FormAlert message={token === null ? null : formError} />
-      <Field label="New password" hint="At least 12 characters." error={formState.errors.password?.message}>
+      <Field label="New password" hint="At least 8 characters." error={formState.errors.password?.message}>
         {({ id, describedBy, invalid }) => <PasswordInput id={id} autoComplete="new-password" aria-describedby={describedBy} aria-invalid={invalid} {...register("password")} />}
       </Field>
       <Field label="Confirm new password" error={formState.errors.confirm?.message}>
