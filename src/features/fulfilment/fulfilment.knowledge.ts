@@ -28,7 +28,7 @@ export const ORDER_KNOWLEDGE = describePage<
   title: "Order",
   purpose: "Work through one order: scan every unit, record the parcel, buy the label and hand it to the carrier.",
   steps: [
-    "Scan each unit's barcode or lot label until nothing is left to scan.",
+    "Scan the barcode or the lot label on the bin once for each unit, until nothing is left to scan.",
     "Choose the package, weigh the sealed parcel and record the pack.",
     "Get shipping rates, pick one and buy the label. The vendor's wallet is charged for shipping.",
     "Print the label, photograph the sealed parcel and mark it as handed to the carrier.",

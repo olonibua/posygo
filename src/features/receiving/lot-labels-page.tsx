@@ -13,7 +13,7 @@ export function LotLabelsPage({ inboundId }: { inboundId: string }) {
   return (
     <div className="flex flex-col gap-7">
       <div className="print:hidden">
-        <PageHeader stamp="Receiving" title="Lot labels" lead="Stick one label on each lot before putting it away." />
+        <PageHeader stamp="Receiving" title="Lot labels" lead="One label per product. Keep each product in its own bin and stick its label on the bin." />
       </div>
       {labels.isError ? <p className="text-ink-soft">These labels aren&apos;t available to you.</p> : null}
       {labels.data && labels.data.length === 0 ? <EmptyState title="No lots yet" body="Labels appear once the shipment has been counted." /> : null}

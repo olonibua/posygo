@@ -23,7 +23,7 @@ export const RECEIVING_CASE_KNOWLEDGE = describePage<ReceiveInboundInput & Inbou
     "Press Check in at the dock when the delivery arrives.",
     "If something's wrong, put it on hold, refuse it or return it to the sender, with a reason the vendor will see.",
     "Press Record counts. Count the boxes by size, photograph the shipment, and enter good and damaged units for each product.",
-    "Save the counts, then print the lot labels and stick one on each lot.",
+    "Save the counts, then print the lot labels. You get one per product: keep each product in its own bin and stick its label on the bin.",
     "Use Messages to talk to the vendor about this shipment.",
   ],
   fields: {
@@ -67,7 +67,7 @@ export const LOT_LABELS_KNOWLEDGE = describePage({
   route: "/admin/receiving/[id]/labels",
   title: "Lot labels",
   purpose: "Printable labels for the lots in a counted shipment.",
-  steps: ["Print the page.", "Stick one label on each lot before putting it away.", "Put the lots away from the Stock page."],
+  steps: ["Print the page.", "Keep each product in its own bin and stick its label on the bin before putting it away.", "Put the lots away from the Stock page."],
   fields: {},
   related: [
     { href: "/admin/receiving", label: "Receiving" },

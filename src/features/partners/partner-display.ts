@@ -110,6 +110,7 @@ export const PAYOUT_ACCOUNT_DISPLAY: Record<PayoutAccountView["status"], { label
   ONBOARDING: { label: "Setup not finished", tone: "yellow" },
   ACTIVE: { label: "Ready for payouts", tone: "lime" },
   RESTRICTED: { label: "Needs attention", tone: "pink" },
+  CLOSED: { label: "Disconnected", tone: "cocoa" },
 };
 
 export const STOCK_COUNT_DISPLAY: Record<StockCountView["status"], { label: string; tone: Tone }> = {

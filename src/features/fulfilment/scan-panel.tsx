@@ -59,7 +59,7 @@ export function ScanPanel({ lines, remaining, busy, error, last, onScan, onReset
           Start again
         </Button>
       </div>
-      <p className="mt-2 text-small text-ink-soft">Check every item going in the box by scanning its barcode or the lot label stuck on it when it arrived.</p>
+      <p className="mt-2 text-small text-ink-soft">Check every item going in the box by scanning its barcode or the lot label on its bin. Scan once for each piece.</p>
 
       <Button variant="yellow" size="lg" className="mt-4 w-full justify-center" onClick={() => setCamera(true)}>
         Scan with camera
@@ -91,7 +91,7 @@ export function ScanPanel({ lines, remaining, busy, error, last, onScan, onReset
           <p id="no-barcode" className="text-small font-medium">
             No barcode on the product?
           </p>
-          <p className="mt-1 text-meta text-ink-soft">Find the lot label on the item and check it matches. Tap the code to put it in the box above, then tap Add code.</p>
+          <p className="mt-1 text-meta text-ink-soft">Find the lot label on the item&apos;s bin and check it matches. Tap the code to put it in the box above, then tap Add code.</p>
           <ul className="mt-3 flex flex-col gap-2.5">
             {unlabelled.map((line) => (
               <li key={line.id} className="flex flex-wrap items-center justify-between gap-2">
