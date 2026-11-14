@@ -34,4 +34,4 @@ export function middleware(request: NextRequest) {
   return response;
 }
 
-export const config = { matcher: [{ source: "/((?!_next/static|_next/image|brand/|favicon.ico).*)", missing: [{ type: "header", key: "next-router-prefetch" }] }] };
+export const config = { matcher: [{ source: "/((?!_next/static|_next/image|brand/|email/|favicon.ico).*)", missing: [{ type: "header", key: "next-router-prefetch" }] }] };

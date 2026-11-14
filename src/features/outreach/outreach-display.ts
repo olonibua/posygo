@@ -12,4 +12,11 @@ export const OUTREACH_STATUS_LABELS: Record<OutreachStatus, { label: string; ton
   UNSUBSCRIBED: { label: "Unsubscribed", tone: "pink" },
 };
 
-export const OUTREACH_KIND_LABELS: Record<OutreachKind, string> = { PREP_CENTRE: "Prep centre", CARGO_AGENT: "Cargo agent", COURIER: "Courier", INDIVIDUAL: "Individual", OTHER: "Other" };
+export const OUTREACH_KIND_LABELS: Record<OutreachKind, string> = {
+  PREP_CENTRE: "Prep centre",
+  CARGO_AGENT: "Cargo agent",
+  COURIER: "Courier",
+  INDIVIDUAL: "Individual",
+  BRAND: "Brand",
+  OTHER: "Other",
+};

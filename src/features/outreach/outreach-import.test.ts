@@ -50,6 +50,7 @@ describe("outreach import", () => {
     expect(kindFrom("Nigeria cargo agent")).toBe("CARGO_AGENT");
     expect(kindFrom("Africa freight agent")).toBe("CARGO_AGENT");
     expect(kindFrom("Prep centre / 3PL")).toBe("PREP_CENTRE");
+    expect(kindFrom("Brand")).toBe("BRAND");
     expect(kindFrom("—")).toBe("OTHER");
   });
 });

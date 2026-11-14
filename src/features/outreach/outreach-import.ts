@@ -34,6 +34,9 @@ export function kindFrom(text: string): OutreachKind {
   if (value.includes("individual") || value.includes("home")) {
     return "INDIVIDUAL";
   }
+  if (value.includes("brand") || value.includes("seller")) {
+    return "BRAND";
+  }
   return "OTHER";
 }
 

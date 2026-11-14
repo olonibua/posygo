@@ -1,6 +1,6 @@
 "use client";
 
-import { fillOutreach, OUTREACH_FIELDS, OUTREACH_LIMITS, type OutreachContactView, type OutreachSendResultView } from "@/shared";
+import { fillOutreach, OUTREACH_FIELDS, OUTREACH_LIMITS, type OutreachContactView, type OutreachDesign, type OutreachSendResultView } from "@/shared";
 import { type FormEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ export function ComposePanel({ recipients, onSent, onCancel }: ComposePanelProps
   const send = useSendOutreach();
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+  const [design, setDesign] = useState<OutreachDesign | undefined>(undefined);
   const [confirming, setConfirming] = useState(false);
   const [result, setResult] = useState<OutreachSendResultView | null>(null);
   const sample = recipients[0];
@@ -30,6 +31,7 @@ export function ComposePanel({ recipients, onSent, onCancel }: ComposePanelProps
     if (template) {
       setSubject(template.subject);
       setBody(template.body);
+      setDesign(template.design);
     }
   }
 
@@ -40,7 +42,7 @@ export function ComposePanel({ recipients, onSent, onCancel }: ComposePanelProps
       return;
     }
     send.mutate(
-      { contactIds: recipients.map((contact) => contact.id), subject, body },
+      { contactIds: recipients.map((contact) => contact.id), subject, body, design },
       {
         onSuccess: (outcome) => {
           setResult(outcome);
@@ -98,6 +100,12 @@ export function ComposePanel({ recipients, onSent, onCancel }: ComposePanelProps
             </Select>
           )}
         </Field>
+        {design ? (
+          <p className="rounded-tile bg-lime px-4 py-3 text-small text-cocoa">
+            This sends the designed email with the animated pictures and the WhatsApp button, filled in for each contact. The message below is the plain-text copy for email apps that don&apos;t show
+            pictures.
+          </p>
+        ) : null}
         <Field label="Subject" error={fieldError(send.error, "subject")}>
           {({ id }) => <Input id={id} maxLength={150} value={subject} onChange={(event) => setSubject(event.target.value)} />}
         </Field>
