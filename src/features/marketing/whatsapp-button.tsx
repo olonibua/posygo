@@ -6,9 +6,21 @@ import { type ButtonSize, type ButtonVariant, buttonClasses } from "@/components
 import { trackPixel } from "@/lib/analytics/meta-pixel";
 import { whatsappLink } from "@/lib/whatsapp";
 
-export function WhatsAppButton({ variant = "ghost", size = "lg", className, children = "Chat on WhatsApp" }: { variant?: ButtonVariant; size?: ButtonSize; className?: string; children?: ReactNode }) {
+export function WhatsAppButton({
+  variant = "ghost",
+  size = "lg",
+  className,
+  message,
+  children = "Chat on WhatsApp",
+}: {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  className?: string;
+  message?: string;
+  children?: ReactNode;
+}) {
   return (
-    <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className={buttonClasses(variant, size, className)} onClick={() => trackPixel("Contact", { method: "whatsapp" })}>
+    <a href={whatsappLink(message)} target="_blank" rel="noopener noreferrer" className={buttonClasses(variant, size, className)} onClick={() => trackPixel("Contact", { method: "whatsapp" })}>
       <WhatsAppIcon />
       {children}
     </a>

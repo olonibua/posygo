@@ -1,6 +1,18 @@
 "use client";
 
-import type { ApiKeyCreatedView, ApiKeyView, CreateOrdersInput, ImportResultView, OrderDetailView, OrderEstimateView, OrderSummaryView, VendorOrderActionInput } from "@/shared";
+import type {
+  ApiKeyCreatedView,
+  ApiKeyView,
+  CreateOrdersInput,
+  CreateStoreConnectionInput,
+  StoreConnectionCreatedView,
+  StoreConnectionView,
+  ImportResultView,
+  OrderDetailView,
+  OrderEstimateView,
+  OrderSummaryView,
+  VendorOrderActionInput,
+} from "@/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { VENDOR_WALLET_KEY } from "@/features/finance/use-vendor-wallet";
@@ -78,4 +90,21 @@ export function useApiKeys() {
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: key }),
   });
   return { keys, create, revoke };
+}
+
+export function useStoreConnections() {
+  const queryClient = useQueryClient();
+  const key = ["vendor", "integrations", "stores"];
+  const refresh = () => void queryClient.invalidateQueries({ queryKey: key });
+  const connections = useQuery({ queryKey: key, queryFn: () => apiRequest<StoreConnectionView[]>("/v1/vendor/integrations/stores") });
+  const create = useMutation({
+    mutationFn: (input: CreateStoreConnectionInput) => apiRequest<StoreConnectionCreatedView>("/v1/vendor/integrations/stores", { method: "POST", body: input }),
+    onSuccess: refresh,
+  });
+  const saveSecret = useMutation({
+    mutationFn: ({ id, secret }: { id: string; secret: string }) => apiRequest<StoreConnectionView>(`/v1/vendor/integrations/stores/${id}/signing-secret`, { method: "PUT", body: { secret } }),
+    onSuccess: refresh,
+  });
+  const disconnect = useMutation({ mutationFn: (id: string) => apiRequest<StoreConnectionView>(`/v1/vendor/integrations/stores/${id}`, { method: "DELETE" }), onSuccess: refresh });
+  return { connections, create, saveSecret, disconnect };
 }
