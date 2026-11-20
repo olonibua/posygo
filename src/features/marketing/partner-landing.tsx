@@ -118,7 +118,7 @@ export function EarningsExamples({ programmes }: { programmes: readonly PartnerP
               </a>
               {programme.foundingPlacesLeft > 0 && programme.foundingBonusBps > 0 ? (
                 <NotebookNote tone="yellow" tilt="none" className="py-3 pl-[38px] pr-4 text-small">
-                  Founding partner offer: the first partners here earn an extra {percent(programme.foundingBonusBps)}. {programme.foundingPlacesLeft}{" "}
+                  Founding partner offer: earn an extra {percent(programme.foundingBonusBps)} on everything, for as long as you&rsquo;re with us. {programme.foundingPlacesLeft}{" "}
                   {programme.foundingPlacesLeft === 1 ? "place" : "places"} left.
                 </NotebookNote>
               ) : null}

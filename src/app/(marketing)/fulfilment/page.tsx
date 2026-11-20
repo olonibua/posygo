@@ -4,6 +4,7 @@ import { MarketingFooter, MarketingHeader } from "@/components/layout/marketing-
 import { JsonLd } from "@/components/seo/json-ld";
 import { NotebookNote } from "@/components/ui/surfaces";
 import { loadMarkets } from "@/features/marketing/market-data";
+import { africanBrandsPath } from "@/features/marketing/african-brands-copy";
 import { capitalised, countryPath, countryPhrase, fulfilmentWord } from "@/features/marketing/markets";
 import { PageIntro } from "@/features/marketing/page-intro";
 import { BRAND } from "@/lib/brand";
@@ -55,6 +56,9 @@ export default async function FulfilmentIndexPage() {
                   <p className="mt-2 text-small">
                     Billed in {market.country.currency}
                     {market.prices ? ` · packing from ${formatMoney(market.prices.schedule.fulfilment.baseMinor, market.country.currency, market.country.locale)} an order` : ""}
+                  </p>
+                  <p className="mt-2 text-small">
+                    <Link href={africanBrandsPath(market.country)}>Selling from Africa? See how it works →</Link>
                   </p>
                 </NotebookNote>
               </li>

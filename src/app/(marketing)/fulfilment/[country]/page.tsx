@@ -5,7 +5,9 @@ import { notFound } from "next/navigation";
 import { MarketingFooter, MarketingHeader } from "@/components/layout/marketing-chrome";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ButtonLink } from "@/components/ui/button";
+import { NotebookNote } from "@/components/ui/surfaces";
 import { FeeSummary } from "@/features/finance/fee-summary";
+import { africanBrandsPath, africanBrandsTitle } from "@/features/marketing/african-brands-copy";
 import { FaqSection } from "@/features/marketing/faq";
 import { loadLiveCountries, loadMarket } from "@/features/marketing/market-data";
 import { marketDescription, marketFaq, marketTitle } from "@/features/marketing/market-copy";
@@ -69,6 +71,13 @@ export default async function MarketPage({ params }: Props) {
           </div>
         </PageIntro>
         <TrustStrip />
+        <NotebookNote tone="lime" tilt="none" className="mt-10 max-w-[760px]">
+          <p className="text-[19px] font-medium">Selling from Africa to customers in {place}?</p>
+          <p className="mt-1 text-small">
+            See how brands in Nigeria, Ghana, Kenya, South Africa and across Africa send stock in bulk and deliver every order locally:{" "}
+            <Link href={africanBrandsPath(country)}>{africanBrandsTitle(country)}</Link>.
+          </p>
+        </NotebookNote>
         {prices ? (
           <PageSection title={`${capitalised(word)} prices in ${place}`}>
             <div className="max-w-[640px]">

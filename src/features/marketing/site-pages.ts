@@ -2,7 +2,9 @@ import type { PublicCountry, PublicStoreListing } from "@/shared";
 
 import { fetchPublic } from "@/lib/api/public-server";
 
+import { africanBrandsDescription, africanBrandsPath, africanBrandsTitle } from "./african-brands-copy";
 import { GUIDES } from "./guides";
+import { STORE_PLATFORMS, storePlatformPath } from "./store-platforms";
 import { capitalised, countryPath, countryPhrase, fulfilmentWord } from "./markets";
 import { FEATURES } from "@/lib/features";
 
@@ -39,7 +41,9 @@ export async function sitePages(): Promise<SitePage[]> {
     summary: `Prices and how ${fulfilmentWord(country.code)} works in ${countryPhrase(country)}.`,
     priority: 0.9,
   }));
+  const africanBrands = (countries ?? []).map((country) => ({ path: africanBrandsPath(country), title: africanBrandsTitle(country), summary: africanBrandsDescription(country), priority: 0.9 }));
+  const platforms = Object.values(STORE_PLATFORMS).map((platform) => ({ path: storePlatformPath(platform.slug), title: platform.title, summary: platform.description, priority: 0.9 }));
   const guides = GUIDES.map((guide) => ({ path: `/guides/${guide.slug}`, title: guide.title, summary: guide.description, updated: guide.updated, priority: 0.6 }));
   const shops = (stores ?? []).map((store) => ({ path: `/store/${store.slug}`, title: store.displayName, summary: `An independent shop on Posygo.`, updated: store.updatedAt, priority: 0.5 }));
-  return [...CORE_PAGES, ...(FEATURES.marketplace ? [MARKETPLACE] : []), ...markets, ...guides, ...shops];
+  return [...CORE_PAGES, ...(FEATURES.marketplace ? [MARKETPLACE] : []), ...markets, ...africanBrands, ...platforms, ...guides, ...shops];
 }

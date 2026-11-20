@@ -25,22 +25,27 @@ function cheapestStorage(market: Market): number | null {
   return monthly.length > 0 ? Math.min(...monthly) : null;
 }
 
+export function costFaq(market: Market): FaqItem | null {
+  const prices = market.prices?.schedule;
+  if (!prices) {
+    return null;
+  }
+  const storage = cheapestStorage(market);
+  return {
+    question: `How much does ${fulfilmentWord(market.country.code)} cost in ${countryPhrase(market.country)}?`,
+    answer: [
+      `Packing an order costs ${money(market, prices.fulfilment.baseMinor)}, plus ${money(market, prices.fulfilment.perAdditionalUnitMinor)} for each extra unit, up to ${money(market, prices.fulfilment.maxMinor)}.`,
+      storage === null ? "" : ` Storage starts at ${money(market, storage)} a month per box.`,
+      ` Shipping is the carrier's price plus ${prices.shippingMarkupBps / 100}%. There's no monthly subscription.`,
+    ].join(""),
+  };
+}
+
 export function marketFaq(market: Market): FaqItem[] {
   const word = fulfilmentWord(market.country.code);
   const name = countryPhrase(market.country);
-  const items: FaqItem[] = [];
-  const prices = market.prices?.schedule;
-  if (prices) {
-    const storage = cheapestStorage(market);
-    items.push({
-      question: `How much does ${word} cost in ${name}?`,
-      answer: [
-        `Packing an order costs ${money(market, prices.fulfilment.baseMinor)}, plus ${money(market, prices.fulfilment.perAdditionalUnitMinor)} for each extra unit, up to ${money(market, prices.fulfilment.maxMinor)}.`,
-        storage === null ? "" : ` Storage starts at ${money(market, storage)} a month per box.`,
-        ` Shipping is the carrier's price plus ${prices.shippingMarkupBps / 100}%. There's no monthly subscription.`,
-      ].join(""),
-    });
-  }
+  const cost = costFaq(market);
+  const items: FaqItem[] = cost ? [cost] : [];
   items.push(
     {
       question: `What if my stock is lost or damaged in ${name}?`,
