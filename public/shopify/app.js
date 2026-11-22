@@ -187,6 +187,7 @@
           el("li", {}, "The hub packs and ships it, and Shopify emails your customer the tracking."),
         ),
         el("p", { class: "soft small" }, "If the Posygo hub ships all your orders, Shopify can send them for you: Settings → General → Order processing → Automatically fulfill the order's line items."),
+        el("p", { class: "small" }, el("a", { href: "/guides/posygo-shopify-guide.pdf", target: "_blank", rel: "noopener" }, "Download the step-by-step guide (PDF)"), " · ", el("a", { href: "/videos/connect-shopify.mp4", target: "_blank", rel: "noopener" }, "Watch the 80-second video")),
       ),
       renderWaiting(shop.waiting),
       el("section", { class: "card" }, el("h2", {}, "Recent orders"), renderRecent(shop.recent)),

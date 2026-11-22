@@ -11,6 +11,7 @@ import { localeFor } from "@/lib/format";
 
 import { ApiKeysSection } from "./api-keys-section";
 import { type IntegrationRoute, IntegrationRoutes } from "./integration-routes";
+import { ShopifyAppGuide } from "./shopify-app-guide";
 import { StoreConnectionsSection } from "./store-connections-section";
 
 const VIDEO = { src: "/videos/connect-your-shop.mp4", poster: "/videos/connect-your-shop.jpg", label: "How to connect your shop to Posygo, a short video", stamp: "Connect your shop · 80 sec" };
@@ -33,6 +34,7 @@ export function IntegrationsPage() {
         <h2 className="text-[22px] font-medium tracking-[-0.5px]">Where do you sell online?</h2>
         <IntegrationRoutes selected={route} onSelect={setRoute} />
       </section>
+      {route === "SHOPIFY" ? <ShopifyAppGuide /> : null}
       {route === "API" ? <ApiKeysSection locale={locale} /> : <StoreConnectionsSection key={route} platform={route} locale={locale} />}
       <FeaturePanel
         tone="cocoa"
