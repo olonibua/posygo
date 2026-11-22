@@ -77,3 +77,7 @@ td:first-child { font-weight: 600; white-space: nowrap; }
 .badge.success { background: #e6efd9; color: #3e5c1b; }
 .badge.info { background: #e3eefb; color: #1f4c80; }
 .badge.critical { background: #fbeeed; color: #7a2e28; }
+
+.card.attention { border-color: #ecdf8f; background: #fdf8dc; }
+.waiting { margin: 8px 0 0; padding-left: 18px; }
+.waiting li { margin-bottom: 4px; font-weight: 600; }

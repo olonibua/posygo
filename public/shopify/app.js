@@ -21,7 +21,7 @@
   }
 
   function show(...nodes) {
-    view.replaceChildren(...nodes);
+    view.replaceChildren(...nodes.filter(Boolean));
   }
 
   function countryName(code) {
@@ -99,7 +99,7 @@
     }
   }
 
-  function renderChooseCountry(apiKey, account, problem) {
+  function renderChooseCountry(apiKey, account, problem, chosen) {
     if (account.countries.length === 0) {
       show(el("div", { class: "card" },
         el("h2", {}, `Hello, ${account.businessName}`),
@@ -108,7 +108,7 @@
       ));
       return;
     }
-    const select = el("select", { id: "country", name: "country" }, account.countries.map((code) => el("option", { value: code }, countryName(code))));
+    const select = el("select", { id: "country", name: "country" }, account.countries.map((code) => el("option", { value: code, selected: code === chosen }, countryName(code))));
     const connect = el("button", { type: "submit", class: "primary" }, "Connect");
     show(el(
       "form",
@@ -130,7 +130,7 @@
       shopify.toast.show("Posygo is connected");
       renderShop(shop);
     } catch (error) {
-      renderChooseCountry(apiKey, account, error.message);
+      renderChooseCountry(apiKey, account, error.message, select.value);
     } finally {
       busy(button, false);
     }
@@ -153,6 +153,19 @@
     );
   }
 
+  function renderWaiting(waiting) {
+    if (!waiting || waiting.length === 0) {
+      return null;
+    }
+    return el("section", { class: "card attention" },
+      el("h2", {}, waiting.length === 1 ? "1 order is waiting for you" : `${waiting.length} orders are waiting for you`),
+      el("p", {}, "These are paid but haven't gone to the hub yet. Open each one and click Request fulfillment."),
+      el("ul", { class: "waiting" }, waiting.map((order) =>
+        el("li", {}, el("a", { href: `shopify://admin/orders/${order.orderId}`, target: "_top" }, `Open ${order.orderName}`)),
+      )),
+    );
+  }
+
   function renderShop(shop) {
     if (!shop.connected) {
       renderConnect();
@@ -170,9 +183,12 @@
         el("ol", { class: "steps" },
           el("li", {}, "Set the product's SKU to its Posygo product code."),
           el("li", {}, "In the product's inventory, stock it at the Posygo location."),
-          el("li", {}, "That's it. Paid orders come to the hub, and Shopify emails your customer the tracking when it ships."),
+          el("li", {}, "When an order is paid, open it in Shopify and click ", el("strong", {}, "Request fulfillment"), ". Shopify only sends it to the hub after you do."),
+          el("li", {}, "The hub packs and ships it, and Shopify emails your customer the tracking."),
         ),
+        el("p", { class: "soft small" }, "If the Posygo hub ships all your orders, Shopify can send them for you: Settings → General → Order processing → Automatically fulfill the order's line items."),
       ),
+      renderWaiting(shop.waiting),
       el("section", { class: "card" }, el("h2", {}, "Recent orders"), renderRecent(shop.recent)),
       el("section", { class: "card quiet" },
         el("h2", {}, "Disconnect"),
