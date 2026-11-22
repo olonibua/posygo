@@ -35,4 +35,10 @@ describe("content security policy", () => {
     expect(policy).toContain("'nonce-abc123'");
     expect(policy).not.toMatch(/script-src[^;]*'unsafe-inline'/);
   });
+
+  it("lets only Shopify admin and the shop frame the Shopify app", () => {
+    const policy = buildContentSecurityPolicy("abc123", { shop: "brand.myshopify.com" });
+    expect(policy).toContain("frame-ancestors https://brand.myshopify.com https://admin.shopify.com");
+    expect(buildContentSecurityPolicy("abc123", { shop: null })).toMatch(/frame-ancestors https:\/\/admin\.shopify\.com(;|$)/);
+  });
 });
