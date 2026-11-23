@@ -14,6 +14,7 @@ export interface StorePlatformPage {
   intro: string;
   steps: SellerStep[];
   faq: FaqItem[];
+  guide: string;
 }
 
 const SHARED_FAQ: FaqItem[] = [
@@ -41,19 +42,21 @@ export const STORE_PLATFORMS: Record<StorePlatformSlug, StorePlatformPage> = {
     intro: `Your shop runs on Shopify and your customers are abroad. Store your stock with ${BRAND.name} in their country, and every paid Shopify order comes straight to the hub to be packed and delivered locally in days, with tracking. No copying orders by hand.`,
     steps: [
       { title: "Send your stock to a hub", body: `Create your ${BRAND.name} account, add your products and send your stock in bulk to the hub in your customers' country.` },
-      { title: "Connect your Shopify store", body: `In ${BRAND.name}, open Integrations, choose Shopify and press Connect. You get a link for your store.` },
-      {
-        title: "Add one webhook in Shopify",
-        body: "In your Shopify admin, open Settings → Notifications → Webhooks, create a webhook for Order payment and paste your link. Then copy Shopify's signing key back into Posygo.",
-      },
-      { title: "Match your SKUs", body: `Make sure each product's SKU in Shopify matches its ${BRAND.name} product code.` },
-      { title: "Orders arrive on their own", body: "Every paid order reaches the hub in seconds. Unpaid or cancelled orders are skipped, and an order is never placed twice." },
+      { title: `Install the ${BRAND.name} app`, body: `Add the ${BRAND.name} app to your Shopify store. In ${BRAND.name}, open Integrations and create an API key, then paste it into the app and choose the country you ship from.` },
+      { title: `Stock products at the ${BRAND.name} location`, body: `The app adds a ${BRAND.name} location to your store. Set each product's SKU to its ${BRAND.name} product code and stock it at that location.` },
+      { title: "Request fulfillment on paid orders", body: "Open a paid order and click Request fulfillment, or turn on automatic fulfillment in Shopify's order processing settings. The order reaches the hub in seconds." },
+      { title: "Tracking comes back to Shopify", body: "When the hub ships, the tracking goes back to Shopify, the order is marked fulfilled and Shopify emails your customer." },
     ],
     faq: [
-      { question: "Do I need to install an app?", answer: "No. You add one webhook in your Shopify settings, which takes about five minutes. Nothing changes in your theme or checkout." },
-      { question: "Which Shopify orders come through?", answer: "Only paid orders. Unpaid and cancelled orders are skipped, and if Shopify sends the same order again, it isn't placed twice." },
+      { question: "Do I need to install an app?", answer: `Yes, the free ${BRAND.name} app. It adds a ${BRAND.name} location to your store and nothing changes in your theme or checkout. You pay ${BRAND.name} only for storage and fulfilment.` },
+      {
+        question: "Which Shopify orders go to the hub?",
+        answer: `Paid orders for products stocked at the ${BRAND.name} location, once fulfillment is requested. Shopify can request it for you automatically if the hub ships all your orders.`,
+      },
+      { question: "Can I cancel an order after it reaches the hub?", answer: "Yes, until the hub has packed it. Cancel the fulfillment request in Shopify and the hub won't send it." },
       ...SHARED_FAQ,
     ],
+    guide: "/guides/posygo-shopify-guide.pdf",
   },
   woocommerce: {
     slug: "woocommerce",
@@ -63,19 +66,20 @@ export const STORE_PLATFORMS: Record<StorePlatformSlug, StorePlatformPage> = {
     intro: `Your shop runs on WordPress and WooCommerce and your customers are abroad. Store your stock with ${BRAND.name} in their country, and every paid WooCommerce order comes straight to the hub to be packed and delivered locally in days, with tracking.`,
     steps: [
       { title: "Send your stock to a hub", body: `Create your ${BRAND.name} account, add your products and send your stock in bulk to the hub in your customers' country.` },
-      { title: "Connect your WooCommerce store", body: `In ${BRAND.name}, open Integrations, choose WooCommerce and press Connect. You get a link and a secret.` },
-      { title: "Add one webhook in WordPress", body: "In WordPress, open WooCommerce → Settings → Advanced → Webhooks, add a webhook for Order updated and paste the link and the secret." },
+      { title: `Install the ${BRAND.name} Fulfilment plugin`, body: `In WordPress, open Plugins → Add New Plugin and install ${BRAND.name} Fulfilment, then activate it.` },
+      { title: "Paste your API key", body: `In ${BRAND.name}, open Integrations and create an API key. In WordPress, open WooCommerce → Settings → Integration → ${BRAND.name} Fulfilment, paste the key and choose your hub country.` },
       { title: "Match your SKUs", body: `Make sure each product's SKU in WooCommerce matches its ${BRAND.name} product code.` },
-      { title: "Orders arrive on their own", body: "When an order is marked Processing, it reaches the hub in seconds. Orders waiting for payment are skipped, and an order is never placed twice." },
+      { title: "Orders arrive on their own", body: "When an order becomes Processing, it reaches the hub in seconds. When it ships, the order is completed and your customer gets the tracking by email." },
     ],
     faq: [
-      { question: "Do I need a plugin?", answer: "No. You add one webhook in your WooCommerce settings, which takes about five minutes. Nothing changes on your website." },
+      { question: "Do I need a plugin?", answer: `Yes, the free ${BRAND.name} Fulfilment plugin. It takes about five minutes to set up and nothing changes on your website.` },
       {
         question: "Which WooCommerce orders come through?",
-        answer: "Orders that are Processing or Completed. Orders waiting for payment are skipped, and if WooCommerce sends the same order again, it isn't placed twice.",
+        answer: "Orders that become Processing, which means paid. Orders waiting for payment are skipped, and an order is never placed twice.",
       },
       ...SHARED_FAQ,
     ],
+    guide: "/guides/posygo-woocommerce-guide.pdf",
   },
 };
 

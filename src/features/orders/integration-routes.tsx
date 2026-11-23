@@ -5,8 +5,8 @@ import { type Tone, toneSurface } from "@/components/ui/tone";
 export type IntegrationRoute = "SHOPIFY" | "WOOCOMMERCE" | "API";
 
 const ROUTES: { id: IntegrationRoute; title: string; body: string; tone: Tone }[] = [
-  { id: "SHOPIFY", title: "Shopify", body: "Paste one link into your Shopify settings. About five minutes, no developer needed.", tone: "lime" },
-  { id: "WOOCOMMERCE", title: "WooCommerce", body: "Paste a link and a secret into your WordPress settings. About five minutes.", tone: "sky" },
+  { id: "SHOPIFY", title: "Shopify", body: "Install the Posygo app and paste an API key. About five minutes, no developer needed.", tone: "lime" },
+  { id: "WOOCOMMERCE", title: "WooCommerce", body: "Install the Posygo Fulfilment plugin and paste an API key. About five minutes.", tone: "sky" },
   { id: "API", title: "Another website", body: "Built your own site or use another platform? Your developer sends orders to us with an API key.", tone: "yellow" },
 ];
 

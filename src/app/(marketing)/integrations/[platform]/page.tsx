@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { MarketingFooter, MarketingHeader } from "@/components/layout/marketing-chrome";
 import { JsonLd } from "@/components/seo/json-ld";
-import { ButtonLink } from "@/components/ui/button";
+import { ButtonLink, buttonClasses } from "@/components/ui/button";
 import { Paper, StepNumber } from "@/components/ui/surfaces";
 import { africanBrandsPath, africanBrandsTitle } from "@/features/marketing/african-brands-copy";
 import { FaqSection } from "@/features/marketing/faq";
@@ -64,6 +64,9 @@ export default async function StorePlatformPage({ params }: Props) {
           <p>{platform.intro}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <ButtonLink href="/signup">Connect your {platform.name} store →</ButtonLink>
+            <a href={platform.guide} download className={buttonClasses("ghost")}>
+              Download the step-by-step guide (PDF)
+            </a>
             <ButtonLink href="/contact" variant="ghost">
               Set it up with us
             </ButtonLink>
