@@ -9,7 +9,21 @@ import { absoluteUrl } from "./site";
 const ORGANIZATION_ID = absoluteUrl("/#organization");
 
 export function organization(): JsonLdThing {
-  return { "@type": "Organization", "@id": ORGANIZATION_ID, name: BRAND.name, url: absoluteUrl("/"), logo: absoluteUrl("/brand/flower-mark.svg"), description: BRAND.description };
+  return {
+    "@type": "Organization",
+    "@id": ORGANIZATION_ID,
+    name: BRAND.name,
+    legalName: BRAND.company.legalName,
+    url: absoluteUrl("/"),
+    logo: absoluteUrl("/brand/flower-mark.svg"),
+    description: BRAND.description,
+    email: BRAND.contactEmail,
+    foundingDate: BRAND.company.incorporated,
+    identifier: { "@type": "PropertyValue", propertyID: "Companies House company number", value: BRAND.company.number },
+    address: { "@type": "PostalAddress", streetAddress: BRAND.company.address.street, addressLocality: BRAND.company.address.locality, postalCode: BRAND.company.address.postcode, addressCountry: BRAND.company.address.country },
+    sameAs: [...BRAND.profiles],
+    knowsAbout: ["Ecommerce fulfilment", "Cross-border ecommerce", "Fulfilment for African brands", "Shopify fulfilment", "WooCommerce fulfilment"],
+  };
 }
 
 export function website(): JsonLdThing {

@@ -116,6 +116,46 @@ export const GUIDES: readonly Guide[] = [
       { href: "/pricing", label: "Prices by country" },
     ],
   },
+  {
+    slug: "choose-a-fulfilment-partner-african-brand",
+    title: "How African brands choose a fulfilment partner abroad",
+    description: "Selling from Nigeria, Ghana, Kenya or anywhere in Africa to customers abroad? What a fulfilment partner does, the questions to ask before you send stock, and how Posygo works.",
+    updated: "2026-11-28",
+    sections: [
+      {
+        heading: "What a fulfilment partner does for an African brand",
+        paragraphs: [
+          "A fulfilment partner keeps your stock in the country where your customers are. You send your products in one bulk shipment, they count and store them, and when a customer orders they pick, pack and deliver that order locally, with tracking.",
+          "For a brand selling from Africa, this replaces sending every order across the world on its own. Customers get their order in days instead of weeks, and you pay one bulk shipping cost instead of international postage on every parcel.",
+        ],
+      },
+      {
+        heading: "Start with the country where most of your orders go",
+        paragraphs: [
+          "Look at where your last few months of orders went and start there. One country is enough to test delivery times and your real cost per order before you send stock anywhere else.",
+        ],
+      },
+      {
+        heading: "Questions to ask before you send any stock",
+        paragraphs: [
+          "Do you accept sellers whose business is registered in my country? Who handles customs clearance for my bulk shipment, and who pays the import duty and VAT? What will I pay in a quiet month with only a few orders?",
+          "Ask for a quote based on your real volume that covers receiving, storage, packing, delivery and returns. Check how you'll see your stock and orders, and whether they connect to the shop you already use, such as Shopify or WooCommerce.",
+        ],
+      },
+      {
+        heading: "How Posygo works for African brands",
+        paragraphs: [
+          "Posygo was built for brands selling from Africa to customers abroad. We hold your stock in the United Kingdom, with more countries being added. There's no subscription: you pay to stock each box, a monthly storage fee per box, a fee per order packed and the carrier's postage.",
+          "Every box is counted and photographed when it arrives, and every order is photographed before it's sealed. Orders come in automatically from Shopify or WooCommerce, from a spreadsheet upload or from your Posygo storefront, and tracking goes back to your customer.",
+        ],
+      },
+    ],
+    related: [
+      { href: "/fulfilment", label: "Countries we fulfil in" },
+      { href: "/pricing", label: "Prices by country" },
+      { href: "/integrations", label: "Shopify and WooCommerce" },
+    ],
+  },
 ];
 
 export function findGuide(slug: string): Guide | undefined {
